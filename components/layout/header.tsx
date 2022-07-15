@@ -6,8 +6,8 @@ import { classNames } from "../../util/class-name";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { MdClose } from "react-icons/md";
 const headerData = {
-  icon: "https://velog.velcdn.com/images/chchaeun/profile/01725b7d-94eb-4baa-a83d-753405c4d646/social.png",
-  blog_name: "개발새발",
+  icon: "https://i.imgur.com/2nHGFTv.png",
+  blog_name: "산하개발실록",
 };
 
 function Header() {

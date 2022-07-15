@@ -20,7 +20,7 @@ const nextConfig = {
       "avatars.githubusercontent.com",
     ],
   },
-  basePath: isProd ? "/blog" : "",
+  basePath: isProd ? "/TIL" : "",
 };
 
 module.exports = nextConfig;

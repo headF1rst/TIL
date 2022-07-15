@@ -2,7 +2,7 @@
 const debug = process.env.NODE_ENV !== "production";
 
 module.exports = {
-  "process.env.BACKEND_URL": !debug ? "https://chchaeun.github.io/blog" : "",
+  "process.env.BACKEND_URL": !debug ? "https://headF1rst.github.io/TIL" : "",
 };
 
 // .babelrc.js

@@ -9,7 +9,7 @@ function Layout(props: IProps) {
   return (
     <Fragment>
       <Header />
-      <main className="dark:bg-[#0d1117]">{props.children}</main>
+      <main className="dark:bg-[#0d1117] h-screen pb-10">{props.children}</main>
     </Fragment>
   );
 }

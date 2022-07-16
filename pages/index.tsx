@@ -67,7 +67,7 @@ const Home = ({ allPostsData, allTags, profileData }: IProps) => {
     router.push(`/?tag=${tagName}`);
   };
   return (
-    <div className="flex justify-around gap-10 sm:gap-0 sm:flex-col-reverse dark:bg-[#0d1117] dark:text-[#c9d1d9] ">
+    <div className="flex justify-around gap-10 sm:gap-0 sm:flex-col-reverse dark:bg-[#0d1117] dark:text-[#c9d1d9] h-full">
       <>
         <div className="flex flex-col gap-10 w-2/3 pt-10 sm:w-full px-5">
           <div className="flex flex-wrap mr-20 gap-2 sm:m-0">

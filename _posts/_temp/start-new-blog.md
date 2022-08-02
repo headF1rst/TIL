@@ -1,4 +1,10 @@
-# 내가 블로그를 새로 시작하는 이유
+---
+title: 내가 블로그를 새로 시작하는 이유
+category:
+thumbnail: https://i.imgur.com/HbkinoQ.jpg
+tags: 전체, 회고
+date: 2022-08-2 10:00
+---
 
 ## 앵무새식 블로그 글
 

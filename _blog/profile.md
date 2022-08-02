@@ -1,6 +1,6 @@
 ---
 name: 고산하
-description: 스프링 개발자가 아닌 백엔드 개발자로, 백엔드 개발자가 아닌 개발자로 성장하기 위해 기술의 본질을 탐구하고 공부하고 있습니다.
+description: 경험 공유를 통해 함께 성장하는 선순환 가치를 만들고자 블로그를 운영하고 있습니다.
 email: sanha0498@gmail.com
 github: headF1rst
 instagram: sanha.io

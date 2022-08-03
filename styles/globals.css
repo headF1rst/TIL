@@ -28,3 +28,7 @@ a {
     background-color: transparent;
   }
 }
+
+.markdown-body ul {
+  list-style: disc;
+}

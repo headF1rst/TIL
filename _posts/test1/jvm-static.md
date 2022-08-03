@@ -2,7 +2,7 @@
 title: Static 변수 저장위치와 JVM 구조의 변화
 category: JAVA
 thumbnail: https://i.imgur.com/5AJJwhh.png
-tags: 전체, Java
+tags: Java
 date: 2022-07-11 10:00
 ---
 

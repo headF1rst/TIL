@@ -6,7 +6,7 @@ const Utterances = () => {
     const scriptElem = document.createElement("script");
     scriptElem.src = "https://utteranc.es/client.js";
     scriptElem.async = true;
-    scriptElem.setAttribute("repo", "chchaeun/blog");
+    scriptElem.setAttribute("repo", "headF1rst/TIL");
     scriptElem.setAttribute("issue-term", "pathname");
     scriptElem.setAttribute("theme", "github-light");
     scriptElem.setAttribute("label", "blog-comment");

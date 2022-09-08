@@ -1,7 +1,7 @@
 ---
 title: promisor - 리버스 프록시 적용하여 Tomcat과 연동
 category:
-thumbnail: /Users/sanha/SpringStudy/blog/images/Promisor_logo.png
+thumbnail: https://i.imgur.com/9XDkZau.png
 tags: 프로젝트
 date: 2022-06-03 10:00
 ---

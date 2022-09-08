@@ -1,7 +1,7 @@
 ---
 title: promisor - CORS 해결
 category:
-thumbnail: /Users/sanha/SpringStudy/blog/images/Promisor_logo.png
+thumbnail: https://i.imgur.com/9XDkZau.png
 tags: 프로젝트
 date: 2022-05-26 10:00
 ---

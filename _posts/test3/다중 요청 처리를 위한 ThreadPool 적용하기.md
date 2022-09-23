@@ -27,7 +27,7 @@ WAS는 사용자의 요청마다 Thread를 할당해 주는데, 코드를 통해
 - 반복문을 돌면서 클라이언트의 요청이 소켓에 들어올때까지 대기한다.
 - 클라이언트의 요청이 들어오면, 요청(task)를 처리하기 위한 스레드를 생성하여 할당한다.
 - 할당된 스레드가 `RequestHandler` 객체를 생성한다.
-- `[thread.start()](https://kim-jong-hyun.tistory.com/101)` 에 의해서 Thread가 task를 수행한다
+- [thread.start()](https://kim-jong-hyun.tistory.com/101) 에 의해서 Thread가 task를 수행한다
     - `RequestHandler` 에 오바라이드된 `run()` 메서드를 수행한다.
     
 
@@ -63,7 +63,7 @@ Thread Pool의 Thread 할당 과정을 살펴보면 다음과 같다.
 
 ## Thread Pool을 사용하여 다중 요청을 처리하는 WAS
 
-이제 자바에서 기본으로 제공하는 `[ThreadPoolExecutor](https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ThreadPoolExecutor.html)` 를 활용해 아래의 설정값을 바탕으로하는 Thread Pool 기능을 추가해보자.
+이제 자바에서 기본으로 제공하는 [ThreadPoolExecutor](https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ThreadPoolExecutor.html) 를 활용해 아래의 설정값을 바탕으로하는 Thread Pool 기능을 추가해보자.
 
 - 최대 Thread Pool의 크기 = `250` (Pool Size)
 - 모든 Thread가 사용중인 (Busy) 상태이면 `100` 명까지 대기 상태 유지 (Queue Size)
@@ -181,7 +181,7 @@ java/util/concurrent/Executors.java 파일의 Executors 클래스는 정적 메�
 
 고정 스레드 풀이기 때문에 corePoolSize와 maximumPoolSize의 값이 같고 corePoolSize보다 스레드 개수가 많아질 일이 없기 때문에 keepAliveTime은 0이다.
 
-눈여겨봐야할 부분은 바로 workQueue인데, `[LinkedBlockingQueue](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/LinkedBlockingQueue.html)` 를 사용한다.
+눈여겨봐야할 부분은 바로 workQueue인데, [LinkedBlockingQueue](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/LinkedBlockingQueue.html) 를 사용한다.
 
 LinkedBlockingQueue는 생성자의 인자로 queue의 사이즈를 지정해주지 않으면 최대 큐 사이즈를 **Integer.MAX_VALUE (2*31 - 1)**로 설정하고 값이 삽입될 때 마다 동적으로 node를 생성하여 값을 저장한다.
 
@@ -201,7 +201,7 @@ LinkedBlockingQueue는 생성자의 인자로 queue의 사이즈를 지정해주
 
 지금까지 Thread Pool을 적용하기 위한 코드를 작성하고 이를 알아보았지만, 감사하게도 스프링부트는 Tomcat을 내장하고 있다.
 
- 내장 Tomcat 덕분에 위와 같이 Thread Pool을 구현할 필요 없이 `application.yml` 혹은 `[application.properties](http://application.properties)` 에서 Tomcat의 Connector설정을 변경 할 수 있다.
+ 내장 Tomcat 덕분에 위와 같이 Thread Pool을 구현할 필요 없이 `application.yml` 혹은 [application.properties](http://application.properties) 에서 Tomcat의 Connector설정을 변경 할 수 있다.
 
 ```java
 # application.yml (적어놓은 값은 default)
@@ -238,10 +238,10 @@ Thead Pool에 의해 관리되는 스레드는 소켓 연결을 받아 요청을
 
 [Task queuing in Executors.newFixedThreadPool()](https://medium.com/@amardeepbhowmick92/task-queuing-in-executors-newfixedthreadpool-31bc8c24b4d2)
 
-[](https://www.baeldung.com/thread-pool-java-and-guava)
+[Introduction to Thread Pools in Java](https://www.baeldung.com/thread-pool-java-and-guava)
 
 [JAVA 쓰레드풀 분석 - newFixedThreadPool 는 어떻게 동작하는가?](https://hamait.tistory.com/937)
 
-[](https://velog.io/@sihyung92/how-does-springboot-handle-multiple-requests)
+[스프링부트는 어떻게 다중 유저 요청을 처리할까? (Tomcat9.0 Thread Pool)](https://velog.io/@sihyung92/how-does-springboot-handle-multiple-requests)
 
 [병행성(Concurrency)을 위한 CountDownLatch](https://imasoftwareengineer.tistory.com/100)

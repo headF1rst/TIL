@@ -46,8 +46,10 @@ function CategoryPosts({ categoryInfo, postDatas, profileData }: IProps) {
   return (
     <div className="m-auto flex flex-col gap-10 w-2/3 pt-10 dark:text-[#c9d1d9] sm:gap-0 sm:flex-col-reverse sm:pt-0 sm:w-full">
       <div className="sm:flex sm:flex-col sm:px-5 sm:gap-5">
-        <div>카테고리</div>
-        <div className="text-3xl font-bold">{categoryInfo?.name}</div>
+        <div className="mb-10">
+          <div>카테고리</div>
+          <div className="text-3xl font-bold">{categoryInfo?.name}</div>
+        </div>
         <div className="flex flex-col gap-10 pb-20">
           {postDatas?.map((postData: IPostData) => (
             <div key={postData.id}>

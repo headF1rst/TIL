@@ -1,5 +1,5 @@
 ---
-title: promisor - CORS 해결
+title: CORS, 알고보니 우리편?
 category:
 thumbnail: https://i.imgur.com/9XDkZau.png
 tags: 프로젝트

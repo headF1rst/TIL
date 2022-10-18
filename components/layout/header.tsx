@@ -5,6 +5,7 @@ import Image from "next/image";
 import { classNames } from "../../util/class-name";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { MdClose } from "react-icons/md";
+import {BiLinkExternal} from'react-icons/bi'
 const headerData = {
   icon: "https://i.imgur.com/2nHGFTv.png",
   blog_name: "산하개발실록",
@@ -56,19 +57,19 @@ function Header() {
             Category
           </button>
         </Link>
-        <Link href="/about">
-          <button
-            className={classNames(
-              router.pathname === "/about" ? "font-bold " : "font-light",
-              "hover:text-indigo-300 text-base"
-            )}
-          >
-            About
-          </button>
-        </Link>
+        <a href={'https://plain-composer-c65.notion.site/29c7640fdf054059b6ea28ed61189bfb'}
+           target={"_blank"}
+           rel="noreferrer"
+          className={"hover:text-indigo-300 text-base font-light flex gap-1"}
+        >
+          About
+          <span className={"flex justify-center"} style={{alignItems:'center'}}>
+            <BiLinkExternal/>
+          </span>
+        </a>
       </div>
       {showMenu ? (
-        <div className="flex flex-col fixed left-0 top-0 bg-white w-full h-screen dark:bg-[#0d1117] dark:bg-opacity-80 p-4 gap-5">
+        <div className="flex flex-col fixed left-0 top-0 bg-white w-full h-screen dark:bg-[#0d1117] dark:bg-opacity-90 p-4 gap-5">
           <MdClose
             onClick={() => setShowMenu(false)}
             className="lg:hidden"
@@ -96,15 +97,16 @@ function Header() {
           >
             Category
           </button>
-          <button
-            onClick={() => onMenuClick("/about")}
-            className={classNames(
-              router.pathname === "/about" ? "font-bold " : "font-light",
-              "hover:text-indigo-300 text-base"
-            )}
+          <a href={'https://plain-composer-c65.notion.site/29c7640fdf054059b6ea28ed61189bfb'}
+             target={"_blank"}
+             rel="noreferrer"
+             className={"hover:text-indigo-300 text-base font-light flex gap-1 align-center justify-center"}
           >
             About
-          </button>
+            <span className={"flex justify-center"} style={{alignItems:'center'}}>
+            <BiLinkExternal/>
+          </span>
+          </a>
         </div>
       ) : (
         <GiHamburgerMenu

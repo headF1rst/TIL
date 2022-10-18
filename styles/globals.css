@@ -11,6 +11,10 @@ body {
   overflow-x: hidden;
 }
 
+html{
+  overflow: inherit;
+}
+
 a {
   color: inherit;
   text-decoration: none;

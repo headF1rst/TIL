@@ -36,3 +36,6 @@ a {
 .markdown-body ul {
   list-style: disc;
 }
+.markdown-body img{
+  margin: 0 auto;
+}

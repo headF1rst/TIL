@@ -1,5 +1,5 @@
 ---
-title: MVC 프레임워크 만들기 - 1편
+title: MVC 프레임워크 만들기 - MVC 1편
 category:
 thumbnail: https://i.imgur.com/b9vvtK7.png
 tags: Spring
@@ -25,9 +25,7 @@ UI와 로직의 역할 분리가 제대로 이뤄지지 않았기 때문에 간�
 
 유지보수에 유연한 구조를 생성하고자 어플리케이션 구성 요소의 관심사를 분리한 MVC 패턴을 도입하였으며 서블릿, JSP 조합 MVC 패턴을 통해서 로직과 뷰 부분을 나누어서 개발하기 시작했다. 이후 MVC 패턴을 기반으로한 여러 MVC 프레임워크가 등장하기 시작했다 (스트럿츠, 스프링 MVC 등)
 
-<div style="text-align: center;"><img src="https://i.imgur.com/xHDLKSZ.png" alt=""></div>
-
-<div style="text-align: center;">출처 - XESCHOOL</div>
+![mvc](https://i.imgur.com/oKAr8hs.png)
 
 - **MVC 패턴의 구성 요소**
     - `Controller`

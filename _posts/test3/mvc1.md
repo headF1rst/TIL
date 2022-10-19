@@ -3,12 +3,12 @@ title: MVC 프레임워크 만들기 - 1편
 category:
 thumbnail: https://i.imgur.com/b9vvtK7.png
 tags: Spring
-date: 2022-09-20 10:00
+date: 2022-10-08 10:00
 ---
 
-7월에 [넥스트 스텝](https://edu.nextstep.camp/)에서 진행하는 [만들면서 배우는 스프링 3기](https://edu.nextstep.camp/s/I7LCaCf3)에 참여했다.
+7월에 [넥스트 스텝](https://edu.nextstep.camp/)에서 진행하는 [만들면서 배우는 스프링 3기](https://edu.nextstep.camp/s/I7LCaCf3)에 참여하였습니다.
 
-이 포스트는 해당 과정에서 스스로 고민하며 MVC 프레임워크를 차근 차근 구현해보았던 과정이다.
+이 포스트는 해당 과정에서 스스로 고민하며 MVC 프레임워크를 차근 차근 구현해보았던 과정입니다.
 
 ## 1. MVC 패턴의 탄생
 
@@ -16,19 +16,17 @@ date: 2022-09-20 10:00
 
 MVC 구현 과정을 살펴보기 이전에 MVC 패턴이 무엇이고 어떤 과정을 통해서 발전하였는지 개념을 짚고 넘어가도록 하자.
 
-초기 자바 진영에서는 동적인 웹 페이지를 구현하기 위한 표준으로 [서블릿](https://mangkyu.tistory.com/m/14)이 등장하였다.
-
-서블릿은 WAS의 tcp/ip 연결, 멀티 쓰레드 관리등을 담당하였으며 사용자 요청에 대한 처리와 처리 결과에 따른 응답을 생성해서 HTML 파일을 클라이언트에게 반환하는 역할을 하였다.
+초기 자바 진영에서는 동적인 웹 페이지를 구현하기 위한 표준으로 [서블릿](https://mangkyu.tistory.com/m/14)이 등장하였다. 서블릿은 WAS의 tcp/ip 연결, 멀티 쓰레드 관리등을 담당하였으며 사용자 요청에 대한 처리와 처리 결과에 따른 응답을 생성해서 HTML 파일을 클라이언트에게 반환하는 역할을 하였다.
 
 하지만 서블릿은 자바 코드로 작성되기 때문에 HTML 파일을 생성하기 어렵다는 단점이 존재했고, 화면 출력 로직을 담당하는 `템플릿 엔진` (JSP, Thymeleaf …)이 등장했다.
 
-JSP의 등장으로 HTML 파일 생성은 쉬워졌지만 JSP가 비즈니스 로직까지 너무 많은 역할을 담당한다는 단점이 존재했다. (하나의 JSP파일에 코드가 수천줄이 넘어가고 유지보수가 어려웠다.)
-
+JSP의 등장으로 HTML 파일 생성은 쉬워졌지만 JSP가 비즈니스 로직까지 너무 많은 역할을 담당한다는 단점이 여전히 존재했다. (하나의 JSP파일에 코드가 수천줄이 넘어가고 유지보수가 어려웠다.)
 UI와 로직의 역할 분리가 제대로 이뤄지지 않았기 때문에 간단한 UI를 변경하더라도 로직까지 함께 수정해야 하는 등 변경 라이프 사이클이 맞지 않았기 때문에 유지보수에 좋은 구조라고 볼 수도 없었다.
 
-관심사를 분리하여 유지보수에 유연한 구조를 생성하고자 MVC 패턴을 도입하였으며 서블릿, JSP 조합 MVC 패턴을 통해서 로직과 뷰 부분을 나누어서 개발하기 시작했다. 이후 MVC 패턴을 기반으로한 여러 MVC 프레임워크가 등장하기 시작했다 (스트럿츠, 스프링 MVC 등)
+유지보수에 유연한 구조를 생성하고자 어플리케이션 구성 요소의 관심사를 분리한 MVC 패턴을 도입하였으며 서블릿, JSP 조합 MVC 패턴을 통해서 로직과 뷰 부분을 나누어서 개발하기 시작했다. 이후 MVC 패턴을 기반으로한 여러 MVC 프레임워크가 등장하기 시작했다 (스트럿츠, 스프링 MVC 등)
 
 <p align="center"><img src="https://i.imgur.com/xHDLKSZ.png"></p>
+
 <div style="text-align: center;">출처 - XESCHOOL</div>
 
 - **MVC 패턴의 구성 요소**
@@ -78,6 +76,8 @@ Front Controller의 역할을 하는 DispatcherServlet 클래스 코드를 만�
 
 여기서 순서대로 어댑터들이 저장된것을 주의해야 하는데, 동일한 URI를 처리하는 어댑터가 여러개 존재하더라도 우선순위를 부여하기 위함이다. 이후에 `getHandlerAdapter()` 메서드가 호출되면 `HandlerExecution` → `SimpleControllerHandlerAdapter` 순으로 리스트에서 객체를 가져와서 인자로 주어진 handler를 지원하는지 여부를 검사한다.
 
+> **Handler** 라는 용어가 어색할 수 있는데, Handler는 더 넓은 의미에서의 Controller를 뜻하며 현재 포스트에서는 Handler와 Controller를 같은 의미로 받아들여도 좋다.
+
   ![스크린샷 2022-10-09 오후 10.50.52.png](https://i.imgur.com/CtG6FlS.png)
 
 - `ReqeustMapping` - initMapping()
@@ -93,8 +93,8 @@ Front Controller의 역할을 하는 DispatcherServlet 클래스 코드를 만�
 
 service 메서드의 핵심 로직을 살펴보도록 하자.
 
-- requestURI와 매핑되는 Controller를 찾아온다.
-    
+- `getHandler(request)` - requestURI와 매핑되는 Controller를 찾아온다.
+- `requestMapping.findController(requestURI)` 메서드는 RequestMapping 객체내 URI를 키값으로 하는 값(Controller)을 반환한다. 
     ![스크린샷 2022-10-09 오후 11.04.15.png](https://i.imgur.com/pF0xb8p.png)
     
 
@@ -177,7 +177,7 @@ public class DispatcherServlet extends HttpServlet {
 
 ## 3. HandlerAdapter
 
-- HandlerAdpater란?
+- HandlerAdapter란?
     - `HandlerAdapter`
         - DispatcherServlet과 Controller 사이에 HandlerAdpater를 위치시켜서 DispatcherServlet이 다양한 형태의 Handler(Controller)를 호출할 수 있게 한다.
     - `어뎁터 패턴`
@@ -205,27 +205,28 @@ HandlerAdapter 인터페이스의 구현체인 `SimpleControllerHandlerAdapter` 
 
 ![스크린샷 2022-10-09 오후 11.14.21.png](https://i.imgur.com/9UjRZsq.png)
 
-`handle()` 메서드는 앞서 살펴본 DispatcherServlet의 `handlerAdater()` → `handle()` → `adapter.handle()` 메서드에 의해서 호출된다.
+`handle()` 메서드는 아래와 같이 DispatcherServlet의 `handlerAdater()` → `handle()` → `adapter.handle()` 메서드에 의해서 호출된다.
 
 ![스크린샷 2022-10-09 오후 11.02.43.png](https://i.imgur.com/BA0tMbg.png)
 
-SimpleControllerHandlerAdapter의 handle 메서드는 인자로 받아온 handler 객체를 Controller로 다운캐스팅 한 다음 `execute()` 메서드를 호출하여 Controller가 로직을 수행하도록 요청하게 된다.
+만약 요청 uri를 처리할 수 있는 Controller를 알고있는 어댑터가 `SimpleControllerHandlerAdapter`일 경우, SimpleControllerHandlerAdapter의 handle 메서드가 호출된다.
+handle() 메서드의 인자로 받아온 handler 객체를 Controller로 다운캐스팅 한 다음 `execute()` 메서드를 호출하여 Controller가 로직을 수행하도록 요청하게 된다.
 
 ## 4. Controller
 
-Controller 인터페이스를 다음과 같이 정의하였고 그 구현체로 다양한 URI를 처리할 수 있는 각각의 Controller 구현체를 구현해 주었다. (HomeController, FowardController, ListUserController …)
+Controller 인터페이스를 다음과 같이 정의하였고 그 구현체로 다양한 URI를 처리할 수 있는 각각의 Controller 구현체를 구현해 주었다. (HomeController, ForwardController, ListUserController …)
 
 ![스크린샷 2022-10-09 오후 11.16.06.png](https://i.imgur.com/NwEgKVD.png)
 
-`exeute()` 메서드가 호출되었을때 어떤 로직이 수행되는지 Controller 인터페이스의 구현체인 `ListUserController` 를 예로 들어서 알아보도록 하겠다.
+`exeute()` 메서드가 호출되었을때 어떤 로직이 수행되는지 Controller 인터페이스의 구현체인 `ListUserController` 를 예로 알아보도록 하자 .
 
 ## 4.1 execute 메서드
 
 ![스크린샷 2022-10-09 오후 11.20.09.png](https://i.imgur.com/L8po0KF.png)
 
-ListUserController는 로그인되어있는 상태라면 모든 회원정보를 출력하는 `list.jsp` 파일을 렌더링하고 그렇지 않은 상태라면 사용자가 로그인을 먼저 하고 다시 요청할 수 있게끔 로그인 폼으로 리다이렉트하는 로직을 수행한다.
+ListUserController는 로그인되어있는 상태라면 모든 회원정보를 출력하는 `list.jsp` 파일을 렌더링하고, 그렇지 않은 상태라면 사용자가 로그인을 먼저 하고 다시 요청할 수 있게끔 로그인 폼으로 리다이렉트하는 로직을 수행한다.
 
-이때 사용자의 로그인 상태 여부를 확인하기 위해서 `HttpServletRequest` 의 `getSession()` 메서드를 통해 HttpSession 정보를 isLogined 메서드의 인자로 넘겨주게 되는데 HttpServeltRequest가 Controller에게 데이터를 전달하는 MVC 패턴의 Model 역할을 하게 되는 것이다.
+이때 사용자의 로그인 상태 여부를 확인하기 위해서 `HttpServletRequest` 의 `getSession()` 메서드를 통해 HttpSession 정보를 isLogined 메서드의 인자로 넘겨주게 되는데 HttpServeltRequest가 Controller에게 데이터를 전달하는 MVC 패턴의 **Model** 역할을 하게 되는 것이다.
 
 좀 더 로직을 자세히 알아보기 위해서 UserSessionUtils 객체를 어떻게 구현하였는지 알아보도록 하자.
 
@@ -235,13 +236,17 @@ static 멤버만을 저장하는 유틸성 클래스이기 때문에 객체 생�
 
 ![스크린샷 2022-10-18 오후 8.37.24.png](https://i.imgur.com/cymChPc.png)
 
-앞서 `ListUserController` 의 `execute()` 메서드에서 호출된 `isLogined()` 메서드를 살펴보도록 하겠다. `getUserFromSession()` 메서드를 호출하고 getUserFromSession() 메서드는 HttpSession으로 부터 “user”를 키값으로 갖고있는 속성값을 가져오며 그러한 속성값이 존재할 경우 User 객체로 다운 캐스팅하여 반환한다.
+앞서 `ListUserController` 의 `execute()` 메서드에서 호출된 `UserSessionUtils.isLogined()` 메서드를 살펴보도록 하겠다.
 
-만약 getUserFromSession()의 결과값이 null일 경우, 해당 회원의 로그인 정보가 세션에 저장되어 있지 않다는 의미이기 때문에 false를 반환하며 그렇지 않을 경우 로그인이 되어있는 회원임을 나타내는 true를 반환한다.
+조건문에서 `getUserFromSession()` 메서드를 호출하고 호출된 메서드는 HttpSession으로 부터 “user”를 키값으로 갖는 속성값을 가져온다.
+만약 그러한 속성값이 존재하지 않을 경우 null을 반환하고, 존재할 경우 User 클래스로 다운 캐스팅하여 반환한다.
 
-다시 `ListUserController` 클래스의 execute()의 로직을 살펴보면 isLogined() 메서드의 결과값에 따라서 `RedirectView` 혹은 `ForwardView` 를 생성자의 인자로 넘겨받은 ModelAndView가 반환된다.
+만약 getUserFromSession()의 결과값이 null일 경우, 해당 회원의 로그인 정보가 세션에 저장되어 있지 않다는 뜻이기 때문에 false를 반환하며 그렇지 않을 경우 로그인 되어있는 회원임을 나타내는 true를 반환한다.
 
-UserSessionUtils 전체 코드
+다시 `ListUserController` 클래스의 execute()의 로직을 살펴보면 UserSessionUtils.isLogined() 메서드의 결과값에 따라서 
+`RedirectView` 혹은 `ForwardView` 를 생성자의 인자로 넘겨받아 ModelAndView 객체를 생성하여 반환한다.
+
+- UserSessionUtils 전체 코드
 
 ```java
 package next.controller;
@@ -290,29 +295,42 @@ ModelAndView는 Controller의 로직 처리 결과 후 응답할 View와 View에
 
 ![스크린샷 2022-08-23 오전 3.05.00.png](https://i.imgur.com/6qb8wGR.png)
 
-앞서 살펴보았던 DispatcherServlet의 handle() 메서드를 마저 알아보도록 하자. 인자로 전달받은 HandlerAdapter의 handle()을 호출하여 이동할 View (ListUserController의 경우 `ForwardView` or `RedirectView` )와 View에 전달할 모델 (데이터)를 알고있는 `ModelAndView` 객체가 반환된다.
+앞서 살펴보았던 DispatcherServlet의 handle() 메서드를 마저 알아보도록 하자. 
 
 ![스크린샷 2022-10-09 오후 11.02.43.png](https://i.imgur.com/iqDt1QP.png)
 
-getView() 메서드를 통해서 이동할 View 구현체를 가져온다.
+인자로 전달받은 HandlerAdapter의 handle()을 호출하여 이동할 View
+(ListUserController의 경우 `ForwardView` or `RedirectView`)와 View에 전달할 모델(데이터)을 알고있는 `ModelAndView` 객체가 반환된다.
 
-그다음 View 인터페이스에 정의되어 있는 render() 함수를 호출하여 model 데이터를 인자로 넘겨주었다.
+반환된 ModelAndView 객체의 `getView()` 메서드를 통해서 이동할 View 구현체를 가져온다.
+그다음 View 인터페이스를 상속한 구현체가 정의한 `render()` 함수를 호출하여 model 데이터를 인자로 넘겨주었다.
 
 ![스크린샷 2022-08-23 오전 3.05.28.png](https://i.imgur.com/sHLtiFN.png)
 
 ![스크린샷 2022-08-23 오전 3.06.57.png](https://i.imgur.com/1uv52fY.png)
 
-View 인터페이스의 구현체인 ForwardView는 JSP 파일이 저장된 경로인 `viewPath` 를 멤버변수로 포함하고 있으며 render 메서드가 호출되면 modelToRequestAttribute() 메서드를 호출하여 Model에 담긴 데이터를 전부 꺼내서 `request.setAttibute` 에 다 넣어 주었다. (JSP는 데이터를 request에 저장하는 편이 사용하기 편리하다.)
+View 인터페이스의 구현체인 ForwardView는 JSP 파일이 저장된 경로인 `viewPath` 를 멤버변수로 포함하고 있으며 render() 메서드가 호출되면 
+`modelToRequestAttribute()` 메서드를 호출하여 Model에 담긴 데이터를 전부 꺼내서 `request.setAttibute` 에 다 넣어 주었다. 
+(Model내 데이터를 전부 HttpServletRequest에 저장하는 이유는 아래에서 설명하도록 하겠다.)
 
-HttpServletRequest의 getRequestDispatcher(String) 메서드를 통해서 `RequestDispatcher` 객체를 생성해주었고 메서드의 인자로 viewPath를 주어서 이동할 페이지의 경로를 지정하였다.
+HttpServletRequest의 `getRequestDispatcher(String)` 팩토리 메서드를 통해서 `RequestDispatcher` 객체를 생성해주었고 
+메서드의 인자로 viewPath를 주어서 제어권이 이동할 페이지의 경로를 지정하였다.
 
-RequestDispatcher의 `forward()` 메서드는 대상 자원으로 제어를 넘기는 역할을 한다. 여기서는 앞서 ListUserController 객체에서 ForwardView를 생성하면서 인자인 viewPath로 `user/list.jsp` 를 명시해 주었기 때문에 해당 jsp 파일로 제어가 넘어가게 되며 최종적으로 user/list.jsp의 처리 결과가 브라우저에 출력되게 된다.
+RequestDispatcher의 `forward(request, response)` 메서드는 getRequestDispatcher(String)의 인자로 주어진 경로의 자원으로 제어를 넘기는 역할을 한다. 
+앞서 ListUserController 객체에서 ForwardView를 생성하면서 인자인 viewPath로 `user/list.jsp` 를 명시해 주었기 때문에 
+해당 jsp 파일로 제어가 넘어가게 되며 최종적으로 user/list.jsp의 처리 결과가 브라우저에 출력되게 된다.
 
-반면 `RedirectView` 는 생성자로 redirectPath를 넘겨받으며 `HttpServletResponse` 의 `sendRedirect(String)` 메서드를 호출한다.
+이때 forward(request, response) 메서드가 제어권을 다른 새로운 자원으로 넘겨주면서 인자로 HttpServletRequest 객체를 포함하기 때문에
+jsp 파일 내에서 필요한 데이터를 HttpServletRequest의 속성값에 저장해 줘야만 한다.
+
+때문에 앞에서 modelToRequestAttribute() 메서드를 호출하여 Model의 데이터를 request.setAttribute로 넘겨준 것이다.
+ModelAndView 객체내에 model이라는 이름의 필드값이 존재하지만 실질적인 Model의 역할은 HttpServletRequest가 담당하고 있다.
+
+`RedirectView`는 생성자로 redirectPath를 넘겨받으며 `HttpServletResponse` 의 `sendRedirect(String)` 메서드를 호출한다.
 
 ![스크린샷 2022-08-23 오전 3.07.16.png](https://i.imgur.com/m5fA7u6.png)
 
-sendRedirect() 메서드 또한 forward() 메서드와 마찬가지로 인자로 넘어온 경로로 제어를 이동시킨다. 
+sendRedirect(String) 메서드 또한 forward(request, response)와 마찬가지로 인자로 넘어온 경로로 제어를 이동시킨다. 
 
 하지만 두 메서드는 다음과 같은 차이점이 존재한다.
 
@@ -330,6 +348,8 @@ sendRedirect() 메서드 또한 forward() 메서드와 마찬가지로 인자로
     - 요청이 처리되기 위해 같은 서버의 다른 자원에 전달된다.
     - forward 메서드는 인자로 HttpRequest, Response 객체를 넘겨주기 때문에 새로운 자원으로 제어권이 넘어가서 과정이 처리되더라도 request 객체 내의 이전 데이터를 사용할 수 있다.
         - 때문에 model 내 모든 데이터를 request.setAttribute()로 옮기는 작업을 수행하였다.
+
+최종적으로 jsp파일로 화면 구성에 필요한 데이터가 전달되며 사용자의 요청에 해당하는 결과값이 출력되게 된다.
 
 ## 마치며
 

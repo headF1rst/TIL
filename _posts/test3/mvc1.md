@@ -25,7 +25,7 @@ UI와 로직의 역할 분리가 제대로 이뤄지지 않았기 때문에 간�
 
 유지보수에 유연한 구조를 생성하고자 어플리케이션 구성 요소의 관심사를 분리한 MVC 패턴을 도입하였으며 서블릿, JSP 조합 MVC 패턴을 통해서 로직과 뷰 부분을 나누어서 개발하기 시작했다. 이후 MVC 패턴을 기반으로한 여러 MVC 프레임워크가 등장하기 시작했다 (스트럿츠, 스프링 MVC 등)
 
-<p align="center"><img src="https://i.imgur.com/xHDLKSZ.png"></p>
+<div style="text-align: center;"><img src="https://i.imgur.com/xHDLKSZ.png" alt=""></div>
 
 <div style="text-align: center;">출처 - XESCHOOL</div>
 
@@ -324,7 +324,7 @@ RequestDispatcher의 `forward(request, response)` 메서드는 getRequestDispatc
 jsp 파일 내에서 필요한 데이터를 HttpServletRequest의 속성값에 저장해 줘야만 한다.
 
 때문에 앞에서 modelToRequestAttribute() 메서드를 호출하여 Model의 데이터를 request.setAttribute로 넘겨준 것이다.
-ModelAndView 객체내에 model이라는 이름의 필드값이 존재하지만 실질적인 Model의 역할은 HttpServletRequest가 담당하고 있다.
+ModelAndView 객체내에 model이라는 이름의 필드값이 존재하지만 실질적인 Model의 역할은 HttpServletRequest가 담당하게 된다.
 
 `RedirectView`는 생성자로 redirectPath를 넘겨받으며 `HttpServletResponse` 의 `sendRedirect(String)` 메서드를 호출한다.
 

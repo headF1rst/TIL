@@ -12,7 +12,7 @@ date: 2022-10-08 10:00
 
 ## 1. MVC 패턴의 탄생
 
-## 1.1 Servlet, JSP, Model
+### 1.1 Servlet, JSP, Model
 
 MVC 구현 과정을 살펴보기 이전에 MVC 패턴이 무엇이고 어떤 과정을 통해서 발전하였는지 개념을 짚고 넘어가도록 하자.
 
@@ -25,7 +25,8 @@ UI와 로직의 역할 분리가 제대로 이뤄지지 않았기 때문에 간�
 
 유지보수에 유연한 구조를 생성하고자 어플리케이션 구성 요소의 관심사를 분리한 MVC 패턴을 도입하였으며 서블릿, JSP 조합 MVC 패턴을 통해서 로직과 뷰 부분을 나누어서 개발하기 시작했다. 이후 MVC 패턴을 기반으로한 여러 MVC 프레임워크가 등장하기 시작했다 (스트럿츠, 스프링 MVC 등)
 
-![](https://i.imgur.com/Jg2jEjp.png)
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/ModelViewControllerDiagram2.svg/1200px-ModelViewControllerDiagram2.svg.png)
+출처 - 위키피디아
 
 - **MVC 패턴의 구성 요소**
     - `Controller`
@@ -38,7 +39,7 @@ UI와 로직의 역할 분리가 제대로 이뤄지지 않았기 때문에 간�
         - `Model` 에 담긴 데이터를 사용하여 화면을 렌더링하는 책임을 수행한다.
         
 
-## 1.2 Front Controller 패턴
+### 1.2 Front Controller 패턴
 
 초기 MVC 패턴에서 클라이언트들은  서로 다른 Controller를 호출하였으며 공통 코드들이 각 Controller에 포함되어있었다.
 
@@ -58,7 +59,7 @@ UI와 로직의 역할 분리가 제대로 이뤄지지 않았기 때문에 간�
 
 Front Controller의 역할을 하는 DispatcherServlet 클래스 코드를 만들어보자.
 
-## 2.1 기능 구현
+### 2.1 기능 구현
 
 가장 먼저 [HttpServlet](https://docs.oracle.com/javaee/7/api/javax/servlet/http/HttpServlet.html) 인터페이스를 상속받아서 [init() 과 service()](https://docs.oracle.com/javaee/6/api/javax/servlet/Servlet.html#:~:text=init,-void%20init(ServletConfig&text=config)%20throws%20ServletException-,Called%20by%20the%20servlet%20container%20to%20indicate%20to%20a%20servlet,servlet%20can%20receive%20any%20requests.) 메서드를 다음과 같이 구현하였다.
 
@@ -102,7 +103,7 @@ service 메서드의 핵심 로직을 살펴보도록 하자.
     ![스크린샷 2022-10-09 오후 11.02.43.png](https://i.imgur.com/6r7svKL.png)
     
 
-## 2.2 DispatcherServlet 전체 코드
+### 2.2 DispatcherServlet 전체 코드
 
 ```java
 package core.mvc.asis;
@@ -197,7 +198,7 @@ public class DispatcherServlet extends HttpServlet {
     - 어댑터가 실제 컨트롤러를 호출하고 결과로 ModelAndView를 반환 한다.
     - 컨트롤러가 ModelAndView를 반환하지 못하면 어댑터가 ModelAndView를 생성해서 반환 한다.
 
-## 3.1 SimpleControllerHandlerAdapter
+### 3.1 SimpleControllerHandlerAdapter
 
 HandlerAdapter 인터페이스의 구현체인 `SimpleControllerHandlerAdapter` 객체를 살펴보면 `support()` 의 인자로 주어진 handler가 Controller 인터페이스를 구현한 객체일 경우 true를, 그렇지 않을 경우 false를 반환한다.
 
@@ -218,7 +219,7 @@ Controller 인터페이스를 다음과 같이 정의하였고 그 구현체로 
 
 `exeute()` 메서드가 호출되었을때 어떤 로직이 수행되는지 Controller 인터페이스의 구현체인 `ListUserController` 를 예로 알아보도록 하자 .
 
-## 4.1 execute 메서드
+### 4.1 execute 메서드
 
 ![스크린샷 2022-10-09 오후 11.20.09.png](https://i.imgur.com/L8po0KF.png)
 
@@ -228,7 +229,7 @@ ListUserController는 로그인되어있는 상태라면 모든 회원정보를 
 
 좀 더 로직을 자세히 알아보기 위해서 UserSessionUtils 객체를 어떻게 구현하였는지 알아보도록 하자.
 
-## 4.1.1 UserSessionUtils
+### 4.1.1 UserSessionUtils
 
 static 멤버만을 저장하는 유틸성 클래스이기 때문에 객체 생성을 막고자 추상 클래스로 선언해 주었다.
 

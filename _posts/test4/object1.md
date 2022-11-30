@@ -1,5 +1,5 @@
 ---
-title: [오브젝트] 1장 - 객체, 설계
+title: "[오브젝트] 1장 - 객체, 설계"
 category: object
 thumbnail: https://wikibook.co.kr/images/cover/m/9791158391409.png
 tags: object

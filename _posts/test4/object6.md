@@ -1,5 +1,5 @@
 ---
-title: [오브젝트] 6장 - 메시지와 인터페이스
+title: "[오브젝트] 6장 - 메시지와 인터페이스"
 category: object
 thumbnail: https://wikibook.co.kr/images/cover/m/9791158391409.png
 tags: object

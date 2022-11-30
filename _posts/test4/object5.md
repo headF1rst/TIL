@@ -1,5 +1,5 @@
 ---
-title: [오브젝트] 5장 - 책임 할당하기
+title: "[오브젝트] 5장 - 책임 할당하기"
 category: object
 thumbnail: https://wikibook.co.kr/images/cover/m/9791158391409.png
 tags: object

@@ -1,5 +1,5 @@
 ---
-title: [오브젝트] 7장 - 객체 분해
+title: "[오브젝트] 7장 - 객체 분해"
 category: object
 thumbnail: https://wikibook.co.kr/images/cover/m/9791158391409.png
 tags: object

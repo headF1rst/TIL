@@ -1,5 +1,5 @@
 ---
-title: [오브젝트] 3장 - 역할, 책임, 협력
+title: "[오브젝트] 3장 - 역할, 책임, 협력"
 category: object
 thumbnail: https://wikibook.co.kr/images/cover/m/9791158391409.png
 tags: object

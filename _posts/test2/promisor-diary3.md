@@ -1,7 +1,7 @@
 ---
 title: Nginx 리버스 프록시 적용하여 Tomcat과 연동하기
 category:
-thumbnail: https://i.imgur.com/9XDkZau.png
+thumbnail: https://sysopszone.files.wordpress.com/2017/09/loadbalancer.jpeg?w=676
 tags: 프로젝트
 date: 2022-06-03 10:00
 ---

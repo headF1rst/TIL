@@ -1,7 +1,7 @@
 ---
 title: CORS, 알고보니 우리편?
 category:
-thumbnail: https://i.imgur.com/9XDkZau.png
+thumbnail: https://file.namu.moe/file/8bc9e381797334eb33da66e3ba501be1146c77bb874c318287f91084e7a405ab358eb98503cd087ef190d361cafcc76b23351a3f318dae4e8c8ae2fb7d28ed2796987b6ca3282a022e89d59ab91cc64bb5ebcc078ecafe0442e429919d6e2bf4401610591839ad74ca8e381455e7f81d
 tags: 프로젝트
 date: 2022-05-26 10:00
 ---

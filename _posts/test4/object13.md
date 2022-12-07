@@ -1,5 +1,5 @@
 ---
-title: "[오브젝트] 9장 - 유연한 설계"
+title: "[오브젝트] 13장 - 서브클래싱과 서브타이핑"
 category: object
 thumbnail: https://wikibook.co.kr/images/cover/m/9791158391409.png
 tags: object

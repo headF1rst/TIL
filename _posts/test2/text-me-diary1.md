@@ -176,7 +176,7 @@ jobs:
   - 해당 Dockerfile을 프로젝트 폴더에 넣은 후 docker build . -t 태그 이름 명령어를 실행하면 컨테이너 이미지 생성
   - java11의 실행환경을 제공하는 openjdk:11 이미지 위에서 폴더에 있는 jar 파일을 이미지 내부로 복사 후 java 명령어를 통해 실행
 
-![d](https://cloud.google.com/java/images/docker_build_flow.png?hl=ko)
+![d](https://cloud.google.com/java/images/docker_build_flow.png)
 
 하지만 jar 파일을 빌드하고 추가로 이미지에 복사하여 실행하는 방법은 소스코드에 조금의 변화만 생기더라도 변경된 부분과 의존성이 연결된 jar 파일 전체가 새로운 이미지로 인식되어 전체 파일이 다시 빌드되기 때문에 Docker layer의 장점을 살릴 수 없습니다.
 
@@ -187,7 +187,7 @@ jobs:
   - 어플리케이션을 **(종속 항목, 리소스, 클래스 등)** 별개의 레이어로 구성하고 Docker 이미지 레이어 캐싱을 활용해서 **변경사항만 다시 빌드**함으로써 빌드를 빠르게 유지
   - jib 레이어 구성과 작은 기본 이미지는 전체 이미지 크기를 작게 유지시키며 빌드 속도를 향상 시킴
 
-![d](https://cloud.google.com/java/images/jib_build_flow.png?hl=ko)
+![d](https://cloud.google.com/java/images/jib_build_flow.png)
 
 **Gradle에 jib 플러그인 추가 및 환경 변수 등록**
 

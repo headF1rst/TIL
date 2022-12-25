@@ -51,7 +51,7 @@ GitHub Actoins를 CI 솔루션으로 채택하게 된 이유는 다음과 같습
 
 더 자세한 GitHub Actions workflow syntax는 [해당 포스트](https://jinmay.github.io/2020/05/13/git/github-action-syntax/)를 참고하면 도움이 되실 것 같습니다.
 
-<img src="https://i.imgur.com/9tu0sgH.png" width="400" height="300"/>
+![먀](https://i.imgur.com/9tu0sgH.png)
 
 ## 3. Github Action으로 CI/CD 파이프라인 구축하기
 
@@ -142,12 +142,12 @@ jobs:
 - `jobs: build: runs-on: ubuntu-latest`
   - 작성한 스크립트가 작동될 OS 환경을 지정합니다.
   - text me 서비스는 우분투 18.04에서 동작하기 때문에 `ubuntu-latest` 로 지정해 주었습니다.
-    <img src="https://i.imgur.com/mRZU1aq.png" width="350" height="200"/>
+    ![d](https://i.imgur.com/mRZU1aq.png)
     
 - `steps: uses`
     - 마켓 플레이스에 사전 정의된 내용을 이용하여 step을 수행합니다.
     - 사전 작업을 위한 환경 설정용.
-      <img src="https://i.imgur.com/xZ8nmau.png" width="300" height="200"/>
+      ![d](https://i.imgur.com/xZ8nmau.png)
 
 - `steps: run`
     - 개발자가 직접 정의한 커맨드를 수행합니다.
@@ -176,7 +176,7 @@ jobs:
   - 해당 Dockerfile을 프로젝트 폴더에 넣은 후 docker build . -t 태그 이름 명령어를 실행하면 컨테이너 이미지 생성
   - java11의 실행환경을 제공하는 openjdk:11 이미지 위에서 폴더에 있는 jar 파일을 이미지 내부로 복사 후 java 명령어를 통해 실행
 
-<img src="https://cloud.google.com/java/images/docker_build_flow.png?hl=ko" width="400" height="50"/>
+![d](https://cloud.google.com/java/images/docker_build_flow.png?hl=ko)
 
 하지만 jar 파일을 빌드하고 추가로 이미지에 복사하여 실행하는 방법은 소스코드에 조금의 변화만 생기더라도 변경된 부분과 의존성이 연결된 jar 파일 전체가 새로운 이미지로 인식되어 전체 파일이 다시 빌드되기 때문에 Docker layer의 장점을 살릴 수 없습니다.
 
@@ -187,7 +187,7 @@ jobs:
   - 어플리케이션을 **(종속 항목, 리소스, 클래스 등)** 별개의 레이어로 구성하고 Docker 이미지 레이어 캐싱을 활용해서 **변경사항만 다시 빌드**함으로써 빌드를 빠르게 유지
   - jib 레이어 구성과 작은 기본 이미지는 전체 이미지 크기를 작게 유지시키며 빌드 속도를 향상 시킴
 
-<img src="https://cloud.google.com/java/images/jib_build_flow.png?hl=ko" width="400" height="50"/>
+![d](https://cloud.google.com/java/images/jib_build_flow.png?hl=ko)
 
 **Gradle에 jib 플러그인 추가 및 환경 변수 등록**
 
@@ -297,7 +297,7 @@ jobs:
 
 - `ssh-keygen -t rsa -b 4096 -C "내이메일@gmail.com"`
 
-<img src="https://i.imgur.com/s7q725G.png" width="400" height="300"/>
+![d](https://i.imgur.com/s7q725G.png)
 
 ssh 키를 `./authorized_keys2` 경로에 저장하고 다음 명령어를 통해서 ssh 키값을 확인해 줍니다.
 
@@ -305,7 +305,7 @@ ssh 키를 `./authorized_keys2` 경로에 저장하고 다음 명령어를 통�
 
 ssh 키를 GITHUB SECRET의 PRIVATE_KEY로 등록해주었습니다.
 
-<img src="https://i.imgur.com/wJ7mdpG.png" width="400" height="300"/>
+![d](https://i.imgur.com/wJ7mdpG.png)
 
 모든 과정이 마무리되었다면 직접 docker hub에 접속해서 이미지를 pull 받아올 필요 없이 자동으로 이미지를 가져와서 운영 서버에 띄워주게됩니다.
 

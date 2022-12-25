@@ -61,6 +61,10 @@ function PostDetail({ postData, detail }: IProps) {
         router.push(`/?tag=${tag}`);
     };
 
+    const ImageRenderer = ({...props})=>{
+        return <img {...props} style={{maxHeight:"450px", maxWidth:"90%"}}/>
+    }
+
     if (!postData) {
         return <div>존재하지 않는 게시글입니다.</div>;
     }
@@ -107,6 +111,7 @@ function PostDetail({ postData, detail }: IProps) {
                                 </code>
                             );
                         },
+                        img:ImageRenderer
                     }}
                 >
                     {detail}

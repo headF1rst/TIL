@@ -1,4 +1,10 @@
-# PWA 환경에서 푸시 알림 구현하기 (Spring Boot, FCM, Redis)
+---
+title: PWA 환경에서 푸시 알림 구현하기 (Spring Boot, FCM, Redis)
+category:
+thumbnail: https://www.pushengage.com/wp-content/uploads/2021/11/Best-FREE-Push-Notification-Services.png
+tags: 프로젝트
+date: 2023-01-03 10:00
+---
 
 푸시 알림이란 사용자가 서비스를 사용하고 있지 않은 상황에서도 사용자에게 알림을 보내는 방법입니다.
 

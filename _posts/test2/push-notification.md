@@ -60,7 +60,7 @@ SSE는 구현이 간단하고 real-time 서비스이지만 몇가지 제한이 �
 
 반면, 푸시 알림 시스템의 workload가 크지 않은 경우 기존 응용프로그램과 동일한 인스턴스를 사용하는 것이 비용 측면에서 효율적일 수 있습니다. 이렇게 하면 관리 및 유지해야 하는 인스턴스 수를 줄일 수 있어 리소스를 절약하고 복잡성을 줄일 수 있습니다.
 
-저희 서비스의 경우 사용자가 편지를 받는 경우에만 알림 요청이 발생하고 아직 사용자가 많지 않은점, 그리고 비용적인 측면을 고려하여 기존 응용프로그램과 동일한 인스턴스를 사용하기로 결정하였습니다. (~~서비스가 대박이나서 아키텍처 수정하는 날이 오면 좋겠습니다~~)
+저희 서비스의 경우 사용자가 편지를 받는 경우에만 알림 요청이 발생하고 아직 사용자가 많지 않은점, 그리고 비용적인 측면을 고려하여 기존 응용프로그램과 동일한 인스턴스를 사용하기로 결정하였습니다. (서비스가 대박이나서 아키텍처 수정하는 날이 오면 좋겠습니다)
 
 ![스크린샷 2023-01-02 오후 10.45.48.png](https://i.imgur.com/eb0TAnG.png)
 
@@ -121,8 +121,32 @@ json 파일로 생성된 `admin sdk` 를 프로젝트의 resouces 디렉토리�
 
 어플리케이션이 실행되는 시점에 비공개 키 파일의 인증정보를 이용해 FirebaseApp을 초기화하는 객체를 구현해주었습니다.
 
-![스크린샷 2023-01-03 오전 12.42.03.png](https://i.imgur.com/fRZCUPV.png)
+```java
+@Slf4j
+@Component
+public class FCMInitializer {
 
+    @Value("${fcm.certification}")
+    private String googleApplicationCredentials;
+
+    @PostConstruct
+    public void initialize() throws IOException {
+        ClassPathResource resource = new ClassPathResource(googleApplicationCredentials);
+
+        try (InputStream is = resource.getInputStream()) {
+            FirebaseOptions options = FirebaseOptions.builder()
+                    .setCredentials(GoogleCredentials.fromStream(is))
+                    .build();
+
+            if (FirebaseApp.getApps().isEmpty()) {
+                FirebaseApp.initializeApp(options);
+                log.info("FirebaseApp initialization complete");
+            }
+        }
+    }
+}
+
+```
  
 
 빈 객체가 생성되고 의존성 주입이 완료된 후에 초기화가 실행될 수 있도록 @PostConstruct 설정을 해주었습니다.
@@ -135,19 +159,133 @@ json 파일로 생성된 `admin sdk` 를 프로젝트의 resouces 디렉토리�
 
 Redis 설치방법과 Config 파일 작성에 대한 내용은 다루지 않고 넘어가도록 하겠습니다.
 
-![스크린샷 2023-01-04 오전 7.40.40.png](https://i.imgur.com/bXt2fWO.png)
+```java
+@Repository
+@RequiredArgsConstructor
+public class FCMTokenDao {
 
-![스크린샷 2023-01-04 오전 8.05.41.png](https://i.imgur.com/udaSt5s.png)
+    private final StringRedisTemplate tokenRedisTemplate;
 
+    public void saveToken(LoginRequest loginRequest) {
+        tokenRedisTemplate.opsForValue()
+                .set(loginRequest.getEmail(), loginRequest.getToken());
+    }
+
+    public String getToken(String email) {
+        return tokenRedisTemplate.opsForValue().get(email);
+    }
+
+    public void deleteToken(String email) {
+        tokenRedisTemplate.delete(email);
+    }
+
+    public boolean hasKey(String email) {
+        return tokenRedisTemplate.hasKey(email);
+    }
+}
+
+```
+
+```java
+@RestController
+@RequestMapping("/users")
+@RequiredArgsConstructor
+public class UserController {
+
+    private final UserService userService;
+    private final FCMService fcmService;
+    private final AesUtils aesUtils;
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody @Valid final LoginRequest request) {
+        LoginResponse loginResponse = userService.login(request);
+        fcmService.saveToken(request);
+        return ResponseEntity.ok().body(loginResponse);
+    }
+
+    @DeleteMapping("/logout")
+    public void logout(@JwtAuth String email) {
+        fcmService.deleteToken(email);
+    }
+    //...
+}
+
+```
 ### 5.5 편지 전송시 편지 수신 유저에게 알림 전송하기
 
 FCMService를 구현하기에 앞서 NotificationService 인터페이스를 구현하여 상속받도록 해주었는데 그 이유는 FCM 뿐만 아니라 iOS 푸시 알림을 위한 APNs도 사용해야 하기 때문입니다.. (iOS 웹 푸시는 현재 지원되지 않기 때문에 apple wallet을 통한 편법을 사용해야 합니다.)
 
-![스크린샷 2023-01-04 오전 8.11.25.png](https://i.imgur.com/Vj3MNIY.png)
+```java
+@Service
+@RequiredArgsConstructor
+public class FCMService implements NotificationService {
+
+    private final FCMTokenDao fcmTokenDao;
+
+    @Override
+    public void sendLetterReceivedNotification(String email) {
+        if (!hasKey(email)) {
+            return;
+        }
+        String token = getToken(email);
+        Message message = Message.builder()
+                .putData("title", "편지 도착 알림")
+                .putData("content", "편지가 도착했습니다.")
+                .setToken(token)
+                .build();
+        send(message);
+    }
+
+    public void saveToken(LoginRequest loginRequest) {
+        fcmTokenDao.saveToken(loginRequest);
+    }
+
+    public void deleteToken(String email) {
+        fcmTokenDao.deleteToken(email);
+    }
+
+    private void send(Message message) {
+        FirebaseMessaging.getInstance().sendAsync(message);
+    }
+
+    private String getToken(String email) {
+        return fcmTokenDao.getToken(email);
+    }
+
+    private boolean hasKey(String email) {
+        return fcmTokenDao.hasKey(email);
+    }
+}
+
+```
 
 fcm 서버로 메시지를 전송할 때, 서버가 메시지의 응답을 기다리는 동안 블로킹으로 인한 성능 저하를 방지하고자 `sendAsync()` 를 사용하여 메시지를 비동기적으로 처리하였습니다.
 
-![스크린샷 2023-01-04 오전 8.24.04.png](https://i.imgur.com/Pbczsoo.png)
+```java
+@Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
+public class LetterService {
+    
+    private final UserRepository userRepository;
+    private final LetterRepository letterRepository;
+    private final FCMService fcmService;
+    private final AesUtils aesUtils;
+
+    @Transactional
+    public LetterResponse makeLetter(LetterRequest request) {
+        String decryptedId = aesUtils.decryption(request.getReceiverId());
+        Long userId = Long.valueOf(decryptedId);
+        User receiver = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        Letter letter = Letter.of(receiver, request.getSenderName(), request.getContents(), request.getImageUrl());
+        letterRepository.save(letter);
+        fcmService.sendLetterReceivedNotification(receiver.getEmail());
+        return new LetterResponse(letter.getId(), receiver.getName(),
+                request.getSenderName(), request.getContents(), request.getImageUrl());
+    }
+    //...
+}
+```
 
 ## 6. 마치며
 

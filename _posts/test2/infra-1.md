@@ -1,5 +1,5 @@
 ---
-title: ubuntu에 Docker 설치하기
+title: ubuntu 18.04에 Docker 설치하기
 category:
 thumbnail: https://www.docker.com/wp-content/uploads/2021/09/Docker-build.png
 tags: infra

@@ -22,7 +22,7 @@ SSE는 구현이 간단하고 real-time 서비스이지만 몇가지 제한이 �
 
 ## 2. 현재 서비스에 더 적합한 쪽은?
 
-현제 구현하고자 하는 기능은 푸시 알림이며, 가능한 빨리 전달되어야 하지만 시스템에 높은 부하가 걸렸을 때 약간의 지연은 무방합니다. 또한 iOS, 안드로이드, 데스크톱을 지원해야 합니다. 
+현재 구현하고자 하는 기능은 푸시 알림이며, 가능한 빨리 전달되어야 하지만 시스템에 높은 부하가 걸렸을 때 약간의 지연은 무방합니다. 또한 iOS, 안드로이드, 데스크톱을 지원해야 합니다. 
 
 이러한 요구사항을 종합해 보았을때 다양한 플랫폼을 지원하며 연성 실시간 시스템이어도 문제가 없는 FCM을 사용하여 알림기능을 구현하는 방향을 선택하였습니다. 
 
@@ -44,11 +44,77 @@ SSE는 구현이 간단하고 real-time 서비스이지만 몇가지 제한이 �
     - 구글이 제공하는 원격 서비스. 푸시 알림을 다양한 플랫폼으로 보내는 역할을 담당
 - **디바이스 장치**
     - 푸시 알림을 수신하는 사용자 단말
+
+## 4. FCM의 동작 원리
+
+알림 제공자가 알림 요청을 만들어 HTTP 통신을 통해 전송 할 경우, 요청이 처리되는 과정을 그림으로 나타내보면 다음과 같습니다.
+
+![스크린샷 2023-01-06 오후 12.35.19.png](https://i.imgur.com/EGJQ13w.png)
+
+1. 알림 제공자(서비스 어플리케이션)는 FCM에 단말 토큰과 페이로드를 담아서 HTTP POST 요청을 보낸다.
+2. 요청을 받은 FCM은 요청을 통해 받은 정보의 이상 유무에 따라 알림 제공자에게 적절한 응답을 보낸다.
+3. FCM은 메시지 우선 순위, 수신 단말과의 통신 가능 여부 등을 고려하여 메시지를 수신 단말에 보낸다.
+4. 수신 단말은 정보 이상 유무에 따라 FCM에 적절한 응답을 보낸다.
+
+이전에 구현해보았던 이메일 인증 로직과 유사한 부분이 많아서 HTTP 요청을 `비동기 방식`으로 처리해야겠다는 생각을 쉽게 떠올릴 수 있었습니다.
+
+### 4.1 Sync vs Async & Blocking vs Non-Blocking
+
+병목 지점없는 안정적인 푸시 알림을 구현하기 위해서는 동기와 비동기, Blocking과 Non-Blocking에 대한 개념을 이해해야 합니다. 자세한 내용은 [블로킹 Vs. 논블로킹, 동기 Vs. 비동기](https://velog.io/@nittre/%EB%B8%94%EB%A1%9C%ED%82%B9-Vs.-%EB%85%BC%EB%B8%94%EB%A1%9C%ED%82%B9-%EB%8F%99%EA%B8%B0-Vs.-%EB%B9%84%EB%8F%99%EA%B8%B0) 포스트를 참고해주세요.
+
+간단하게 요약하자면 다음과 같습니다.
+
+- 동기 - 비동기란 특정 주체가 호출되는 함수의 **작업 완료 여부를 신경쓰는지**의 여부 차이다.
+- Blocking - Nonblocking이란 특정 주체가 **함수를 호출할 때 제어권을 양도하는지**의 여부 차이다.
+
+- **SyncExample.js**
+
+```jsx
+function a() {
+    let result = b();
+    console.log(result);
+    console.log("a finished");
+}
+
+function b() {
+    return 11;
+}
+
+/*
+실행 결과
+11
+a finished
+*/
+```
+
+Synchronous(동기)란 작업을 요청한 후 작업의 결과가 나올 때까지 기다린 후 처리하는 것을 의미합니다. a 함수가 b 함수를 호출했을 때, a 함수가 b 함수의 수행 결과 및 종료를 신경쓰는 경우를 예로 들 수 있습니다. 일반적인 경우 blocking과 동일한 의미로 사용될 수 있습니다.
+
+- **AsyncExample.js**
+
+```jsx
+function a() {
+    fetch(url, options)
+      .then(response => console.log("response arrives"))
+      .catch(error => console.log("error thrown"));
+    console.log("a is done");
+}
+
+/*
+실행 결과
+a is done
+response arrives
+*/
+```
+
+반면 Asynchronous(비동기)란 두 주체가 서로의 시작/종료 시간과는 관계 없이 별도의 수행 시작/종료시간을 가지고 있는 것을 의미합니다. 
+a 함수가 b 함수를 호출했을 때, 호출된 함수의 수행 결과 및 종료를 호출된 함수 혼자 직접 신경쓰고 처리하는 경우를 예로 들 수 있습니다. 
+대게 결과를 돌려주었을 때 순서와 결과(처리)에 관심이 있는지 아닌지로 판단할 수 있습니다.
+
+![Untitled](https://i.imgur.com/Rjm9qEh.png)
+
+비동기를 사용하면 두 개의 요청을 동시에 보내기 때문에 더 빠른 응답 속도를 보여줄 수 있습니다. 또한 현재 스레드가 Blocking되지 않고 다른 작업을 수행할 수 있기 때문에 더 적은 수의 리소스(스레드)로 더 많은 양의 요청을 처리할 수 있습니다.
     
-
-3가지 컴포넌트 중 알림 제공자에 해당하는 로직을 구현해 보도록 하겠습니다.
-
-## 4. 알림 시스템 아키텍처
+## 5. 알림 시스템 아키텍처
 
 알림 제공자 역할을 하는 별도의 인스턴스를 생성하여 어플리케이션 서버와 알림 서버를 분리해야 할지, 어플리케이션 서버에 알림 기능을 추가해야 할지 고민이 되었습니다.
 
@@ -64,11 +130,11 @@ SSE는 구현이 간단하고 real-time 서비스이지만 몇가지 제한이 �
 
 ![스크린샷 2023-01-02 오후 10.45.48.png](https://i.imgur.com/eb0TAnG.png)
 
-## 5. FCM을 Spring Boot 프로젝트에 적용하기
+## 6. FCM을 Spring Boot 프로젝트에 적용하기
 
 먼저 FCM을 사용할 프로젝트에 `firebase-admin` 의존성을 추가해주었습니다.
 
-### 5.1 의존성 추가
+### 6.1 의존성 추가
 
 - **build.gradle**
 
@@ -79,7 +145,7 @@ dependencies {
 }
 ```
 
-### 5.2 Firebase 프로젝트, 비공개 키 생성
+### 6.2 Firebase 프로젝트, 비공개 키 생성
 
 [Firebase 콘솔](https://console.firebase.google.com/u/0/)에 접속하여 프로젝트를 생성하고, `프로젝트 설정 → 서비스 계정 항목`에서 비공개 키를 생성하였습니다.
 
@@ -117,7 +183,7 @@ json 파일로 생성된 `admin sdk` 를 프로젝트의 resouces 디렉토리�
 </script>
 ```
 
-### 5.3 FCM 초기화
+### 6.3 FCM 초기화
 
 어플리케이션이 실행되는 시점에 비공개 키 파일의 인증정보를 이용해 FirebaseApp을 초기화하는 객체를 구현해주었습니다.
 
@@ -151,7 +217,7 @@ public class FCMInitializer {
 
 빈 객체가 생성되고 의존성 주입이 완료된 후에 초기화가 실행될 수 있도록 @PostConstruct 설정을 해주었습니다.
 
-### 5.4 토큰 관리 저장소
+### 6.4 토큰 관리 저장소
 
 로그인시에 클라이언트는 FCM 토큰(단말 토큰)을 서버에 전달하게 되는데 서버는 해당 토큰을 스토리지에 저장한 다음, 활성 토큰의 목록을 유지해야 합니다. FCM 공식 문서에 있는 [토큰 관리 Best practice](https://firebase.google.com/docs/cloud-messaging/manage-tokens?hl=ko)에 따르면 토큰의 신선도 보장을 위해서 2개월 이상 사용되지 않은 토큰은 삭제하는 것을 권장하고 있습니다.
 
@@ -211,7 +277,7 @@ public class UserController {
 }
 
 ```
-### 5.5 편지 전송시 편지 수신 유저에게 알림 전송하기
+### 6.5 편지 전송시 편지 수신 유저에게 알림 전송하기
 
 FCMService를 구현하기에 앞서 NotificationService 인터페이스를 구현하여 상속받도록 해주었는데 그 이유는 FCM 뿐만 아니라 iOS 푸시 알림을 위한 APNs도 사용해야 하기 때문입니다.. (iOS 웹 푸시는 현재 지원되지 않기 때문에 apple wallet을 통한 편법을 사용해야 합니다.)
 
@@ -287,7 +353,7 @@ public class LetterService {
 }
 ```
 
-## 6. 마치며
+## 7. 마치며
 
 지금까지 FCM을 사용한 푸시 알림을 구현해 보았습니다. 알림 기능을 구현하면서 많은 기술적 고민을 하였고 대안을 검토해 보았습니다. 제 짧은 지식으로는 현재 시점에 가장 좋은 옵션을 고려해보았는데, 다양한 의견들을 댓글을 통해서 공유해주시면 감사하겠습니다. 
 
@@ -295,12 +361,12 @@ public class LetterService {
 
 **참고 자료** 📚
 
-[FCM 등록 토큰 관리 모범 사례 | Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging/manage-tokens?hl=ko)
+- [FCM 등록 토큰 관리 모범 사례 | Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging/manage-tokens?hl=ko)
 
-[[Firebase] FCM을 도입할 때 고려할 것들](https://seungwoolog.tistory.com/88)
+- [[Firebase] FCM을 도입할 때 고려할 것들](https://seungwoolog.tistory.com/88)
 
-[알림 기능을 구현해보자 - SSE(Server-Sent-Events)!](https://gilssang97.tistory.com/69)
+- [알림 기능을 구현해보자 - SSE(Server-Sent-Events)!](https://gilssang97.tistory.com/69)
 
-[FCM, Spring Boot를 사용하여 웹 푸시 기능 구현하기](https://velog.io/@skygl/FCM-Spring-Boot%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EC%97%AC-%EC%9B%B9-%ED%91%B8%EC%8B%9C-%EA%B8%B0%EB%8A%A5-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0)
+- [FCM, Spring Boot를 사용하여 웹 푸시 기능 구현하기](https://velog.io/@skygl/FCM-Spring-Boot%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%98%EC%97%AC-%EC%9B%B9-%ED%91%B8%EC%8B%9C-%EA%B8%B0%EB%8A%A5-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0)
 
-[Spring Boot 프로젝트에서 FCM을 이용한 웹 푸시 구현하기](https://kerobero.tistory.com/38)
+- [Spring Boot 프로젝트에서 FCM을 이용한 웹 푸시 구현하기](https://kerobero.tistory.com/38)

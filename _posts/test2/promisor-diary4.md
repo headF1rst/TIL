@@ -30,22 +30,18 @@ CORS 정책을 이해하기 위해서는 아래 3가지를 이해해야만 합�
 
 `Origin` : 요청이 시작된 서버의 위치
 
-현재 진행중인 프로젝트로 예를 들겠습니다.
+- `Client` : http://localhost:3000
+- `Server` : http://localhost:8080
 
-현재 Client는 localhost를 통해서 운영 서버인 promisor.site에 요청을 보내고자 
-하는 상황입니다.
+로컬에서 리엑트와 스프링 서버를 실행하였을때 둘은 각각 3000과 8080포트를 사용하게 됩니다. 포트번호가 다르기
+때문에 이 둘의 **Cross Origin**이며 이로 인해서 CORS 에러가 발생하게 됩니다.
 
-- `Client 서버` : http://localhost:3000
-- `Prod 서버` : [https://promisor.site](https://promisor.site)
+두 서버 IP의 Origin이 같다면 **Same Origin,** 다르면 **Cross
+Origin** 이라고 하며, 아래의 3가지가 같아야 같은 Origin입니다.
 
-이때 두 서버 IP의 Origin이 같다면 **Same Origin,** 다르면 **Cross
-Origin** 이라고 합니다.
-
-아래의 3가지가 같아야 같은 Origin입니다.
-
-1. Schema
-2. HOST
-3. Port
+- Schema 
+- HOST 
+- Port
 
 ![스크린샷 2022-05-25 오전 11.06.46.png](https://i.imgur.com/vc7T5r5.png)
 
@@ -121,23 +117,17 @@ CrossOrigin 어노테이션을 사용하는 케이스는 설정해야하는 어�
 ![스크린샷 2022-05-25 오후 12.55.02.png](https://i.imgur.com/hlj97Tq.png)
 
 `WebMvcConfigurer` 인터페이스를 상속받는 `WebConfig` 클래스를 생성해주었습니다.
-
 그 다음, WebMvcConfigurer 인터페이스의 `addCorsMappings` 메서드를 구현해 
 주었습니다.
 
 **registry.addMapping** 메서드
 
 registry.addMapping 메서드를 이용해서 CORS를 적용할 URL 패턴을 정의해 
-주었습니다.
-
-Ant-style도 지원하지만 저는 `"/**"` 와일드 카드를 사용하였습니다.
+주었습니다. Ant-style도 지원하지만 저는 `"/**"` 와일드 카드를 사용하였습니다.
 
 **allowedOrigins 메서드**
 
-allowedOrigins 메서드를 사용해서 자원 공유를 허락할 Origin을 지정하였습니다.
-
-“*”로 모든 Origin을 허락해 주었습니다.
-
+allowedOrigins 메서드를 사용해서 자원 공유를 허락할 Origin을 지정하였습니다. “*”로 모든 Origin을 허락해 주었습니다.
 그 밖에도 다음과 같이 한번에 여러 Origin을 설정할 수도 있습니다.
 
 ```java
@@ -146,9 +136,7 @@ allowedOrigins 메서드를 사용해서 자원 공유를 허락할 Origin을 �
 
 **allowedMethods**
 
-allowedMethods를 이용하면 허용할 http method를 지정할 수 있습니다.
-
-“*”를 이용하여 모든 http method를 허용할 수 있습니다.
+allowedMethods를 이용하면 허용할 http method를 지정할 수 있습니다. “*”를 이용하여 모든 http method를 허용할 수 있습니다.
 
 **maxAge**
 

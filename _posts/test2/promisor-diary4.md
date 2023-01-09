@@ -22,9 +22,9 @@ CORS는 말 그대로 에러나 오류가 아닌 **하나의 보안 정책**입�
 
 CORS 정책을 이해하기 위해서는 아래 3가지를 이해해야만 합니다.
 
-1. Origin
-2. SOP
-3. Access-Control-Allow-Origin
+- Origin 
+- SOP 
+- Access-Control-Allow-Origin
 
 ### 1. Origin
 
@@ -51,32 +51,27 @@ Origin** 이라고 합니다.
 
 **Cross Origin 예제**
 
+```text
 A. https://localhost:80
-
 B. http://localhost:80
+```
 
-위의 A, B는 Host, Port는 동일하나 Schema 부분이 다릅니다.
+위의 A, B는 Host, Port는 동일하나 Schema 부분이 다릅니다. 즉, Cross Origin입니다.
 
-즉, Cross Origin입니다.
-
+```text
 A. https://localhost
-
 B. https://127.0.0.1
-
-언뜻보면 localhost의 IP주소가 127.0.0.1이기 때문에 Same Origin 처럼 보입니다.
-
-하지만 위 예제는 Cross Origin입니다.
-
+```
+언뜻보면 localhost의 IP주소가 127.0.0.1이기 때문에 Same Origin 처럼 보입니다. 하지만 위 예제는 Cross Origin입니다.
 브라우저 입장에서는 String-value를 서로 비교하기 때문에 다른 출처로 판단합니다.
 
 **Same Origin 예제**
 
+```text
 A. http://localshot:80
-
 B. http://localhost
-
+```
 위 예제는 Same Origin 입니다.
-
 B의 경우 포트가 생략되어있지만 http의 기본 포트가 80이기 때문에 A, B는 동일 출처가 
 됩니다.
 
@@ -90,21 +85,21 @@ SOP (Same Origin Policy)은 동일한 출처의 Origin만 리소스를 공유할
 
 ### 3. Access Control Allow Origin
 
-앞서 SOP 정책에 의해서 Same Origin의 자원만 공유가 가능하는 것을 알아보았습니다.
-
-하지만 웹에서 다른 리소스의 공유를 할 수 없다는건 말이 안되는 일입니다.
-
+앞서 SOP 정책에 의해서 Same Origin의 자원만 공유가 가능하는 것을 알아보았습니다. 하지만 웹에서 다른 리소스의 공유를 할 수 없다는건 말이 안되는 일입니다.
 때문에 Access Control Allow Origin으로 Cross Origin에서도 자원 공유를 
 가능하게 할 수 있습니다.
 
 ## 그래서 Cross Origin에서 자원 요청은 어떻게 해야할까?
 
-1. HTTP 통신 헤더인 Origin 헤더에 요청을 보내는 곳의 정보를 담고 서버로 요청을 
+1_ HTTP 통신 헤더인 Origin 헤더에 요청을 보내는 곳의 정보를 담고 서버로 요청을 
 보낸다.
-2. 이후 서버는 Access Control Allow Origin 헤더에 허용된 Origin이라는 
+
+2_ 이후 서버는 Access Control Allow Origin 헤더에 허용된 Origin이라는 
 정보를 담아서 보낸다.
-3. 클라이언트는 헤더의 값과 비교해 정상 응답임을 확인하고 지정된 요청을 보낸다.
-4. 서버는 요청을 수행하고 200 상태를 응답한다.
+
+3_ 클라이언트는 헤더의 값과 비교해 정상 응답임을 확인하고 지정된 요청을 보낸다.
+
+4_ 서버는 요청을 수행하고 200 상태를 응답한다.
 
 ## Spring Boot 프로젝트에서 CORS 해결하기
 

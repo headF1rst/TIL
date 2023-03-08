@@ -54,10 +54,10 @@ function CategoryPosts({ categoryInfo, postDatas, profileData }: IProps) {
           {postDatas?.map((postData: IPostData) => (
             <div key={postData.id}>
               <div className="flex gap-5 sm:flex-col-reverse">
-                <div className="w-3/5 flex flex-col justify-between sm:w-full">
+                <div className="flex flex-col justify-between w-3/5 sm:w-full">
                   <div className="flex flex-col gap-2">
                     <Link href={`/${postData.id}`}>
-                      <h1 className="text-2xl hover:underline cursor-pointer">
+                      <h1 className="text-2xl cursor-pointer hover:underline">
                         {postData.title}
                       </h1>
                     </Link>
@@ -73,6 +73,7 @@ function CategoryPosts({ categoryInfo, postDatas, profileData }: IProps) {
                     alt="포스트 썸네일"
                     width={250}
                     height={180}
+                    className="object-cover cursor-pointer"
                   />
                 </Link>
               </div>

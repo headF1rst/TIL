@@ -30,12 +30,12 @@ function Category({ categoryInfos, profileData }: IProps) {
 
   return (
     <div className="flex justify-around gap-10 dark:text-[#c9d1d9] sm:gap-0 sm:flex-col-reverse">
-      <div className="flex flex-col gap-10 w-1/2 mr-20 pt-10 pb-20 sm:w-full sm:px-5">
+      <div className="flex flex-col w-1/2 gap-10 pt-10 pb-20 mr-20 sm:w-full sm:px-5">
         <h1 className="text-3xl font-bold">Category</h1>
         <div className="grid grid-cols-2 gap-8 sm:flex sm:flex-col">
           {categoryInfos.map((categoryInfo) => (
             <div
-              className="flex flex-col gap-1 cursor-pointer hover:-translate-y-1 transition duration-150"
+              className="flex flex-col gap-1 transition duration-150 cursor-pointer hover:-translate-y-1"
               key={categoryInfo.id}
               onClick={() => onCategoryClick(categoryInfo.id)}
             >
@@ -46,10 +46,10 @@ function Category({ categoryInfos, profileData }: IProps) {
                 alt="카테고리 썸네일"
                 className="object-cover"
               />
-              <div className="text-lg font-semibold pl-2 pt-3">
+              <div className="pt-3 pl-2 text-lg font-semibold">
                 {categoryInfo.name}
               </div>
-              <div className="text-base pl-2 pb-4 text-gray-600 dark:text-gray-400">
+              <div className="pb-4 pl-2 text-base text-gray-600 dark:text-gray-400">
                 {categoryInfo.numberOfPosts}개의 포스트
               </div>
             </div>

@@ -69,8 +69,8 @@ const Home = ({ allPostsData, allTags, profileData }: IProps) => {
   return (
     <div className="flex justify-around gap-10 sm:gap-0 sm:flex-col-reverse dark:bg-[#0d1117] dark:text-[#c9d1d9] lg:h-full">
       <>
-        <div className="flex flex-col gap-10 w-2/3 pt-10 sm:w-full px-5">
-          <div className="flex flex-wrap mr-20 gap-2 sm:m-0">
+        <div className="flex flex-col w-2/3 gap-10 px-5 pt-10 sm:w-full">
+          <div className="flex flex-wrap gap-2 mr-20 sm:m-0">
             {allTags.map((tag: ITag) => (
               <span
                 className={classNames(
@@ -90,10 +90,10 @@ const Home = ({ allPostsData, allTags, profileData }: IProps) => {
             {getFilteredPosts(allPostsData).map((postData: IPostData) => (
               <div key={postData.id}>
                 <div className="flex gap-5 sm:flex-col-reverse">
-                  <div className="w-3/5 flex flex-col justify-between sm:w-full">
+                  <div className="flex flex-col justify-between w-3/5 sm:w-full">
                     <div className="flex flex-col gap-2">
                       <Link href={`/${postData.id}`}>
-                        <h1 className="text-2xl hover:underline cursor-pointer">
+                        <h1 className="text-2xl cursor-pointer hover:underline">
                           {postData.title}
                         </h1>
                       </Link>
@@ -109,7 +109,7 @@ const Home = ({ allPostsData, allTags, profileData }: IProps) => {
                       alt="포스트 썸네일"
                       width={250}
                       height={180}
-                      className="object-cover"
+                      className="object-cover cursor-pointer"
                     />
                   </Link>
                 </div>

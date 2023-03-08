@@ -2,7 +2,6 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { docco } from "react-syntax-highlighter/dist/cjs/styles/hljs";
-import { useRouter } from "next/router";
 import "github-markdown-css";
 import { getAboutData } from "../lib/blog";
 export async function getStaticProps() {

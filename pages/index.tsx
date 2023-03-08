@@ -2,7 +2,6 @@ import { getAllTags, getSortedPostsData } from "../lib/posts";
 import { getProfileData } from "../lib/blog";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
 import SideProfile from "../components/side-profile";
 import { classNames } from "../util/class-name";
 import markdownToTxt from "markdown-to-txt";

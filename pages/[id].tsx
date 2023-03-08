@@ -1,125 +1,146 @@
 import React, { useEffect, useState } from "react";
 import { IPostData } from ".";
 import {
-    getPostDataById,
-    getPostDetailById,
-    getSortedPostsData,
+  getPostDataById,
+  getPostDetailById,
+  getSortedPostsData,
 } from "../lib/posts";
 import ReactMarkdown from "react-markdown";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import {
-    atomOneLight,
-    atomOneDark,
+  atomOneLight,
+  atomOneDark,
 } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 import { useRouter } from "next/router";
 import "github-markdown-css";
 import Utterances from "../components/utterances";
 import ScrollSpy from "../components/scroll-spy";
+import Head from "next/head";
 interface IParams {
-    params: {
-        id: string;
-    };
+  params: {
+    id: string;
+  };
 }
 interface IProps {
-    postData: IPostData;
-    detail: string;
+  postData: IPostData;
+  detail: string;
 }
 export async function getStaticPaths() {
-    const allPostData = getSortedPostsData();
-    const paths = allPostData.map((postData) => {
-        return { params: { id: postData.id } };
-    });
-    return {
-        paths,
-        fallback: true,
-    };
+  const allPostData = getSortedPostsData();
+  const paths = allPostData.map((postData) => {
+    return { params: { id: postData.id } };
+  });
+  return {
+    paths,
+    fallback: true,
+  };
 }
 
 export async function getStaticProps({ params }: IParams) {
-    const postData = getPostDataById(params.id);
-    const detail = getPostDetailById(params.id);
+  const postData = getPostDataById(params.id);
+  const detail = getPostDetailById(params.id);
 
-    if (!postData) {
-        return { props: {} };
-    }
-    return { props: { postData, detail } };
+  if (!postData) {
+    return { props: {} };
+  }
+  return { props: { postData, detail } };
 }
 
 function PostDetail({ postData, detail }: IProps) {
-    const router = useRouter();
+  const router = useRouter();
 
-    const [isDark, setIsDark] = useState<boolean>();
+  const [isDark, setIsDark] = useState<boolean>();
 
-    useEffect(() => {
-        const dark =
-            window.matchMedia &&
-            window.matchMedia("(prefers-color-scheme: Dark)").matches;
-        setIsDark(dark);
-    }, []);
+  useEffect(() => {
+    const dark =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: Dark)").matches;
+    setIsDark(dark);
+  }, []);
 
-    const onTagClick = (tag: string) => {
-        router.push(`/?tag=${tag}`);
-    };
+  const onTagClick = (tag: string) => {
+    router.push(`/?tag=${tag}`);
+  };
 
-    const ImageRenderer = ({...props})=>{
-        return <img {...props} style={{maxHeight:"450px", maxWidth:"90%"}}/>
-    }
+  const ImageRenderer = ({ ...props }) => {
+    return <img {...props} style={{ maxHeight: "450px", maxWidth: "90%" }} />;
+  };
 
-    if (!postData) {
-        return <div>존재하지 않는 게시글입니다.</div>;
-    }
-    return (
-        <div className="flex flex-col w-3/5 sm:w-5/6 m-auto pt-20 pb-20 gap-10 dark:bg-[#0d1117] dark:text-[#c9d1d9]">
-            <ScrollSpy />
-            <div className="text-5xl font-bold">{postData.title}</div>
-            <div className="flex flex-col gap-2">
-                <div className="text-base text-gray-600 dark:text-gray-300">
-                    {postData.date}
-                </div>
-                <div className="flex gap-2 dark:text-black flex-wrap sm:m-0">
-                    {postData.tags.split(", ").map((tag: string) => (
-                        <span
-                            className={
-                                "p-1 pl-3 pr-3 rounded-md bg-indigo-100 hover:bg-indigo-200 cursor-pointer transition ease-in-out duration-200 text-sm"
-                            }
-                            key={tag}
-                            onClick={() => onTagClick(tag)}
-                        >
-              {tag}
-            </span>
-                    ))}
-                </div>
-            </div>
-
-            <div className="markdown-body" style={{ fontSize: "17px" }}>
-                <ReactMarkdown
-                    components={{
-                        code({ inline, className, children, ...props }) {
-                            const match = /language-(\w+)/.exec(className || "");
-                            return !inline && match ? (
-                                <SyntaxHighlighter
-                                    language={match[1]}
-                                    PreTag="div"
-                                    {...props}
-                                    style={isDark ? atomOneDark : atomOneLight}
-                                >
-                                    {String(children).replace(/\n$/, "")}
-                                </SyntaxHighlighter>
-                            ) : (
-                                <code className={className} {...props}>
-                                    {children}
-                                </code>
-                            );
-                        },
-                        img:ImageRenderer
-                    }}
-                >
-                    {detail}
-                </ReactMarkdown>
-            </div>
-            <Utterances />
+  if (!postData) {
+    return <div>존재하지 않는 게시글입니다.</div>;
+  }
+  return (
+    <>
+      <Head>
+        <title>{postData.title}</title>
+        <meta name="title" content={postData.title} />
+        <meta name="description" content={postData.description || ""} />
+        <meta name="keywords" content={postData.searchKeywords || ""} />
+        <meta name="robots" content="index, follow" />
+        <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="language" content="Korean" />
+        <meta name="author" content="Sanha Ko" />
+        <meta property="og:title" content={postData.title} />
+        <meta
+          property="og:url"
+          content={`https://headf1rst.github.io/TIL/${postData.id}`}
+        />
+        <meta property="og:type" content="blog" />
+        <meta property="og:image" content={postData.thumbnail} />
+        <meta property="og:description" content={postData.description} />
+      </Head>
+      <div className="flex flex-col w-3/5 sm:w-5/6 m-auto pt-20 pb-20 gap-10 dark:bg-[#0d1117] dark:text-[#c9d1d9]">
+        <ScrollSpy />
+        <div className="text-5xl font-bold">{postData.title}</div>
+        <div className="flex flex-col gap-2">
+          <div className="text-base text-gray-600 dark:text-gray-300">
+            {postData.date}
+          </div>
+          <div className="flex flex-wrap gap-2 dark:text-black sm:m-0">
+            {postData.tags.split(", ").map((tag: string) => (
+              <span
+                className={
+                  "p-1 pl-3 pr-3 rounded-md bg-indigo-100 hover:bg-indigo-200 cursor-pointer transition ease-in-out duration-200 text-sm"
+                }
+                key={tag}
+                onClick={() => onTagClick(tag)}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
         </div>
-    );
+
+        <div className="markdown-body" style={{ fontSize: "17px" }}>
+          <ReactMarkdown
+            components={{
+              code({ inline, className, children, ...props }) {
+                const match = /language-(\w+)/.exec(className || "");
+                return !inline && match ? (
+                  <SyntaxHighlighter
+                    language={match[1]}
+                    PreTag="div"
+                    {...props}
+                    style={isDark ? atomOneDark : atomOneLight}
+                  >
+                    {String(children).replace(/\n$/, "")}
+                  </SyntaxHighlighter>
+                ) : (
+                  <code className={className} {...props}>
+                    {children}
+                  </code>
+                );
+              },
+              img: ImageRenderer,
+            }}
+          >
+            {detail}
+          </ReactMarkdown>
+        </div>
+        <Utterances />
+      </div>
+    </>
+  );
 }
 
 export default PostDetail;

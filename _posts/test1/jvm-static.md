@@ -4,6 +4,8 @@ category: JAVA
 thumbnail: https://i.imgur.com/5AJJwhh.png
 tags: Java
 date: 2022-07-11 10:00
+searchKeywords: 자바, jvm, 정적 변수
+description: Static 변수 저장위치와 JVM 구조의 변화
 ---
 
 Static 키워드를 사용하여 정적 변수와 정적 메서드를 만들수 있는데, 이들을 정적 멤버 (혹은 클래스 멤버) 라고 합니다.

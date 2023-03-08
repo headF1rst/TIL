@@ -89,7 +89,7 @@ const Home = ({ allPostsData, allTags, profileData }: IProps) => {
         <meta property="og:title" content="산하개발실록" />
         <meta property="og:url" content="https://headf1rst.github.io/TIL" />
         <meta property="og:type" content="blog" />
-        <meta property="og:image" content="https://i.imgur.com/2nHGFTv.png" />
+        <meta property="og:image" content="https://i.imgur.com/JtjOEf3.png" />
         <meta
           property="og:description"
           content="경험 공유를 통해 함께 성장하는 선순환 가치를 만들고자 블로그를 운영하고 있습니다."

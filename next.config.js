@@ -23,4 +23,10 @@ const nextConfig = {
   basePath: isProd ? "/TIL" : "",
 };
 
-module.exports = nextConfig;
+module.exports = {
+  exportPathMap: function() {
+    return {
+      '/': { page: '/' },
+    }
+  }
+}

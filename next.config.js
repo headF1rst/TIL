@@ -19,6 +19,7 @@ const nextConfig = {
       "images.unsplash.com",
       "avatars.githubusercontent.com",
     ],
+    unoptimized: true,
   },
   basePath: isProd ? "/TIL" : "",
 };
@@ -30,5 +31,3 @@ module.exports = {
     }
   }
 }
-
-images.unoptimized = true

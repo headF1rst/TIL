@@ -19,7 +19,6 @@ const nextConfig = {
       "images.unsplash.com",
       "avatars.githubusercontent.com",
     ],
-    unoptimized: true,
   },
   basePath: isProd ? "/TIL" : "",
 };

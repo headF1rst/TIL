@@ -15,19 +15,13 @@ const nextConfig = {
     loader: "akamai",
     path: "",
     domains: [
+      "i.imgur.com",
       "velog.velcdn.com",
       "images.unsplash.com",
       "avatars.githubusercontent.com",
-      "i.imgur.com",
     ],
   },
   basePath: isProd ? "/TIL" : "",
 };
 
-module.exports = {
-  exportPathMap: function() {
-    return {
-      '/': { page: '/' },
-    }
-  }
-}
+module.exports = nextConfig;

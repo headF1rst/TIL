@@ -12,7 +12,7 @@ const nextConfig = {
     return config;
   },
   images: {
-    loader: "akamai",
+    loader: "imgix",
     path: "",
     domains: [
       "velog.velcdn.com",

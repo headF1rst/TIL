@@ -12,11 +12,13 @@ const nextConfig = {
     return config;
   },
   images: {
-    unoptimized: true,
+    loader: "akamai",
+    path: "",
     domains: [
       "velog.velcdn.com",
       "images.unsplash.com",
       "avatars.githubusercontent.com",
+      "i.imgur.com",
     ],
   },
   basePath: isProd ? "/TIL" : "",

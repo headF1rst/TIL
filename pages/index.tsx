@@ -132,12 +132,10 @@ const Home = ({ allPostsData, allTags, profileData }: IProps) => {
                       <div className="text-gray-500">{postData.date}</div>
                     </div>
                     <Link href={`/${postData.id}`}>
-                      <Image
+                      <img
                         src={postData.thumbnail}
                         alt="포스트 썸네일"
-                        width={250}
-                        height={180}
-                        className="object-cover cursor-pointer"
+                        className="object-cover h-[180px] cursor-pointer w-[250px] sm:w-full sm:h-[200px]"
                       />
                     </Link>
                   </div>

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { classNames } from "../../util/class-name";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { MdClose } from "react-icons/md";
-import {BiLinkExternal} from'react-icons/bi'
+import { BiLinkExternal } from "react-icons/bi";
 const headerData = {
   icon: "https://i.imgur.com/2nHGFTv.png",
   blog_name: "산하개발실록",
@@ -23,7 +23,7 @@ function Header() {
       <div className="flex justify-start">
         <Link href="/">
           <div className="flex items-center gap-2 cursor-pointer">
-            <Image
+            <img
               src={headerData.icon}
               width={40}
               height={40}
@@ -57,14 +57,20 @@ function Header() {
             Category
           </button>
         </Link>
-        <a href={'https://plain-composer-c65.notion.site/29c7640fdf054059b6ea28ed61189bfb'}
-           target={"_blank"}
-           rel="noreferrer"
+        <a
+          href={
+            "https://plain-composer-c65.notion.site/29c7640fdf054059b6ea28ed61189bfb"
+          }
+          target={"_blank"}
+          rel="noreferrer"
           className={"hover:text-indigo-300 text-base font-light flex gap-1"}
         >
           About
-          <span className={"flex justify-center"} style={{alignItems:'center'}}>
-            <BiLinkExternal/>
+          <span
+            className={"flex justify-center"}
+            style={{ alignItems: "center" }}
+          >
+            <BiLinkExternal />
           </span>
         </a>
       </div>
@@ -97,15 +103,23 @@ function Header() {
           >
             Category
           </button>
-          <a href={'https://plain-composer-c65.notion.site/29c7640fdf054059b6ea28ed61189bfb'}
-             target={"_blank"}
-             rel="noreferrer"
-             className={"hover:text-indigo-300 text-base font-light flex gap-1 align-center justify-center"}
+          <a
+            href={
+              "https://plain-composer-c65.notion.site/29c7640fdf054059b6ea28ed61189bfb"
+            }
+            target={"_blank"}
+            rel="noreferrer"
+            className={
+              "hover:text-indigo-300 text-base font-light flex gap-1 align-center justify-center"
+            }
           >
             About
-            <span className={"flex justify-center"} style={{alignItems:'center'}}>
-            <BiLinkExternal/>
-          </span>
+            <span
+              className={"flex justify-center"}
+              style={{ alignItems: "center" }}
+            >
+              <BiLinkExternal />
+            </span>
           </a>
         </div>
       ) : (

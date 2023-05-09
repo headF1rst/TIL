@@ -94,7 +94,7 @@ function CategoryPosts({ categoryInfo, postDatas, profileData }: IProps) {
                     <div className="text-gray-500">{postData.date}</div>
                   </div>
                   <Link href={`/${postData.id}`}>
-                    <Image
+                    <img
                       src={postData.thumbnail}
                       alt="포스트 썸네일"
                       width={250}

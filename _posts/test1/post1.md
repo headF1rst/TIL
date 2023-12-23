@@ -1,3 +1,13 @@
+---
+title: if-else, switch 성능 비교
+category: JAVA
+thumbnail: https://i.imgur.com/5AJJwhh.png
+tags: Java
+date: 2023-12-24 10:00
+searchKeywords: 자바, jmh, if, switch 
+description: if-else, switch 성능 비교
+---
+
 최근에 회사 팀원분의 추천으로 '크리에이티브 프로그래머'라는 책을 읽어보았는데, 비판적 사고에 대한 중요성을 강조하고 있다.
 
 비판적 사고란 정보를 받아들일 때 단순히 수용하지 않고, 의심하고 분석하는 과정을 말한다.

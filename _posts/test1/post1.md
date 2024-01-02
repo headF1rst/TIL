@@ -270,6 +270,7 @@ LOOKUPSWITCH (case: 1, 10, 100)
 ![[스크린샷 2023-12-23 오후 9.10.43.png]]
 
 실행 결과 if-else문은 0.19ms, `LOOKUPSWITCH`를 사용한 switch문은 0.21ms 소요되는걸 확인할 수 있었다.
+
 ### 마무리
 
 지금까지 if-else문과 switch문의 성능을 비교해보았다.

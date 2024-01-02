@@ -1,0 +1,344 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="apple-touch-icon" sizes="180x180" href="https://i.imgur.com/2nHGFTv.png"/><link rel="icon" type="image/png" sizes="32x32" href="https://i.imgur.com/2nHGFTv.png"/><link rel="icon" type="image/png" sizes="16x16" href="https://i.imgur.com/2nHGFTv.png"/><link rel="manifest" href="/site.webmanifest"/><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="theme-color" content="#ffffff"/><title>GitHub Actions를 통해 CI/CD 구축하기 (feat. Docker, Jib)</title><meta name="title" content="GitHub Actions를 통해 CI/CD 구축하기 (feat. Docker, Jib)"/><meta name="description" content=""/><meta name="keywords" content=""/><meta name="robots" content="index, follow"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><meta name="language" content="Korean"/><meta name="author" content="Sanha Ko"/><meta property="og:title" content="GitHub Actions를 통해 CI/CD 구축하기 (feat. Docker, Jib)"/><meta property="og:url" content="https://headf1rst.github.io/TIL/text-me-diary1"/><meta property="og:type" content="blog"/><meta property="og:image" content="https://miro.medium.com/max/1400/1*DmFbJvnRIiQIyi5xBuIXlQ.png"/><meta property="og:description"/><meta name="next-head-count" content="22"/><link rel="preload" href="/TIL/_next/static/css/754b961274c075df.css" as="style"/><link rel="stylesheet" href="/TIL/_next/static/css/754b961274c075df.css" data-n-g=""/><link rel="preload" href="/TIL/_next/static/css/38994dd0aed51f22.css" as="style"/><link rel="stylesheet" href="/TIL/_next/static/css/38994dd0aed51f22.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/TIL/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/TIL/_next/static/chunks/webpack-ac557983bcc4c022.js" defer=""></script><script src="/TIL/_next/static/chunks/framework-2c79e2a64abdb08b.js" defer=""></script><script src="/TIL/_next/static/chunks/main-dc8c1543918dad35.js" defer=""></script><script src="/TIL/_next/static/chunks/pages/_app-421e211a78340d83.js" defer=""></script><script src="/TIL/_next/static/chunks/202-7f08bae5ecc79443.js" defer=""></script><script src="/TIL/_next/static/chunks/pages/%5Bid%5D-e822cf87f2ef122d.js" defer=""></script><script src="/TIL/_next/static/kp1gY2qzEskHKbCxkA_Iv/_buildManifest.js" defer=""></script><script src="/TIL/_next/static/kp1gY2qzEskHKbCxkA_Iv/_ssgManifest.js" defer=""></script></head><body><div id="__next"><nav class="flex bg-white sticky top-0 left-0 z-50 justify-between items-center border-b-2 border-gray-100 py-3 md:justify-start md:space-x-10 px-10 sm:px-5 dark:bg-[#0d1117] dark:text-[#c9d1d9] dark:border-gray-600"><div class="flex justify-start"><a href="/TIL"><div class="flex items-center gap-2 cursor-pointer"><img src="https://i.imgur.com/2nHGFTv.png" width="40" height="40" alt="블로그 아이콘"/><h1 class="text-lg ">산하개발실록</h1></div></a></div><div class="flex justify-between gap-10 sm:hidden"><a href="/TIL"><button class="font-light hover:text-indigo-300 text-base">Home</button></a><a href="/TIL/category"><button class="font-light hover:text-indigo-300 text-base">Category</button></a><a href="https://plain-composer-c65.notion.site/29c7640fdf054059b6ea28ed61189bfb" target="_blank" rel="noreferrer" class="hover:text-indigo-300 text-base font-light flex gap-1">About<span class="flex justify-center" style="align-items:center"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="m13 3 3.293 3.293-7 7 1.414 1.414 7-7L21 11V3z"></path><path d="M19 19H5V5h7l-2-2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2v-5l-2-2v7z"></path></svg></span></a></div><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="lg:hidden" height="25" width="25" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></nav><main class="dark:bg-[#0d1117] h-screen pb-10"><div class="flex flex-col w-3/5 sm:w-5/6 m-auto pt-20 pb-20 gap-10 dark:bg-[#0d1117] dark:text-[#c9d1d9]"><ul id="scroll-spy" class="sm:hidden p-10 fixed top-50 right-0 h-full w-1/5 text-gray-500 dark:text-[#c9d1d9]"></ul><div class="text-5xl font-bold">GitHub Actions를 통해 CI/CD 구축하기 (feat. Docker, Jib)</div><div class="flex flex-col gap-2"><div class="text-base text-gray-600 dark:text-gray-300">2022-12-06 10:00</div><div class="flex flex-wrap gap-2 dark:text-black sm:m-0"><span class="p-1 pl-3 pr-3 rounded-md bg-indigo-100 hover:bg-indigo-200 cursor-pointer transition ease-in-out duration-200 text-sm">프로젝트</span></div></div><div class="markdown-body" style="font-size:17px"><p>저희 <code node="[object Object]">Text Me</code> 서비스의 베타 버전이 배포되고 난 뒤에, 사용자들로 부터 수많은 피드백을 받을 수 있었습니다.
+사용자 피드백을 빠르게 반영하다 보니 프로젝트의 빌드 및 배포 주기가 짧아졌고 이러한 과정이 서서히 번거롭게 느껴지기 시작했습니다.</p>
+<p>사용자의 피드백을 빠르게 반영하기 위해서는 하루에 많게는 20번의 배포가 이루어져야했기 때문에 프로젝트의 빌드 및 배포과정을 자동화 하기로 하였습니다.
+(하루에 1,000번 이상의 크고 작은 배포가 이뤄지는 테크 기업에 비하면 귀여운 수준이지만 말이죠… )</p>
+<p>이번 글에서는 저희가 CI/CD 도구 중 GitHub Actions를 사용하는 이유와 동작원리에 대해서 공유하겠습니다.</p>
+<h2>1. GitHub Actions의 장점</h2>
+<p>GitHub Actoins를 CI 솔루션으로 채택하게 된 이유는 다음과 같습니다.</p>
+<ul>
+<li>
+<p>GitHub와 통일된 환경에서 CI 수행이 가능하다.</p>
+</li>
+<li>
+<p>중앙에서 관리하는 <code node="[object Object]">GitHub Actions Runner</code> 에 지속적으로 트러블슈팅하여 원활한 CI 환경 구성이 가능하다.</p>
+</li>
+<li>
+<p>프로젝트마다 개별 Runner를 통한 빌드 테스트가 가능하다.</p>
+</li>
+<li>
+<p>친숙한 문법의 YAML 파일로 파이프라인 구성이 간단하다.</p>
+</li>
+<li>
+<p>GitHub Actions Runner란?</p>
+<ul>
+<li>GitHub Actions를 기동하는 Runner</li>
+<li>GitHub는 퍼블릭 쪽의 GitHub Actions Runner를 클라우드에서 제공해 주고 있다.<!-- -->
+<ul>
+<li>덕분에 직접 프로비저닝할 필요 없이 Runner를 바로 사용하는 것이 가능하다.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>2. Github Action의 구성 요소</h2>
+<ul>
+<li>workflow<!-- -->
+<ul>
+<li>한개 이상의 <code node="[object Object]">job</code> 을 실행할 수 있는 자동화된 작업</li>
+<li><code node="[object Object]">YAML</code> 파일로 작성된다.</li>
+<li><code node="[object Object]">event</code> 에 의해서 실행된다.</li>
+</ul>
+</li>
+<li>event<!-- -->
+<ul>
+<li><code node="[object Object]">workflow</code> 를 실행시키는 특정 활동</li>
+<li>깃허브에서 발생하는 대부분의 작업을 event로 정의 가능.<!-- -->
+<ul>
+<li>ex) <code node="[object Object]">push event</code> , <code node="[object Object]">pull request event</code> , <code node="[object Object]">issue event</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>jobs<!-- -->
+<ul>
+<li>한가지 <code node="[object Object]">runner</code> 안에서 실행되는 여러 <code node="[object Object]">step</code> 들의 모음</li>
+<li>각 <code node="[object Object]">step</code> 들은 일종의 <code node="[object Object]">shell script</code> 처럼 실행된다.</li>
+<li>step들은 순서에 따라 실행되며 step끼리 데이터 공유가 가능하다</li>
+<li>job은 다른 job에 의존관계를 가질 수 있으며 <code node="[object Object]">병렬 실행</code> 이 가능하다.</li>
+</ul>
+</li>
+<li>actions<!-- -->
+<ul>
+<li>반복 작업을 정의한 커스텀 어플리케이션</li>
+<li>workflow 파일에서 자주 반복되는 코드를 미리 정의할 수 있다.<!-- -->
+<ul>
+<li>코드 양을 줄이는 이점</li>
+</ul>
+</li>
+<li>깃허브 마켓플레이스를 통해 다른 사람이 만든 action 사용 가능</li>
+</ul>
+</li>
+</ul>
+<p>더 자세한 GitHub Actions workflow syntax는 <a href="https://jinmay.github.io/2020/05/13/git/github-action-syntax/">해당 포스트</a>를 참고하면 도움이 되실 것 같습니다.</p>
+<p><img src="https://i.imgur.com/9tu0sgH.png" alt="먀" node="[object Object]" style="max-height:450px;max-width:90%"/></p>
+<h2>3. Github Action으로 CI/CD 파이프라인 구축하기</h2>
+<p>다음과 같은 순서로 파이프라인이 구동되도록 workflow를 작성하였습니다.</p>
+<ol>
+<li>Github Action이 트리거되면 jib로 이미지를 빌드한다.</li>
+<li>만들어진 이미지를 DockerHub에 push한다.</li>
+<li>서버에 접속해서 도커 이미지를 pull 한다.</li>
+</ol>
+<p><code node="[object Object]">.github/workflows</code> 디렉토리를 프로젝트에 생성하고, 거기에 gradle 빌드를 위한 <code node="[object Object]">build_backend.yml</code> 을 생성하였습니다.</p>
+<h3>3.1 build_backend.yml</h3>
+<p>다음 <code node="[object Object]">jobs</code> 가 실제로 CI를 수행하는 과정이며 <code node="[object Object]">steps</code> 단계로 jobs가 진행되게 됩니다.</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-yaml" style="white-space:pre"><span style="color:#986801">name:</span><span> </span><span style="color:#50a14f">Build</span><span> </span><span style="color:#50a14f">Backend</span><span> </span><span style="color:#50a14f">Image</span><span>
+</span>
+<span></span><span style="color:#986801">on:</span><span>
+</span><span>  </span><span style="color:#986801">pull_request:</span><span>
+</span><span>    </span><span style="color:#986801">branches:</span><span>
+</span><span>      </span><span style="color:#4078f2">-</span><span> </span><span style="color:#50a14f">production</span><span>
+</span><span>      </span><span style="color:#4078f2">-</span><span> </span><span style="color:#50a14f">master</span><span>
+</span><span>    </span><span style="color:#986801">paths:</span><span>
+</span><span>      </span><span style="color:#4078f2">-</span><span> </span><span style="color:#50a14f">&quot;backend/**&quot;</span><span>
+</span><span>  </span><span style="color:#986801">workflow_dispatch:</span><span>
+</span>
+<span></span><span style="color:#986801">defaults:</span><span>
+</span><span>  </span><span style="color:#986801">run:</span><span>
+</span><span>    </span><span style="color:#986801">working-directory:</span><span> </span><span style="color:#50a14f">&quot;backend/text-me&quot;</span><span>
+</span>
+<span></span><span style="color:#986801">jobs:</span><span>
+</span><span>  </span><span style="color:#986801">build:</span><span>
+</span><span>    </span><span style="color:#986801">runs-on:</span><span> </span><span style="color:#50a14f">ubuntu-latest</span><span>
+</span>
+<span>    </span><span style="color:#986801">steps:</span><span>
+</span><span>      </span><span style="color:#4078f2">-</span><span> </span><span style="color:#986801">name:</span><span> </span><span style="color:#50a14f">Checkout</span><span>
+</span><span>        </span><span style="color:#986801">uses:</span><span> </span><span style="color:#50a14f">actions/checkout@v3</span><span>
+</span>
+<span>      </span><span style="color:#4078f2">-</span><span> </span><span style="color:#986801">name:</span><span> </span><span style="color:#50a14f">Set</span><span> </span><span style="color:#50a14f">up</span><span> </span><span style="color:#50a14f">JDK</span><span> </span><span style="color:#986801">11</span><span>
+</span><span>        </span><span style="color:#986801">uses:</span><span> </span><span style="color:#50a14f">actions/setup-java@v1</span><span>
+</span><span>        </span><span style="color:#986801">with:</span><span>
+</span><span>          </span><span style="color:#986801">java-version:</span><span> </span><span style="color:#50a14f">&#x27;11&#x27;</span><span>
+</span><span>          </span><span style="color:#986801">distribution:</span><span> </span><span style="color:#50a14f">&#x27;temurin&#x27;</span><span>
+</span>
+<span>      </span><span style="color:#4078f2">-</span><span> </span><span style="color:#986801">name:</span><span> </span><span style="color:#50a14f">Set</span><span> </span><span style="color:#50a14f">environment</span><span> </span><span style="color:#50a14f">variables</span><span>
+</span><span>          </span><span style="color:#50a14f">run:|</span><span>
+</span><span>            </span><span style="color:#50a14f">echo</span><span> </span><span style="color:#50a14f">&quot;::set-env name=DB_URL::$</span><span style="color:#986801">{{ secrets.DB_URL }}</span><span style="color:#50a14f">&quot;</span><span>
+</span><span>            </span><span style="color:#50a14f">echo</span><span> </span><span style="color:#50a14f">&quot;::set-env name=DB_USERNAME::$</span><span style="color:#986801">{{ secrets.DB_USERNAME }}</span><span style="color:#50a14f">&quot;</span><span>
+</span><span>            </span><span style="color:#50a14f">echo</span><span> </span><span style="color:#50a14f">&quot;::set-env name=DB_PASSWORD::$</span><span style="color:#986801">{{ secrets.DB_PASSWORD }}</span><span style="color:#50a14f">&quot;</span><span>
+</span><span>            </span><span style="color:#50a14f">echo</span><span> </span><span style="color:#50a14f">&quot;::set-env name=JWT_KEY::$</span><span style="color:#986801">{{ secrets.JWT_KEY }}</span><span style="color:#50a14f">&quot;</span><span>
+</span><span>            </span><span style="color:#50a14f">echo</span><span> </span><span style="color:#50a14f">&quot;::set-env name=JWT_EXPIRY::$</span><span style="color:#986801">{{ secrets.JWT_EXPIRY }}</span><span style="color:#50a14f">&quot;</span><span>
+</span><span>            </span><span style="color:#50a14f">echo</span><span> </span><span style="color:#50a14f">&quot;::set-env name=REFRESH_EXPIRY::$</span><span style="color:#986801">{{ secrets.REFRESH_EXPIRY }}</span><span style="color:#50a14f">&quot;</span><span>
+</span><span>            </span><span style="color:#50a14f">echo</span><span> </span><span style="color:#50a14f">&quot;::set-env name=AWS_ACCESS_KEY_ID::$</span><span style="color:#986801">{{ secrets.AWS_ACCESS_KEY_ID }}</span><span style="color:#50a14f">&quot;</span><span>
+</span><span>            </span><span style="color:#50a14f">echo</span><span> </span><span style="color:#50a14f">&quot;::set-env name=AWS_SECRET_ACCESS_KEY::$</span><span style="color:#986801">{{ secrets.AWS_SECRET_ACCESS_KEY }}</span><span style="color:#50a14f">&quot;</span><span>
+</span>
+<span>      </span><span style="color:#4078f2">-</span><span> </span><span style="color:#986801">name:</span><span> </span><span style="color:#50a14f">Login</span><span> </span><span style="color:#50a14f">to</span><span> </span><span style="color:#50a14f">Docker</span><span> </span><span style="color:#50a14f">Hub</span><span>
+</span><span>        </span><span style="color:#986801">uses:</span><span> </span><span style="color:#50a14f">docker/login-action@v2.1.0</span><span>
+</span><span>        </span><span style="color:#986801">with:</span><span>
+</span><span>          </span><span style="color:#986801">username:</span><span> </span><span style="color:#50a14f">${{</span><span> </span><span style="color:#50a14f">secrets.DOCKERHUB_USERNAME</span><span> </span><span style="color:#50a14f">}}</span><span>
+</span><span>          </span><span style="color:#986801">password:</span><span> </span><span style="color:#50a14f">${{</span><span> </span><span style="color:#50a14f">secrets.DOCKERHUB_PASSWORD</span><span> </span><span style="color:#50a14f">}}</span><span>
+</span>
+<span>      </span><span style="color:#4078f2">-</span><span> </span><span style="color:#986801">name:</span><span> </span><span style="color:#50a14f">Grant</span><span> </span><span style="color:#50a14f">execute</span><span> </span><span style="color:#50a14f">permission</span><span> </span><span style="color:#50a14f">for</span><span> </span><span style="color:#50a14f">gradlew</span><span>
+</span><span>        </span><span style="color:#986801">run:</span><span> </span><span style="color:#50a14f">chmod</span><span> </span><span style="color:#50a14f">+x</span><span> </span><span style="color:#50a14f">gradlew</span><span>
+</span><span>        </span><span style="color:#986801">shell:</span><span> </span><span style="color:#50a14f">bash</span><span>
+</span>
+<span>      </span><span style="color:#4078f2">-</span><span> </span><span style="color:#986801">name:</span><span> </span><span style="color:#50a14f">Build</span><span> </span><span style="color:#50a14f">with</span><span> </span><span style="color:#50a14f">jib</span><span>
+</span><span>        </span><span style="color:#986801">run:</span><span> </span><span style="color:#50a14f">|
+</span><span style="color:#50a14f">          ./gradlew jib \
+</span><span style="color:#50a14f">          -Djib.to.auth.username=${{ secrets.DOCKERHUB_USERNAME }} \
+</span><span style="color:#50a14f">          -Djib.to.auth.password=${{ secrets.DOCKERHUB_PASSWORD }} \
+</span><span style="color:#50a14f">          -Djib.to.image=&quot;${{ secrets.DOCKERHUB_USERNAME }}/text-me-docker-repo:${GITHUB_REF##*/}&quot;
+</span><span style="color:#50a14f"></span><span>
+</span><span>      </span><span style="color:#4078f2">-</span><span> </span><span style="color:#986801">name:</span><span> </span><span style="color:#50a14f">Get</span><span> </span><span style="color:#50a14f">current</span><span> </span><span style="color:#50a14f">time</span><span>
+</span><span>        </span><span style="color:#986801">uses:</span><span> </span><span style="color:#986801">1466587594</span><span style="color:#50a14f">/get-current-time@v2</span><span>
+</span><span>        </span><span style="color:#986801">id:</span><span> </span><span style="color:#50a14f">current-time</span><span>
+</span><span>        </span><span style="color:#986801">with:</span><span>
+</span><span>          </span><span style="color:#986801">format:</span><span> </span><span style="color:#50a14f">YYYY-MM-DDTHH-mm-ss</span><span>
+</span><span>          </span><span style="color:#986801">utcOffset:</span><span> </span><span style="color:#50a14f">&quot;+09:00&quot;</span><span>
+</span>
+<span>      </span><span style="color:#4078f2">-</span><span> </span><span style="color:#986801">name:</span><span> </span><span style="color:#50a14f">Show</span><span> </span><span style="color:#50a14f">Current</span><span> </span><span style="color:#50a14f">Time</span><span>
+</span><span>        </span><span style="color:#986801">run:</span><span> </span><span style="color:#50a14f">echo</span><span> </span><span style="color:#50a14f">&quot;CurrentTime=$</span><span style="color:#986801">{{steps.current-time.outputs.formattedTime}}</span><span style="color:#50a14f">&quot;</span><span>
+</span><span>        </span><span style="color:#986801">shell:</span><span> </span><span style="color:#50a14f">bash</span></code></div></pre>
+<p>빌드 스크립트에 작성된 내용을 좀 더 자세히 살펴보겠습니다.</p>
+<ul>
+<li>
+<p><code node="[object Object]">jobs: build: runs-on: ubuntu-latest</code></p>
+<ul>
+<li>작성한 스크립트가 작동될 OS 환경을 지정합니다.</li>
+<li>text me 서비스는 우분투 18.04에서 동작하기 때문에 <code node="[object Object]">ubuntu-latest</code> 로 지정해 주었습니다.
+<img src="https://i.imgur.com/mRZU1aq.png" alt="d" node="[object Object]" style="max-height:450px;max-width:90%"/></li>
+</ul>
+</li>
+<li>
+<p><code node="[object Object]">steps: uses</code></p>
+<ul>
+<li>마켓 플레이스에 사전 정의된 내용을 이용하여 step을 수행합니다.</li>
+<li>사전 작업을 위한 환경 설정용.
+<img src="https://i.imgur.com/xZ8nmau.png" alt="d" node="[object Object]" style="max-height:450px;max-width:90%"/></li>
+</ul>
+</li>
+<li>
+<p><code node="[object Object]">steps: run</code></p>
+<ul>
+<li>개발자가 직접 정의한 커맨드를 수행합니다.</li>
+<li>실제 수행용.</li>
+</ul>
+</li>
+<li>
+<p><code node="[object Object]">-Djib.to.image=&quot;${{ secrets.DOCKERHUB_USERNAME }}/text-me-docker-repo:${GITHUB_REF##*/}&quot;</code></p>
+<ul>
+<li>Jib를 통해 도커 이미지를 빌드해서 도커 허브에 push 합니다.</li>
+</ul>
+</li>
+</ul>
+<p><strong>도커 컨테이너 이미지와 JIB</strong></p>
+<p>스프링 프로젝트를 컨테이너 이미지로 만들기 위해서는 다양한 방법들이 존재합니다.</p>
+<ul>
+<li><strong>로컬 환경에서 jar 파일 빌드 , jar 파일을 이미지에 복사 후 실행</strong>
+<ul>
+<li>
+<p>프로젝트 폴더로 들어가서 gradlew clean build를 통해 grdlew로 jar 파일 빌드</p>
+<ul>
+<li><code node="[object Object]">./gradlew clean build</code></li>
+</ul>
+</li>
+<li>
+<p>프로젝트 테스트 코드들이 실행되고 모든 테스트가 통과하면 <code node="[object Object]">./build/libs</code> 에 실행 가능한 jar 파일이 생성된다.</p>
+</li>
+<li>
+<p>jar 파일을 바탕으로 도커 이미지를 생성하기 위한 Dockerfile을 작성</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-yaml" style="white-space:pre"><span style="color:#50a14f">FROM</span><span> </span><span style="color:#50a14f">openjdk:11</span><span>
+</span><span></span><span style="color:#50a14f">ARG</span><span> </span><span style="color:#50a14f">JAR_FILE=./build/libs/jpashop-0.0.1-SNAPSHOT.jar</span><span>
+</span><span></span><span style="color:#50a14f">COPY</span><span> </span><span style="color:#50a14f">${JAR_FILE}</span><span> </span><span style="color:#50a14f">app.jar</span><span>
+</span><span></span><span style="color:#50a14f">ENTRYPOINT</span><span> [</span><span style="color:#50a14f">&quot;java&quot;</span><span>,</span><span style="color:#50a14f">&quot;-Djava.security.egd=file:/dev/./urandom&quot;</span><span>,</span><span style="color:#50a14f">&quot;-jar&quot;</span><span>,</span><span style="color:#50a14f">&quot;/app.jar&quot;</span><span>]</span></code></div></pre>
+</li>
+<li>
+<p>해당 Dockerfile을 프로젝트 폴더에 넣은 후 docker build . -t 태그 이름 명령어를 실행하면 컨테이너 이미지 생성</p>
+</li>
+<li>
+<p>java11의 실행환경을 제공하는 openjdk:11 이미지 위에서 폴더에 있는 jar 파일을 이미지 내부로 복사 후 java 명령어를 통해 실행</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://cloud.google.com/java/images/docker_build_flow.png" alt="d" node="[object Object]" style="max-height:450px;max-width:90%"/></p>
+<p>하지만 jar 파일을 빌드하고 추가로 이미지에 복사하여 실행하는 방법은 소스코드에 조금의 변화만 생기더라도 변경된 부분과 의존성이 연결된 jar 파일 전체가 새로운 이미지로 인식되어 전체 파일이 다시 빌드되기 때문에 Docker layer의 장점을 살릴 수 없습니다.</p>
+<p>이를 해결하기 위해서 layer를 나누는 방법도 있지만 Google Cloud에서 제공해주는 jib를 통해서 이미지 빌드를 최적화하는 방법을 선택하였습니다.</p>
+<ul>
+<li><strong>JIB를 통한 이미지 빌드</strong>
+<ul>
+<li>Jib는 <strong>Dockerfile, Docker에 의존하지 않고</strong> gradle, maven에서 Jib 플러그인을 사용해서 컨테이너 이미지를 빌드하고 허브에 푸시하는 방법.</li>
+<li>어플리케이션을 <strong>(종속 항목, 리소스, 클래스 등)</strong> 별개의 레이어로 구성하고 Docker 이미지 레이어 캐싱을 활용해서 <strong>변경사항만 다시 빌드</strong>함으로써 빌드를 빠르게 유지</li>
+<li>jib 레이어 구성과 작은 기본 이미지는 전체 이미지 크기를 작게 유지시키며 빌드 속도를 향상 시킴</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://cloud.google.com/java/images/jib_build_flow.png" alt="d" node="[object Object]" style="max-height:450px;max-width:90%"/></p>
+<p><strong>Gradle에 jib 플러그인 추가 및 환경 변수 등록</strong></p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-bash" style="white-space:pre"><span>plugins {
+</span><span>    id </span><span style="color:#50a14f">&#x27;com.google.cloud.tools.jib&#x27;</span><span> version </span><span style="color:#50a14f">&#x27;3.3.1&#x27;</span><span>
+</span>}
+<!-- -->
+<!-- -->jib {
+<!-- -->	to {
+<span>		image = </span><span style="color:#50a14f">&quot;sanha1998/text-me-docker-repo&quot;</span><span>
+</span>	}
+<!-- -->	from {
+<span>		image = </span><span style="color:#50a14f">&quot;eclipse-temurin:11-jre&quot;</span><span>
+</span>	}
+<!-- -->	container {
+<span>		jvmFlags = [</span><span style="color:#50a14f">&quot;-Xms128m&quot;</span><span>, </span><span style="color:#50a14f">&quot;-Xmx128m&quot;</span><span>]
+</span>		environment = [
+<span>				</span><span style="color:#50a14f">&#x27;DB_URL&#x27;</span><span>: System.getenv(</span><span style="color:#50a14f">&#x27;DB_URL&#x27;</span><span>),
+</span><span>				</span><span style="color:#50a14f">&#x27;DB_USERNAME&#x27;</span><span>: System.getenv(</span><span style="color:#50a14f">&#x27;DB_USERNAME&#x27;</span><span>),
+</span><span>				</span><span style="color:#50a14f">&#x27;DB_PASSWORD&#x27;</span><span>: System.getenv(</span><span style="color:#50a14f">&#x27;DB_PASSWORD&#x27;</span><span>),
+</span><span>				</span><span style="color:#50a14f">&#x27;JWT_KEY&#x27;</span><span>: System.getenv(</span><span style="color:#50a14f">&#x27;JWT_KEY&#x27;</span><span>),
+</span><span>				</span><span style="color:#50a14f">&#x27;JWT_EXPIRY&#x27;</span><span>: System.getenv(</span><span style="color:#50a14f">&#x27;JWT_EXPIRY&#x27;</span><span>),
+</span><span>				</span><span style="color:#50a14f">&#x27;REFRESH_EXPIRY&#x27;</span><span>: System.getenv(</span><span style="color:#50a14f">&#x27;REFRESH_EXPIRY&#x27;</span><span>),
+</span><span>				</span><span style="color:#50a14f">&#x27;AWS_ACCESS_KEY_ID&#x27;</span><span>: System.getenv(</span><span style="color:#50a14f">&#x27;AWS_ACCESS_KEY_ID&#x27;</span><span>),
+</span><span>				</span><span style="color:#50a14f">&#x27;AWS_SECRET_ACCESS_KEY&#x27;</span><span>: System.getenv(</span><span style="color:#50a14f">&#x27;AWS_SECRET_ACCESS_KEY&#x27;</span><span>)
+</span>		]
+<!-- -->	}
+<!-- -->}</code></div></pre>
+<p><strong>환경 변수 주입</strong></p>
+<p>스프링 부트 프로젝트의 빌드가 시작되면<code node="[object Object]">application.yml</code> 혹은 <code node="[object Object]">application.properties</code>
+내에 설정된 환경변수 값들이 주입됩니다. 이때 AWS 계정 정보와 같은 민감 정보를 application.yml에 노출시키지 않기 위해서 Secrete 환경 변수를 깃허브에 등록해줘야 합니다.</p>
+<p><img src="https://i.imgur.com/VPtkmpm.png" alt="스크린샷 2022-12-17 오후 9.19.33.png" node="[object Object]" style="max-height:450px;max-width:90%"/></p>
+<p>깃허브에 등록한 secrets 환경 변수들을 사용하기 위해서 다음과 같은 작업을 수행해주었습니다.</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-yaml" style="white-space:pre"><span style="color:#4078f2">-</span><span> </span><span style="color:#986801">name:</span><span> </span><span style="color:#50a14f">Set</span><span> </span><span style="color:#50a14f">environment</span><span> </span><span style="color:#50a14f">variables</span><span>
+</span><span>  </span><span style="color:#50a14f">run:|</span><span>
+</span><span>    </span><span style="color:#50a14f">echo</span><span> </span><span style="color:#50a14f">&quot;::set-env name=DB_URL::$</span><span style="color:#986801">{{ secrets.DB_URL }}</span><span style="color:#50a14f">&quot;</span><span>
+</span><span>    </span><span style="color:#50a14f">echo</span><span> </span><span style="color:#50a14f">&quot;::set-env name=DB_USERNAME::$</span><span style="color:#986801">{{ secrets.DB_USERNAME }}</span><span style="color:#50a14f">&quot;</span><span>
+</span><span>    </span><span style="color:#50a14f">echo</span><span> </span><span style="color:#50a14f">&quot;::set-env name=DB_PASSWORD::$</span><span style="color:#986801">{{ secrets.DB_PASSWORD }}</span><span style="color:#50a14f">&quot;</span><span>
+</span><span>    </span><span style="color:#50a14f">echo</span><span> </span><span style="color:#50a14f">&quot;::set-env name=JWT_KEY::$</span><span style="color:#986801">{{ secrets.JWT_KEY }}</span><span style="color:#50a14f">&quot;</span><span>
+</span><span>    </span><span style="color:#50a14f">echo</span><span> </span><span style="color:#50a14f">&quot;::set-env name=JWT_EXPIRY::$</span><span style="color:#986801">{{ secrets.JWT_EXPIRY }}</span><span style="color:#50a14f">&quot;</span><span>
+</span><span>    </span><span style="color:#50a14f">echo</span><span> </span><span style="color:#50a14f">&quot;::set-env name=REFRESH_EXPIRY::$</span><span style="color:#986801">{{ secrets.REFRESH_EXPIRY }}</span><span style="color:#50a14f">&quot;</span><span>
+</span><span>    </span><span style="color:#50a14f">echo</span><span> </span><span style="color:#50a14f">&quot;::set-env name=AWS_ACCESS_KEY_ID::$</span><span style="color:#986801">{{ secrets.AWS_ACCESS_KEY_ID }}</span><span style="color:#50a14f">&quot;</span><span>
+</span><span>    </span><span style="color:#50a14f">echo</span><span> </span><span style="color:#50a14f">&quot;::set-env name=AWS_SECRET_ACCESS_KEY::$</span><span style="color:#986801">{{ secrets.AWS_SECRET_ACCESS_KEY }}</span><span style="color:#50a14f">&quot;</span></code></div></pre>
+<h3>3.2 deploy-backend</h3>
+<p>이제 운영 서버에서 도커 허브에 올린 이미지를 pull한 다음, 실행시켜 주면 됩니다.</p>
+<p>docker 관련 명령어를 사용하기 위해서 <a href="https://headf1rst.github.io/TIL/infra-1">운영 서버에 docker를 설치</a>해 주었습니다.</p>
+<p>docker가 운영 서버에 정상적으로 설치되었다면, 이미지를 가져와서 실행시키는 스크립트를 작성하여 배포를 자동화 시켜 보도록 하겠습니다.</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-yaml" style="white-space:pre"><span style="color:#986801">name:</span><span> </span><span style="color:#50a14f">Deploy</span><span> </span><span style="color:#50a14f">Backend</span><span>
+</span>
+<span></span><span style="color:#986801">on:</span><span>
+</span><span>  </span><span style="color:#986801">push:</span><span>
+</span><span>    </span><span style="color:#986801">branches:</span><span>
+</span><span>      </span><span style="color:#4078f2">-</span><span> </span><span style="color:#50a14f">production</span><span>
+</span><span>  </span><span style="color:#986801">workflow_dispatch:</span><span>
+</span>
+<span></span><span style="color:#986801">defaults:</span><span>
+</span><span>  </span><span style="color:#986801">run:</span><span>
+</span><span>    </span><span style="color:#986801">working-directory:</span><span> </span><span style="color:#50a14f">&quot;backend/text-me&quot;</span><span>
+</span>
+<span></span><span style="color:#986801">jobs:</span><span>
+</span><span>  </span><span style="color:#986801">build:</span><span>
+</span><span>    </span><span style="color:#986801">runs-on:</span><span> </span><span style="color:#50a14f">ubuntu-latest</span><span>
+</span>
+<span>    </span><span style="color:#986801">steps:</span><span>
+</span><span>      </span><span style="color:#4078f2">-</span><span> </span><span style="color:#986801">name:</span><span> </span><span style="color:#50a14f">Checkout</span><span>
+</span><span>        </span><span style="color:#986801">uses:</span><span> </span><span style="color:#50a14f">actions/checkout@v2</span><span>
+</span>
+<span>      </span><span style="color:#4078f2">-</span><span> </span><span style="color:#986801">name:</span><span> </span><span style="color:#50a14f">Set</span><span> </span><span style="color:#50a14f">up</span><span> </span><span style="color:#50a14f">JDK</span><span> </span><span style="color:#986801">11</span><span>
+</span><span>        </span><span style="color:#986801">uses:</span><span> </span><span style="color:#50a14f">actions/setup-java@v1</span><span>
+</span><span>        </span><span style="color:#986801">with:</span><span>
+</span><span>          </span><span style="color:#986801">java-version:</span><span> </span><span style="color:#50a14f">&#x27;11&#x27;</span><span>
+</span><span>          </span><span style="color:#986801">distribution:</span><span> </span><span style="color:#50a14f">&#x27;temurin&#x27;</span><span>
+</span>
+<span>      </span><span style="color:#4078f2">-</span><span> </span><span style="color:#986801">name:</span><span> </span><span style="color:#50a14f">SSH</span><span> </span><span style="color:#50a14f">setting</span><span>
+</span><span>        </span><span style="color:#986801">uses:</span><span> </span><span style="color:#50a14f">appleboy/ssh-action@master</span><span>
+</span><span>        </span><span style="color:#986801">with:</span><span>
+</span><span>          </span><span style="color:#986801">host:</span><span> </span><span style="color:#50a14f">${{</span><span> </span><span style="color:#50a14f">secrets.HOST</span><span> </span><span style="color:#50a14f">}}</span><span>
+</span><span>          </span><span style="color:#986801">username:</span><span> </span><span style="color:#50a14f">${{</span><span> </span><span style="color:#50a14f">secrets.USER_NAME</span><span> </span><span style="color:#50a14f">}}</span><span>
+</span><span>          </span><span style="color:#986801">key:</span><span> </span><span style="color:#50a14f">${{</span><span> </span><span style="color:#50a14f">secrets.PRIVATE_KEY</span><span> </span><span style="color:#50a14f">}}</span><span>
+</span><span>          </span><span style="color:#986801">envs:</span><span> </span><span style="color:#50a14f">GITHUB_SHA</span><span>
+</span><span>          </span><span style="color:#986801">script:</span><span> </span><span style="color:#50a14f">|
+</span><span style="color:#50a14f">            whoami
+</span><span style="color:#50a14f">            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/text-me-docker-repo:${GITHUB_REF##*/}
+</span><span style="color:#50a14f">            docker tag ${{ secrets.DOCKERHUB_USERNAME }}/text-me-docker-repo:${GITHUB_REF##*/} ${{ secrets.DOCKERHUB_USERNAME }}/text-me-docker-repo:${GITHUB_REF##*/}
+</span><span style="color:#50a14f">            docker stop text-me-api
+</span><span style="color:#50a14f">            docker run -d --rm --name text-me-api -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/text-me-docker-repo:${GITHUB_REF##*/}</span></code></div></pre>
+<p>배포 스크립트에서 눈여겨 볼 부분은 원격 서버에 접근하기 위한 SSH setting 부분입니다. (<a href="https://github.com/appleboy/ssh-action">ssh-action</a>)</p>
+<p>로컬 서버를 열고 터미널에 다음 명령어를 입력하여 ssh 키를 생성해 주었습니다.</p>
+<ul>
+<li><code node="[object Object]">ssh-keygen -t rsa -b 4096 -C &quot;내이메일@gmail.com&quot;</code></li>
+</ul>
+<p><img src="https://i.imgur.com/s7q725G.png" alt="d" node="[object Object]" style="max-height:450px;max-width:90%"/></p>
+<p>ssh 키를 <code node="[object Object]">./authorized_keys2</code> 경로에 저장하고 다음 명령어를 통해서 ssh 키값을 확인해 줍니다.</p>
+<ul>
+<li><code node="[object Object]">vim ./ssh/authorized_keys2.pub</code></li>
+</ul>
+<p>ssh 키를 GITHUB SECRET의 PRIVATE_KEY로 등록해주었습니다.</p>
+<p><img src="https://i.imgur.com/wJ7mdpG.png" alt="d" node="[object Object]" style="max-height:450px;max-width:90%"/></p>
+<p>모든 과정이 마무리되었다면 직접 docker hub에 접속해서 이미지를 pull 받아올 필요 없이 자동으로 이미지를 가져와서 운영 서버에 띄워주게됩니다.</p>
+<h2>마치며</h2>
+<p>지금까지 기프터즈팀이 GitHub Actions를 사용하는 이유와 동작원리에 대해 설명드렸습니다.</p>
+<p>시간이 된다면 프론트 빌드 및 배포 과정도 포스팅 해보도록 하겠습니다. 감사합니다.</p>
+<hr/>
+<p><strong>참고 자료</strong> 📚</p>
+<ul>
+<li>
+<p><a href="https://velog.io/@sgwon1996/GitHub-Action%EC%9C%BC%EB%A1%9C-CICD-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0">GitHub Action으로 CI/CD 구축하기</a></p>
+</li>
+<li>
+<p><a href="https://tech.kakao.com/2022/05/06/github-actions/">카카오엔터프라이즈가 GitHub Actions를 사용하는 이유</a></p>
+</li>
+<li>
+<p><a href="https://itcoin.tistory.com/685">Github actions를 이용한 CICD - 2</a></p>
+</li>
+<li>
+<p><a href="https://jinmay.github.io/2020/05/13/git/github-action-syntax/">[Github]깃허브의 CI툴인 Actions의 문법 간단 정리</a></p>
+</li>
+<li>
+<p><a href="https://velog.io/@sgwon1996/%EC%BF%A0%EB%B2%84%EB%84%A4%ED%8B%B0%EC%8A%A4-%ED%99%98%EA%B2%BD%EC%97%90-%EC%8A%A4%ED%94%84%EB%A7%81-%EC%96%B4%ED%94%8C%EB%A6%AC%EC%BC%80%EC%9D%B4%EC%85%98-%EB%B0%B0%ED%8F%AC%ED%95%98%EA%B8%B0">쿠버네티스 환경에 스프링 어플리케이션 배포하기</a></p>
+</li>
+</ul></div><section></section></div></main></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"postData":{"id":"text-me-diary1","title":"GitHub Actions를 통해 CI/CD 구축하기 (feat. Docker, Jib)","category":null,"thumbnail":"https://miro.medium.com/max/1400/1*DmFbJvnRIiQIyi5xBuIXlQ.png","tags":"프로젝트","date":"2022-12-06 10:00","preview":"\n저희 `Text Me` 서비스의 베타 버전이 배포되고 난 뒤에, 사용자들로 부터 수많은 피드백을 받을 수 있었습니다. \n사용자 피드백을 빠르게 반영하다 보니 프로젝트의 빌드 및 배포 주기가 짧아졌고 이러한 과정이 서서히 번거롭게 느껴지기 시작했습니다"},"detail":"\n저희 `Text Me` 서비스의 베타 버전이 배포되고 난 뒤에, 사용자들로 부터 수많은 피드백을 받을 수 있었습니다. \n사용자 피드백을 빠르게 반영하다 보니 프로젝트의 빌드 및 배포 주기가 짧아졌고 이러한 과정이 서서히 번거롭게 느껴지기 시작했습니다.\n\n사용자의 피드백을 빠르게 반영하기 위해서는 하루에 많게는 20번의 배포가 이루어져야했기 때문에 프로젝트의 빌드 및 배포과정을 자동화 하기로 하였습니다. \n(하루에 1,000번 이상의 크고 작은 배포가 이뤄지는 테크 기업에 비하면 귀여운 수준이지만 말이죠… )\n\n이번 글에서는 저희가 CI/CD 도구 중 GitHub Actions를 사용하는 이유와 동작원리에 대해서 공유하겠습니다.\n\n## 1. GitHub Actions의 장점\n\nGitHub Actoins를 CI 솔루션으로 채택하게 된 이유는 다음과 같습니다.\n\n- GitHub와 통일된 환경에서 CI 수행이 가능하다.\n- 중앙에서 관리하는 `GitHub Actions Runner` 에 지속적으로 트러블슈팅하여 원활한 CI 환경 구성이 가능하다.\n- 프로젝트마다 개별 Runner를 통한 빌드 테스트가 가능하다.\n- 친숙한 문법의 YAML 파일로 파이프라인 구성이 간단하다.\n\n- GitHub Actions Runner란?\n    - GitHub Actions를 기동하는 Runner\n    - GitHub는 퍼블릭 쪽의 GitHub Actions Runner를 클라우드에서 제공해 주고 있다.\n        - 덕분에 직접 프로비저닝할 필요 없이 Runner를 바로 사용하는 것이 가능하다.\n\n## 2. Github Action의 구성 요소\n\n- workflow\n    - 한개 이상의 `job` 을 실행할 수 있는 자동화된 작업\n    - `YAML` 파일로 작성된다.\n    - `event` 에 의해서 실행된다.\n- event\n    - `workflow` 를 실행시키는 특정 활동\n    - 깃허브에서 발생하는 대부분의 작업을 event로 정의 가능.\n        - ex) `push event` , `pull request event` , `issue event`\n- jobs\n    - 한가지 `runner` 안에서 실행되는 여러 `step` 들의 모음\n    - 각 `step` 들은 일종의 `shell script` 처럼 실행된다.\n    - step들은 순서에 따라 실행되며 step끼리 데이터 공유가 가능하다\n    - job은 다른 job에 의존관계를 가질 수 있으며 `병렬 실행` 이 가능하다.\n- actions\n    - 반복 작업을 정의한 커스텀 어플리케이션\n    - workflow 파일에서 자주 반복되는 코드를 미리 정의할 수 있다.\n        - 코드 양을 줄이는 이점\n    - 깃허브 마켓플레이스를 통해 다른 사람이 만든 action 사용 가능\n\n더 자세한 GitHub Actions workflow syntax는 [해당 포스트](https://jinmay.github.io/2020/05/13/git/github-action-syntax/)를 참고하면 도움이 되실 것 같습니다.\n\n![먀](https://i.imgur.com/9tu0sgH.png)\n\n## 3. Github Action으로 CI/CD 파이프라인 구축하기\n\n다음과 같은 순서로 파이프라인이 구동되도록 workflow를 작성하였습니다.\n\n1. Github Action이 트리거되면 jib로 이미지를 빌드한다.\n2. 만들어진 이미지를 DockerHub에 push한다.\n3. 서버에 접속해서 도커 이미지를 pull 한다.\n\n`.github/workflows` 디렉토리를 프로젝트에 생성하고, 거기에 gradle 빌드를 위한 `build_backend.yml` 을 생성하였습니다.\n\n### 3.1 build_backend.yml\n\n다음 `jobs` 가 실제로 CI를 수행하는 과정이며 `steps` 단계로 jobs가 진행되게 됩니다.\n\n```yaml\nname: Build Backend Image\n\non:\n  pull_request:\n    branches:\n      - production\n      - master\n    paths:\n      - \"backend/**\"\n  workflow_dispatch:\n\ndefaults:\n  run:\n    working-directory: \"backend/text-me\"\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n\n    steps:\n      - name: Checkout\n        uses: actions/checkout@v3\n\n      - name: Set up JDK 11\n        uses: actions/setup-java@v1\n        with:\n          java-version: '11'\n          distribution: 'temurin'\n\n      - name: Set environment variables\n          run:|\n            echo \"::set-env name=DB_URL::${{ secrets.DB_URL }}\"\n            echo \"::set-env name=DB_USERNAME::${{ secrets.DB_USERNAME }}\"\n            echo \"::set-env name=DB_PASSWORD::${{ secrets.DB_PASSWORD }}\"\n            echo \"::set-env name=JWT_KEY::${{ secrets.JWT_KEY }}\"\n            echo \"::set-env name=JWT_EXPIRY::${{ secrets.JWT_EXPIRY }}\"\n            echo \"::set-env name=REFRESH_EXPIRY::${{ secrets.REFRESH_EXPIRY }}\"\n            echo \"::set-env name=AWS_ACCESS_KEY_ID::${{ secrets.AWS_ACCESS_KEY_ID }}\"\n            echo \"::set-env name=AWS_SECRET_ACCESS_KEY::${{ secrets.AWS_SECRET_ACCESS_KEY }}\"\n\n      - name: Login to Docker Hub\n        uses: docker/login-action@v2.1.0\n        with:\n          username: ${{ secrets.DOCKERHUB_USERNAME }}\n          password: ${{ secrets.DOCKERHUB_PASSWORD }}\n\n      - name: Grant execute permission for gradlew\n        run: chmod +x gradlew\n        shell: bash\n\n      - name: Build with jib\n        run: |\n          ./gradlew jib \\\n          -Djib.to.auth.username=${{ secrets.DOCKERHUB_USERNAME }} \\\n          -Djib.to.auth.password=${{ secrets.DOCKERHUB_PASSWORD }} \\\n          -Djib.to.image=\"${{ secrets.DOCKERHUB_USERNAME }}/text-me-docker-repo:${GITHUB_REF##*/}\"\n\n      - name: Get current time\n        uses: 1466587594/get-current-time@v2\n        id: current-time\n        with:\n          format: YYYY-MM-DDTHH-mm-ss\n          utcOffset: \"+09:00\"\n\n      - name: Show Current Time\n        run: echo \"CurrentTime=${{steps.current-time.outputs.formattedTime}}\"\n        shell: bash\n```\n\n빌드 스크립트에 작성된 내용을 좀 더 자세히 살펴보겠습니다.\n\n- `jobs: build: runs-on: ubuntu-latest`\n  - 작성한 스크립트가 작동될 OS 환경을 지정합니다.\n  - text me 서비스는 우분투 18.04에서 동작하기 때문에 `ubuntu-latest` 로 지정해 주었습니다.\n    ![d](https://i.imgur.com/mRZU1aq.png)\n    \n- `steps: uses`\n    - 마켓 플레이스에 사전 정의된 내용을 이용하여 step을 수행합니다.\n    - 사전 작업을 위한 환경 설정용.\n      ![d](https://i.imgur.com/xZ8nmau.png)\n\n- `steps: run`\n    - 개발자가 직접 정의한 커맨드를 수행합니다.\n    - 실제 수행용.\n\n- `-Djib.to.image=\"${{ secrets.DOCKERHUB_USERNAME }}/text-me-docker-repo:${GITHUB_REF##*/}\"`\n  - Jib를 통해 도커 이미지를 빌드해서 도커 허브에 push 합니다.\n\n**도커 컨테이너 이미지와 JIB**\n\n스프링 프로젝트를 컨테이너 이미지로 만들기 위해서는 다양한 방법들이 존재합니다.\n\n- **로컬 환경에서 jar 파일 빌드 , jar 파일을 이미지에 복사 후 실행**\n  - 프로젝트 폴더로 들어가서 gradlew clean build를 통해 grdlew로 jar 파일 빌드\n    - `./gradlew clean build`\n  - 프로젝트 테스트 코드들이 실행되고 모든 테스트가 통과하면 `./build/libs` 에 실행 가능한 jar 파일이 생성된다.\n  - jar 파일을 바탕으로 도커 이미지를 생성하기 위한 Dockerfile을 작성\n\n      ```yaml\n      FROM openjdk:11\n      ARG JAR_FILE=./build/libs/jpashop-0.0.1-SNAPSHOT.jar\n      COPY ${JAR_FILE} app.jar\n      ENTRYPOINT [\"java\",\"-Djava.security.egd=file:/dev/./urandom\",\"-jar\",\"/app.jar\"]\n      ```\n\n  - 해당 Dockerfile을 프로젝트 폴더에 넣은 후 docker build . -t 태그 이름 명령어를 실행하면 컨테이너 이미지 생성\n  - java11의 실행환경을 제공하는 openjdk:11 이미지 위에서 폴더에 있는 jar 파일을 이미지 내부로 복사 후 java 명령어를 통해 실행\n\n![d](https://cloud.google.com/java/images/docker_build_flow.png)\n\n하지만 jar 파일을 빌드하고 추가로 이미지에 복사하여 실행하는 방법은 소스코드에 조금의 변화만 생기더라도 변경된 부분과 의존성이 연결된 jar 파일 전체가 새로운 이미지로 인식되어 전체 파일이 다시 빌드되기 때문에 Docker layer의 장점을 살릴 수 없습니다.\n\n이를 해결하기 위해서 layer를 나누는 방법도 있지만 Google Cloud에서 제공해주는 jib를 통해서 이미지 빌드를 최적화하는 방법을 선택하였습니다.\n\n- **JIB를 통한 이미지 빌드**\n  - Jib는 **Dockerfile, Docker에 의존하지 않고** gradle, maven에서 Jib 플러그인을 사용해서 컨테이너 이미지를 빌드하고 허브에 푸시하는 방법.\n  - 어플리케이션을 **(종속 항목, 리소스, 클래스 등)** 별개의 레이어로 구성하고 Docker 이미지 레이어 캐싱을 활용해서 **변경사항만 다시 빌드**함으로써 빌드를 빠르게 유지\n  - jib 레이어 구성과 작은 기본 이미지는 전체 이미지 크기를 작게 유지시키며 빌드 속도를 향상 시킴\n\n![d](https://cloud.google.com/java/images/jib_build_flow.png)\n\n**Gradle에 jib 플러그인 추가 및 환경 변수 등록**\n\n```bash\nplugins {\n    id 'com.google.cloud.tools.jib' version '3.3.1'\n}\n\njib {\n\tto {\n\t\timage = \"sanha1998/text-me-docker-repo\"\n\t}\n\tfrom {\n\t\timage = \"eclipse-temurin:11-jre\"\n\t}\n\tcontainer {\n\t\tjvmFlags = [\"-Xms128m\", \"-Xmx128m\"]\n\t\tenvironment = [\n\t\t\t\t'DB_URL': System.getenv('DB_URL'),\n\t\t\t\t'DB_USERNAME': System.getenv('DB_USERNAME'),\n\t\t\t\t'DB_PASSWORD': System.getenv('DB_PASSWORD'),\n\t\t\t\t'JWT_KEY': System.getenv('JWT_KEY'),\n\t\t\t\t'JWT_EXPIRY': System.getenv('JWT_EXPIRY'),\n\t\t\t\t'REFRESH_EXPIRY': System.getenv('REFRESH_EXPIRY'),\n\t\t\t\t'AWS_ACCESS_KEY_ID': System.getenv('AWS_ACCESS_KEY_ID'),\n\t\t\t\t'AWS_SECRET_ACCESS_KEY': System.getenv('AWS_SECRET_ACCESS_KEY')\n\t\t]\n\t}\n}\n```\n\n**환경 변수 주입**\n\n스프링 부트 프로젝트의 빌드가 시작되면`application.yml` 혹은 `application.properties` \n내에 설정된 환경변수 값들이 주입됩니다. 이때 AWS 계정 정보와 같은 민감 정보를 application.yml에 노출시키지 않기 위해서 Secrete 환경 변수를 깃허브에 등록해줘야 합니다.\n\n![스크린샷 2022-12-17 오후 9.19.33.png](https://i.imgur.com/VPtkmpm.png)\n\n깃허브에 등록한 secrets 환경 변수들을 사용하기 위해서 다음과 같은 작업을 수행해주었습니다.\n\n```yaml\n- name: Set environment variables\n  run:|\n    echo \"::set-env name=DB_URL::${{ secrets.DB_URL }}\"\n    echo \"::set-env name=DB_USERNAME::${{ secrets.DB_USERNAME }}\"\n    echo \"::set-env name=DB_PASSWORD::${{ secrets.DB_PASSWORD }}\"\n    echo \"::set-env name=JWT_KEY::${{ secrets.JWT_KEY }}\"\n    echo \"::set-env name=JWT_EXPIRY::${{ secrets.JWT_EXPIRY }}\"\n    echo \"::set-env name=REFRESH_EXPIRY::${{ secrets.REFRESH_EXPIRY }}\"\n    echo \"::set-env name=AWS_ACCESS_KEY_ID::${{ secrets.AWS_ACCESS_KEY_ID }}\"\n    echo \"::set-env name=AWS_SECRET_ACCESS_KEY::${{ secrets.AWS_SECRET_ACCESS_KEY }}\"\n```\n\n### 3.2 deploy-backend\n\n이제 운영 서버에서 도커 허브에 올린 이미지를 pull한 다음, 실행시켜 주면 됩니다.\n\n docker 관련 명령어를 사용하기 위해서 [운영 서버에 docker를 설치](https://headf1rst.github.io/TIL/infra-1)해 주었습니다.\n\ndocker가 운영 서버에 정상적으로 설치되었다면, 이미지를 가져와서 실행시키는 스크립트를 작성하여 배포를 자동화 시켜 보도록 하겠습니다.\n\n```yaml\nname: Deploy Backend\n\non:\n  push:\n    branches:\n      - production\n  workflow_dispatch:\n\ndefaults:\n  run:\n    working-directory: \"backend/text-me\"\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n\n    steps:\n      - name: Checkout\n        uses: actions/checkout@v2\n\n      - name: Set up JDK 11\n        uses: actions/setup-java@v1\n        with:\n          java-version: '11'\n          distribution: 'temurin'\n\n      - name: SSH setting\n        uses: appleboy/ssh-action@master\n        with:\n          host: ${{ secrets.HOST }}\n          username: ${{ secrets.USER_NAME }}\n          key: ${{ secrets.PRIVATE_KEY }}\n          envs: GITHUB_SHA\n          script: |\n            whoami\n            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/text-me-docker-repo:${GITHUB_REF##*/}\n            docker tag ${{ secrets.DOCKERHUB_USERNAME }}/text-me-docker-repo:${GITHUB_REF##*/} ${{ secrets.DOCKERHUB_USERNAME }}/text-me-docker-repo:${GITHUB_REF##*/}\n            docker stop text-me-api\n            docker run -d --rm --name text-me-api -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/text-me-docker-repo:${GITHUB_REF##*/}\n```\n\n배포 스크립트에서 눈여겨 볼 부분은 원격 서버에 접근하기 위한 SSH setting 부분입니다. ([ssh-action](https://github.com/appleboy/ssh-action)) \n\n로컬 서버를 열고 터미널에 다음 명령어를 입력하여 ssh 키를 생성해 주었습니다.\n\n- `ssh-keygen -t rsa -b 4096 -C \"내이메일@gmail.com\"`\n\n![d](https://i.imgur.com/s7q725G.png)\n\nssh 키를 `./authorized_keys2` 경로에 저장하고 다음 명령어를 통해서 ssh 키값을 확인해 줍니다.\n\n- `vim ./ssh/authorized_keys2.pub`\n\nssh 키를 GITHUB SECRET의 PRIVATE_KEY로 등록해주었습니다.\n\n![d](https://i.imgur.com/wJ7mdpG.png)\n\n모든 과정이 마무리되었다면 직접 docker hub에 접속해서 이미지를 pull 받아올 필요 없이 자동으로 이미지를 가져와서 운영 서버에 띄워주게됩니다.\n\n## 마치며\n\n지금까지 기프터즈팀이 GitHub Actions를 사용하는 이유와 동작원리에 대해 설명드렸습니다.\n\n시간이 된다면 프론트 빌드 및 배포 과정도 포스팅 해보도록 하겠습니다. 감사합니다.\n\n---\n\n**참고 자료** 📚\n\n- [GitHub Action으로 CI/CD 구축하기](https://velog.io/@sgwon1996/GitHub-Action%EC%9C%BC%EB%A1%9C-CICD-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0)\n\n- [카카오엔터프라이즈가 GitHub Actions를 사용하는 이유](https://tech.kakao.com/2022/05/06/github-actions/)\n\n- [Github actions를 이용한 CICD - 2](https://itcoin.tistory.com/685)\n\n- [[Github]깃허브의 CI툴인 Actions의 문법 간단 정리](https://jinmay.github.io/2020/05/13/git/github-action-syntax/)\n\n- [쿠버네티스 환경에 스프링 어플리케이션 배포하기](https://velog.io/@sgwon1996/%EC%BF%A0%EB%B2%84%EB%84%A4%ED%8B%B0%EC%8A%A4-%ED%99%98%EA%B2%BD%EC%97%90-%EC%8A%A4%ED%94%84%EB%A7%81-%EC%96%B4%ED%94%8C%EB%A6%AC%EC%BC%80%EC%9D%B4%EC%85%98-%EB%B0%B0%ED%8F%AC%ED%95%98%EA%B8%B0)\n"},"__N_SSG":true},"page":"/[id]","query":{"id":"text-me-diary1"},"buildId":"kp1gY2qzEskHKbCxkA_Iv","assetPrefix":"/TIL","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

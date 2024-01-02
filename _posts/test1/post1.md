@@ -19,76 +19,76 @@ description: if-else, switch 성능 비교
 
 간단한 분기문을 if-else문과 switch문으로 작성하였으며 1, 3, 5에 해당하는 case값을 설정하였다.
 ```java
-public int ifElseStatement() {  
-    int temp = 0;
-    int num = generateRandomIntFromOneToTen();
-  
-    if (num == 1) {  
-        temp = 1;  
-    } else if (num == 3) {  
-        temp = 3;  
-    } else if (num == 5) {  
-        temp = 5;  
-    } else {  
-        temp = 99;  
-    }  
-    return temp;  
-}
+public int ifElseStatement() {
+        int temp = 0;
+        int num = generateRandomIntFromOneToTen();
+
+        if (num == 1) {
+        temp = 1;
+        } else if (num == 3) {
+        temp = 3;
+        } else if (num == 5) {
+        temp = 5;
+        } else {
+        temp = 99;
+        }
+        return temp;
+        }
 ```
 
 ```java
 public int switchStatement() {
-    int temp = 0;
-	int num = generateRandomIntFromOneToTen();
-	
-    switch (num) {
-        case 1:
-            temp = 1;
-            break;
-        case 3:
-            temp = 3;
-            break;
-        case 5:
-            temp = 5;
-            break;
-        default:
-            temp = 99;
-    }
+        int temp = 0;
+        int num = generateRandomIntFromOneToTen();
 
-    return temp;
-}
+        switch (num) {
+        case 1:
+        temp = 1;
+        break;
+        case 3:
+        temp = 3;
+        break;
+        case 5:
+        temp = 5;
+        break;
+default:
+        temp = 99;
+        }
+
+        return temp;
+        }
 ```
 
 작성한 두 분기문이 내부적으로 어떻게 동작하는지 자바 바이트코드를 통해 분석해보았다.
 
 ```java
 public ifElseStatement()I
-    ICONST_0
-    ISTORE 1
-    ALOAD 0
-    GETFIELD example/IfElseVSSwitchTest.num : Ljava/lang/Integer;
-    INVOKEVIRTUAL java/lang/Integer.intValue ()I
-    ICONST_1
-    IF_ICMPNE L6
-    ICONST_1
-    ISTORE 1
-    GOTO L8
-   
-   //...
-   
-   L9
-    ALOAD 0
-    GETFIELD example/IfElseVSSwitchTest.num : Ljava/lang/Integer;
-    INVOKEVIRTUAL java/lang/Integer.intValue ()I
-    ICONST_3
-    IF_ICMPNE L8
-    ICONST_3
-    ISTORE 1
-   L8
-    ICONST_4
-    ISTORE 1
-    ILOAD 1
-    IRETURN
+        ICONST_0
+        ISTORE 1
+        ALOAD 0
+        GETFIELD example/IfElseVSSwitchTest.num : Ljava/lang/Integer;
+        INVOKEVIRTUAL java/lang/Integer.intValue ()I
+        ICONST_1
+        IF_ICMPNE L6
+        ICONST_1
+        ISTORE 1
+        GOTO L8
+
+        //...
+
+        L9
+        ALOAD 0
+        GETFIELD example/IfElseVSSwitchTest.num : Ljava/lang/Integer;
+        INVOKEVIRTUAL java/lang/Integer.intValue ()I
+        ICONST_3
+        IF_ICMPNE L8
+        ICONST_3
+        ISTORE 1
+        L8
+        ICONST_4
+        ISTORE 1
+        ILOAD 1
+        IRETURN
 ```
 
 if-else문은 연속된 if와 else if 문을 통해 **차례대로** 조건을 확인한다.
@@ -96,58 +96,58 @@ if-else문은 연속된 if와 else if 문을 통해 **차례대로** 조건을 �
 
 ```java
 public switchStatement()I
-	L0
-	LINENUMBER 43 L0
-	ICONST_0
-	ISTORE 1
-	L1
-	LINENUMBER 46 L1
-	ALOAD 0
-	INVOKEVIRTUAL example/IfElseVSSwitchTest.generateRandomIntFromOneToTen ()V
-	L2
-	LINENUMBER 48 L2
-	ALOAD 0
-	GETFIELD example/IfElseVSSwitchTest.num : Ljava/lang/Integer;
-	INVOKEVIRTUAL java/lang/Integer.intValue ()I
-	TABLESWITCH
-	  1: L3
-	  2: L4
-	  3: L5
-	  4: L4
-	  5: L6
-	  default: L4
-	L3
-	LINENUMBER 50 L3
-	FRAME SAME
-	ICONST_1
-	ISTORE 1
-	GOTO L7
-	L5
-	LINENUMBER 53 L5
-	FRAME SAME
-	ICONST_2
-	ISTORE 1
-	GOTO L7
-	L6
-	LINENUMBER 56 L6
-	FRAME SAME
-	ICONST_
-	ISTORE 1
-	GOTO L7
-	L4
-	LINENUMBER 59 L4
-	FRAME SAME
-	BIPUSH 99
-	ISTORE 1
-	L7
-	LINENUMBER 63 L7
-	FRAME SAME
-	ILOAD 1
-	IRETURN
-	L8
-	LOCALVARIABLE this Lexample/IfElseVSSwitchTest; L0 L8 0LOCALVARIABLE temp I L1 L8 1
-	MAXSTACK = 2
-	MAXLOCALS = 2
+        L0
+        LINENUMBER 43 L0
+        ICONST_0
+        ISTORE 1
+        L1
+        LINENUMBER 46 L1
+        ALOAD 0
+        INVOKEVIRTUAL example/IfElseVSSwitchTest.generateRandomIntFromOneToTen ()V
+        L2
+        LINENUMBER 48 L2
+        ALOAD 0
+        GETFIELD example/IfElseVSSwitchTest.num : Ljava/lang/Integer;
+        INVOKEVIRTUAL java/lang/Integer.intValue ()I
+        TABLESWITCH
+        1: L3
+        2: L4
+        3: L5
+        4: L4
+        5: L6
+default: L4
+        L3
+        LINENUMBER 50 L3
+        FRAME SAME
+        ICONST_1
+        ISTORE 1
+        GOTO L7
+        L5
+        LINENUMBER 53 L5
+        FRAME SAME
+        ICONST_2
+        ISTORE 1
+        GOTO L7
+        L6
+        LINENUMBER 56 L6
+        FRAME SAME
+        ICONST_
+        ISTORE 1
+        GOTO L7
+        L4
+        LINENUMBER 59 L4
+        FRAME SAME
+        BIPUSH 99
+        ISTORE 1
+        L7
+        LINENUMBER 63 L7
+        FRAME SAME
+        ILOAD 1
+        IRETURN
+        L8
+        LOCALVARIABLE this Lexample/IfElseVSSwitchTest; L0 L8 0LOCALVARIABLE temp I L1 L8 1
+        MAXSTACK = 2
+        MAXLOCALS = 2
 ```
 
 switch문의 바이트코드를 보면 `TableSwitch`라는게 보인다.
@@ -168,10 +168,10 @@ switch문의 바이트코드를 보면 `TableSwitch`라는게 보인다.
 
 ```java
 LOOKUPSWITCH
-  1: L3
-  10: L4
-  100: L5
-  default: L6
+        1: L3
+        10: L4
+        100: L5
+default: L6
 ```
 
 위의 바이트코드에서 볼 수 있듯, `LOOKUPTABLE`은 case값  만으로 테이블을 구성한다.
@@ -198,63 +198,63 @@ jmh {
 ### if-else와 switch문 (TABLESWITCH)의 성능차이
 
 ```java
-@State(Scope.Benchmark)  
-@BenchmarkMode(Mode.AverageTime)  
-@OutputTimeUnit(TimeUnit.MICROSECONDS)  
-public class IfElseVSSwitchTest {  
-  
-    private Integer num;  
-  
-    @Setup  
-    public void generateRandomIntFromOneToTen() {  
-        Random random = new Random();  
-        this.num = random.nextInt(10) + 1;  
-    }  
-  
-    @Benchmark  
-    public int ifElseStatement() {  
-        int temp = 0;  
-  
-        for (int i = 0; i < 5_000; ++i) {  
-            generateRandomIntFromOneToTen();  
-  
-            if (num == 1) {  
-                temp = 1;  
-            } else if (num == 3) {  
-                temp = 3;  
-            } else if (num == 5) {  
-                temp = 5;  
-            } else {  
-                temp = 99;  
-            }  
-        }  
-        return temp;  
-    }  
-  
-    @Benchmark  
-    public int switchStatement() {  
-        int temp = 0;  
-  
-        for (int i = 0; i < 5_000; ++i) {  
-            generateRandomIntFromOneToTen();  
-  
-            switch (num) {  
-                case 1:  
-                    temp = 1;  
-                    break;  
-                case 3:  
-                    temp = 3;  
-                    break;  
-                case 5:  
-                    temp = 5;  
-                    break;  
-                default:  
-                    temp = 99;  
-                    break;  
-            }  
-        }  
-        return temp;  
-    }  
+@State(Scope.Benchmark)
+@BenchmarkMode(Mode.AverageTime)
+@OutputTimeUnit(TimeUnit.MICROSECONDS)
+public class IfElseVSSwitchTest {
+
+    private Integer num;
+
+    @Setup
+    public void generateRandomIntFromOneToTen() {
+        Random random = new Random();
+        this.num = random.nextInt(10) + 1;
+    }
+
+    @Benchmark
+    public int ifElseStatement() {
+        int temp = 0;
+
+        for (int i = 0; i < 5_000; ++i) {
+            generateRandomIntFromOneToTen();
+
+            if (num == 1) {
+                temp = 1;
+            } else if (num == 3) {
+                temp = 3;
+            } else if (num == 5) {
+                temp = 5;
+            } else {
+                temp = 99;
+            }
+        }
+        return temp;
+    }
+
+    @Benchmark
+    public int switchStatement() {
+        int temp = 0;
+
+        for (int i = 0; i < 5_000; ++i) {
+            generateRandomIntFromOneToTen();
+
+            switch (num) {
+                case 1:
+                    temp = 1;
+                    break;
+                case 3:
+                    temp = 3;
+                    break;
+                case 5:
+                    temp = 5;
+                    break;
+                default:
+                    temp = 99;
+                    break;
+            }
+        }
+        return temp;
+    }
 }
 ```
 

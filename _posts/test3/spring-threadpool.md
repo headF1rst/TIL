@@ -22,16 +22,16 @@ WAS는 사용자의 요청마다 Thread를 할당해 주는데, 코드를 통해
 
 위 코드는 다음 과정을 순서대로 수행하게 된다.
 
-1. 어플리케이션을 실행한다. 
-2. `try (ServerSocket listenSocket = new ServerSocket(port)) {`
+1) 어플리케이션을 실행한다. 
+2) `try (ServerSocket listenSocket = new ServerSocket(port)) {`
    - 8080 포트를 디폴트로 사용하는 `ServerSocket` 객체를 생성한다. 
    - `ServerSocket` 객체는 주어진 포트에서 들어오는 요청을 청취한다.
-3. `while ((connection = listenSocket.accept()) != null) {`
+3) `while ((connection = listenSocket.accept()) != null) {`
    - `listenSocket.accept()`는 연결 요청이 들어올 때까지 블로킹된다.
    - 연결 요청이 들어오면, 연결을 수락하고 `Socket` 객체를 반환한다.
    - 연결 요청이 끊길때 까지 루프를 돌며 요청을 처리한다.
-4. 클라이언트의 요청이 들어오면, 요청(task)를 처리하기 위한 스레드를 생성하여 할당한다.
-5. 할당된 스레드가 `RequestHandler` 객체를 생성한다.
+4) 클라이언트의 요청이 들어오면, 요청(task)를 처리하기 위한 스레드를 생성하여 할당한다.
+5) 할당된 스레드가 `RequestHandler` 객체를 생성한다.
    - [thread.start()](https://kim-jong-hyun.tistory.com/101) 에 의해서 Thread가 task를 수행한다
    - `RequestHandler` 에 오바라이드된 `run()` 메서드를 수행한다.
     
@@ -57,13 +57,13 @@ WAS는 사용자의 요청마다 Thread를 할당해 주는데, 코드를 통해
 
 Thread Pool의 Thread 할당 과정을 살펴보면 다음과 같다.
 
-1. 설정된 `core size` 만큼 Thread Pool에 Thread를 생성한다.
-2. 사용자로 부터 Task(요청)가 들어올 때마다 큐에 Task를 저장한다.
-3. Thread Pool에 idle 상태의 Thread가 있다면 큐에서 Task를 꺼내 해당 Thead에 할당한다.
+1) 설정된 `core size` 만큼 Thread Pool에 Thread를 생성한다.
+2) 사용자로 부터 Task(요청)가 들어올 때마다 큐에 Task를 저장한다.
+3) Thread Pool에 idle 상태의 Thread가 있다면 큐에서 Task를 꺼내 해당 Thead에 할당한다.
     - idle 상태의 Thread가 Pool에 존재하지 않으면 Task는 큐에 대기한다.
     - ❗️ 대기중인 Task로 인해 **큐가 꽉 차면, Thread를 새로 생성한다**. (설정된 `Maximum Thread Size` 까지)
     - Maximum Thread Size 까지 Thread의 수가 도달하고 큐도 꽉 차게 되면 추가 Task에 대해선 `Connection-refused` 오류를 반환한다.
-4. Task를 처리한 Thread는 다시 idle 상태로 Thread Pool에 반납된다.
+4) Task를 처리한 Thread는 다시 idle 상태로 Thread Pool에 반납된다.
     - 큐가 비어있고 `core size` 이상의 Thread가 생성되어있다면 **Thread를 삭제한다.**
 
 ## Thread Pool을 사용하여 다중 요청을 처리하는 WAS

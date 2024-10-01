@@ -1,5 +1,5 @@
 ---
-title: @Transactional 내부 메서드 호출시 트랜잭션이 적용되지 않는 이슈
+title: 내부 메서드 호출시 트랜잭션이 적용되지 않는 이슈
 category: spring
 thumbnail: https://velog.velcdn.com/images/uiurihappy/post/0c13062e-e5cb-45f0-9727-a9ef018b1ffc/image.png
 tags: transactional

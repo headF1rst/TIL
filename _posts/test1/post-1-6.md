@@ -5,7 +5,7 @@ thumbnail: https://velog.velcdn.com/images/uiurihappy/post/0c13062e-e5cb-45f0-97
 tags: transactional
 date: 2024-10-01 10:00
 searchKeywords: transactional, spring, aop
-description: Transactional 내부 메서드 호출시 트랜잭션이 적용되지 않는 이슈
+description: @Transactional 내부 메서드 호출시 트랜잭션이 적용되지 않는 이슈
 ---
 
 트랜잭션 처리 코드가 비즈니스 로직과 공존하면 코드의 중복이 발생하고 비즈니스 로직에 집중하기 또한 힘들다.  

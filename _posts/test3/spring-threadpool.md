@@ -18,20 +18,46 @@ date: 2022-09-20 10:00
 
 WAS는 사용자의 요청마다 Thread를 할당해 주는데, 코드를 통해 WAS의 Thread 생성 과정을 살펴보도록 하자.
 
-![스크린샷 2022-09-08 오후 2.46.40.png](https://i.imgur.com/bY3G5uv.png)
+```java
+import java.net.ServerSocket;
+import java.net.Socket;
 
+public class WebApplicationServer {
+    private static final int DEFAULT_PORT = 8080;
+
+    public static void main(String[] args) throws Exception {
+        int port = 0;
+
+        if (args == null || args.length == 0) {
+            port = DEFAULT_PORT;
+        } else {
+            port = Integer.parseInt(args[0]);
+        }
+
+        // 서버소켓을 생성한다. 웹 서버는 8080 포트를 사용한다.
+        try (ServerSocket listenSocket = new ServerSocket(port)) {
+
+            Socket connection;
+            while ((connection = listenSocket.accept()) != null) {
+                Thread thread = new Thread(new RequestHandler(connection));
+                thread.start();
+            }
+        }
+    }
+}
+```
 위 코드는 다음 과정을 순서대로 수행하게 된다.
 
-1) 어플리케이션을 실행한다. 
-2) `try (ServerSocket listenSocket = new ServerSocket(port)) {`
+- 어플리케이션을 실행한다. 
+- `try (ServerSocket listenSocket = new ServerSocket(port)) {`
    - 8080 포트를 디폴트로 사용하는 `ServerSocket` 객체를 생성한다. 
    - `ServerSocket` 객체는 주어진 포트에서 들어오는 요청을 청취한다.
-3) `while ((connection = listenSocket.accept()) != null) {`
+- `while ((connection = listenSocket.accept()) != null) {`
    - `listenSocket.accept()`는 연결 요청이 들어올 때까지 블로킹된다.
    - 연결 요청이 들어오면, 연결을 수락하고 `Socket` 객체를 반환한다.
    - 연결 요청이 끊길때 까지 루프를 돌며 요청을 처리한다.
-4) 클라이언트의 요청이 들어오면, 요청(task)를 처리하기 위한 스레드를 생성하여 할당한다.
-5) 할당된 스레드가 `RequestHandler` 객체를 생성한다.
+- 클라이언트의 요청이 들어오면, 요청(task)를 처리하기 위한 스레드를 생성하여 할당한다.
+- 할당된 스레드가 `RequestHandler` 객체를 생성한다.
    - [thread.start()](https://kim-jong-hyun.tistory.com/101) 에 의해서 Thread가 task를 수행한다
    - `RequestHandler` 에 오바라이드된 `run()` 메서드를 수행한다.
     
@@ -57,13 +83,13 @@ WAS는 사용자의 요청마다 Thread를 할당해 주는데, 코드를 통해
 
 Thread Pool의 Thread 할당 과정을 살펴보면 다음과 같다.
 
-1) 설정된 `core size` 만큼 Thread Pool에 Thread를 생성한다.
-2) 사용자로 부터 Task(요청)가 들어올 때마다 큐에 Task를 저장한다.
-3) Thread Pool에 idle 상태의 Thread가 있다면 큐에서 Task를 꺼내 해당 Thead에 할당한다.
+- 설정된 `core size` 만큼 Thread Pool에 Thread를 생성한다.
+- 사용자로 부터 Task(요청)가 들어올 때마다 큐에 Task를 저장한다.
+- Thread Pool에 idle 상태의 Thread가 있다면 큐에서 Task를 꺼내 해당 Thead에 할당한다.
     - idle 상태의 Thread가 Pool에 존재하지 않으면 Task는 큐에 대기한다.
     - ❗️ 대기중인 Task로 인해 **큐가 꽉 차면, Thread를 새로 생성한다**. (설정된 `Maximum Thread Size` 까지)
     - Maximum Thread Size 까지 Thread의 수가 도달하고 큐도 꽉 차게 되면 추가 Task에 대해선 `Connection-refused` 오류를 반환한다.
-4) Task를 처리한 Thread는 다시 idle 상태로 Thread Pool에 반납된다.
+- Task를 처리한 Thread는 다시 idle 상태로 Thread Pool에 반납된다.
     - 큐가 비어있고 `core size` 이상의 Thread가 생성되어있다면 **Thread를 삭제한다.**
 
 ## Thread Pool을 사용하여 다중 요청을 처리하는 WAS
@@ -73,11 +99,57 @@ Thread Pool의 Thread 할당 과정을 살펴보면 다음과 같다.
 - 최대 Thread Pool의 크기 = `250` (Pool Size)
 - 모든 Thread가 사용중인 (Busy) 상태이면 `100` 명까지 대기 상태 유지 (Queue Size)
 
-![스크린샷 2022-09-08 오후 2.34.43.png](https://i.imgur.com/4SlDRwG.png)
+```java
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-![스크린샷 2022-09-08 오후 2.35.08.png](https://i.imgur.com/CovFIOT.png)
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-![스크린샷 2022-09-08 오후 2.45.01.png](https://i.imgur.com/lL2fsrS.png)
+public class WebApplicationServer {
+
+    private static final Logger logger = LoggerFactory.getLogger(WebApplicationServer.class);
+
+    private static final int DEFAULT_PORT = 8080;
+    private static final int PORT_ARGS_INDEX = 0;
+    private static final int THREAD_POOL_SIZE_ARGS_INDEX = 1;
+    private static final int THREAD_QUEUE_SIZE_ARGS_INDEX = 2;
+    private static final int DEFAULT_THREAD_POOL_SIZE = 250;
+    private static final int DEFAULT_THREAD_QUEUE_SIZE = 100;
+
+    public static void main(String args[]) throws Exception {
+
+        int port = port(args);
+        ThreadPoolExecutor threadPoolExecutor = threadPoolExecutor(poolSize(args), queueSize(args));
+
+        // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
+        try (ServerSocket listenSocket = new ServerSocket(port)) {
+            logger.info("Web Application Server started {} port.", port);
+
+            // 클라이언트가 연결될때까지 대기한다.
+            Socket connection;
+            while ((connection = listenSocket.accept()) != null) {
+                threadPoolExecutor.execute(new RequestHandler(connection));
+            }
+        }
+    }
+    ...
+
+    private static int port(String[] args) {
+        return extractValueByIndexOrDefault(args, PORT_ARGS_INDEX, DEFAULT_PORT);
+    }
+
+    private static int extractValueByIndexOrDefault(String[] args, int index, int defaultValue) {
+        if (args == null || args.length < index + 1) {
+            return defaultValue;
+        }
+        return Integer.parseInt(args[index]);
+    }
+}
+```
 
 코드에서 볼 수 있듯이, Thread Pool 적용의 핵심 로직은 `threadPoolExecutor` 메서드에 존재한다.
 
@@ -90,7 +162,18 @@ Thread Pool의 Thread 할당 과정을 살펴보면 다음과 같다.
 
 이들은 각각 `poolSize(args)`, `queueSize(args)` 메서드에 의해서 값이 구해진다.
 
-![스크린샷 2022-09-08 오후 2.44.37.png](https://i.imgur.com/Q6kcIw7.png)
+```java
+public class WebApplicationServer {
+    ...
+    
+    private static int poolSize(String[] args) {
+        return extractValueByIndexOrDefault(args, THREAD_POOL_SIZE_ARGS_INDEX, DEFAULT_THREAD_POOL_SIZE);
+    }
+
+    private static int queueSize(String[] args) {
+        return extractValueByIndexOrDefault(args, THREAD_QUEUE_SIZE_ARGS_INDEX, DEFAULT_THREAD_QUEUE_SIZE);
+    }
+```
 
 `port(args)`, `poolSize(args)` , `queueSize(args)` 모두 `extractValueByIndexOrDefault()` 메서드에 의해서 값이 파싱된다.
 
@@ -102,7 +185,15 @@ Thread Pool의 Thread 할당 과정을 살펴보면 다음과 같다.
 
 전달받은 두 인자를 사용하여 `ThreadPoolExecutor` 객체를 생성하여 Thread Pool을 적용한다.
 
-![스크린샷 2022-09-08 오후 2.43.39.png](https://i.imgur.com/c430sCS.png)
+```java
+public class WebApplicationServer {
+    ...
+    
+    private static ThreadPoolExecutor threadPoolExecutor(int corePoolSize, int queueSize) {
+        return new ThreadPoolExecutor(corePoolSize, corePoolSize, 0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<>(queueSize));
+    }
+```
 
 > ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue)
 

@@ -12,7 +12,7 @@ date: 2022-09-20 10:00
 
 오늘은 그러한 기술들 중, 개발자들을 대신해서 사용자의 다중 요청을 처리해주는 WAS의 `ThreadPool`에 대해서 알아보도록 하겠다.
 
-## WAS의 Thread 생성 과정
+# WAS의 Thread 생성 과정
 
 스프링 부트는 2.5.4 버전 이후로 Tomcat (WAS)을 내장하고 있다.
 
@@ -22,13 +22,18 @@ WAS는 사용자의 요청마다 Thread를 할당해 주는데, 코드를 통해
 
 위 코드는 다음 과정을 순서대로 수행하게 된다.
 
-- 어플리케이션을 실행한다.
-- 8080 포트를 디폴트로 사용하는 서버 소켓을 생성한다.
-- 반복문을 돌면서 클라이언트의 요청이 소켓에 들어올때까지 대기한다.
-- 클라이언트의 요청이 들어오면, 요청(task)를 처리하기 위한 스레드를 생성하여 할당한다.
-- 할당된 스레드가 `RequestHandler` 객체를 생성한다.
-- [thread.start()](https://kim-jong-hyun.tistory.com/101) 에 의해서 Thread가 task를 수행한다
-    - `RequestHandler` 에 오바라이드된 `run()` 메서드를 수행한다.
+1. 어플리케이션을 실행한다. 
+2. `try (ServerSocket listenSocket = new ServerSocket(port)) {`
+   - 8080 포트를 디폴트로 사용하는 `ServerSocket` 객체를 생성한다. 
+   - `ServerSocket` 객체는 주어진 포트에서 들어오는 요청을 청취한다.
+3. `while ((connection = listenSocket.accept()) != null) {`
+   - `listenSocket.accept()`는 연결 요청이 들어올 때까지 블로킹된다.
+   - 연결 요청이 들어오면, 연결을 수락하고 `Socket` 객체를 반환한다.
+   - 연결 요청이 끊길때 까지 루프를 돌며 요청을 처리한다.
+4. 클라이언트의 요청이 들어오면, 요청(task)를 처리하기 위한 스레드를 생성하여 할당한다.
+5. 할당된 스레드가 `RequestHandler` 객체를 생성한다.
+   - [thread.start()](https://kim-jong-hyun.tistory.com/101) 에 의해서 Thread가 task를 수행한다
+   - `RequestHandler` 에 오바라이드된 `run()` 메서드를 수행한다.
     
 
 하지만 이처럼 사용자 요청이 있을 때 마다 스레드를 생성해서 사용자 요청을 처리하게 되면 다음과 같은 문제가 발생한다.
@@ -38,28 +43,28 @@ WAS는 사용자의 요청마다 Thread를 할당해 주는데, 코드를 통해
 
 이처럼 여러 유저의 요청을 효율적으로 처리하고 동시 접속자가 많더라도 안정적으로 서비스를 제공하기 위해서 WAS는 **Thread Pool**을 제공한다.
 
-## Thread Pool 이란?
+# Thread Pool 이란?
 
 [Thread Pool](https://www.baeldung.com/thread-pool-java-and-guava)은 어플리케이션 실행에 필요한 [Thread](https://en.wikipedia.org/wiki/Thread_(computing))들을 미리 생성한 다음, Pool에 있는 Thread를 돌려가며 사용하여 사용자의 요청을 처리한다.
-
 (Task를 처리한 Thread는 다시 Thread Pool에 반납되어 재사용 된다.)
 
-미리 만들어 두는 방식과 Thread가 task를 처리하는 방식에 따라서 여러 풀 구현체들이 존재한다.
+미리 만들어 두는 방식과 Thread가 task를 처리하는 방식에 따라서 여러 Pool 구현체들이 존재한다.
+대표적인 Thread Pool에는 `newFixedThreadPool`이 있다.
 
-(대표적인 Thread Pool = `newFixedThreadPool` )
+## Thread Pool의 Thread 할당 과정
 
 ![스크린샷 2022-09-08 오후 3.21.21.png](https://i.imgur.com/kZs00M1.png)
 
 Thread Pool의 Thread 할당 과정을 살펴보면 다음과 같다.
 
-- 설정된 `core size` 만큼 Thread Pool에 Thread를 생성.
-- 사용자로 부터 Task(요청)가 들어올 때마다 큐에 Task를 저장.
-- Thread Pool에 idle 상태의 Thread가 있다면 큐에서 Task를 꺼내 해당 Thead에 할당.
-    - idle 상태의 Thread가 Pool에 존재하지 않으면 Task는 큐에 대기.
-    - ❗️ 대기중인 Task로 인해 **큐가 꽉 차면, Thread를 새로 생성**. (설정된 `Maximum Thread Size` 까지)
-    - Maximum Thread Size 까지 Thread의 수가 도달하고 큐도 꽉 차게 되면 추가 Task에 대해선 `Connection-refused` 오류를 반환.
-- Task를 처리한 Thread는 다시 idle 상태로 Thread Pool에 반납된다.
-    - 큐가 비어있고 `core size` 이상의 Thread가 생성되어있다면 **Thread를 삭제.**
+1. 설정된 `core size` 만큼 Thread Pool에 Thread를 생성한다.
+2. 사용자로 부터 Task(요청)가 들어올 때마다 큐에 Task를 저장한다.
+3. Thread Pool에 idle 상태의 Thread가 있다면 큐에서 Task를 꺼내 해당 Thead에 할당한다.
+    - idle 상태의 Thread가 Pool에 존재하지 않으면 Task는 큐에 대기한다.
+    - ❗️ 대기중인 Task로 인해 **큐가 꽉 차면, Thread를 새로 생성한다**. (설정된 `Maximum Thread Size` 까지)
+    - Maximum Thread Size 까지 Thread의 수가 도달하고 큐도 꽉 차게 되면 추가 Task에 대해선 `Connection-refused` 오류를 반환한다.
+4. Task를 처리한 Thread는 다시 idle 상태로 Thread Pool에 반납된다.
+    - 큐가 비어있고 `core size` 이상의 Thread가 생성되어있다면 **Thread를 삭제한다.**
 
 ## Thread Pool을 사용하여 다중 요청을 처리하는 WAS
 
@@ -99,38 +104,36 @@ Thread Pool의 Thread 할당 과정을 살펴보면 다음과 같다.
 
 ![스크린샷 2022-09-08 오후 2.43.39.png](https://i.imgur.com/c430sCS.png)
 
-`ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue)`
+> ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue)
 
 - corePoolSize
-    - 풀 안에 유지되는 쓰레드 수 (시작시)
+    - 어플리케이션 시작시 Pool에 할당되는 쓰레드 수
 - maximumPoolSize
-    - 풀에 유지되는 최대 쓰레드 수
+    - Pool에 유지될 수 있는 **최대** 쓰레드 수
 - keepAliveTime
-    - corePoolSize 보다 쓰레드 개수가 많아 진 상태에서, 새로운 Task를 기다리는 시간.
-    - 시간이 지나면 쓰레드를 없애서 corePoolSize를 유지한다.
+    - corePoolSize 보다 쓰레드 개수가 많아 진 상태에서, 새로운 테스크를 기다리는 시간.
+    - keepAliveTime 이상 시간이 경과하면 쓰레드를 없애서 corePoolSize만큼 쓰레드 수를 유지한다.
 - unit
-    - keepAliveTime 시간 단위
+    - keepAliveTime의 시간 단위
 - workQueue
     - 실행 되기전에 홀드시켜 두는 테스크를 유지하는 큐.
-    - 쓰레드가 남지 않을 경우 여기 테스크를 넣는다.
+    - idle 상태의 쓰레드가 없는 경우, 테스크를 workQueue에 저장한다.
 
-- corePoolSize = 1, maximumPoolSize = 1 이면 newSingleThreadExecutor 가 된다.
-    
-    
-- corePoolSize = 0, maximumPoolSize = MAX_VALUE 이면 newCachedThreadPool
+- corePoolSize = 1, maximumPoolSize = 1 이면 `newSingleThreadExecutor` 가 된다.
+- corePoolSize = 0, maximumPoolSize = MAX_VALUE 이면 `newCachedThreadPool`
 
 현재 우리는 최소, 최대가 250인 고정된 Thread Pool을 생성한 것이다.
 
 `threadPoolExecutor.execute(new RequestHandler(connection))`
 
-Thread Pool을 만들고 나서는 반복문을 통해서 클라이언트의 요청이 들어오기까지 대기하다가 요청이 들어오는 순간 Thread Pool의 idle한 Thread를 하나 할당하여 해당 요청 (Task)를 처리한다.
+Thread Pool을 만들고 나서는 클라이언트의 요청이 들어오기까지 대기하다가 요청이 들어오는 순간 Thread Pool의 idle한 Thread를 하나 할당하여 요청 (Task)를 처리한다.
 
 - `execute(테스크)`
     - Thead Pool에서 하나의 Thread를 할당.
 
 ## Thread Pool 수보다 많은 요청을 동시에 보내보기
 
-앞서 적용한 Thread Pool과 동일한 `[newFixedThreadPool](https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executors.html)` 를 사용하여 Thread Pool이 정상 동작하는지 알아보기 위한 테스트를 해보자.
+앞서 적용한 Thread Pool과 동일한 [newFixedThreadPool](https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executors.html) 를 사용하여 Thread Pool이 정상 동작하는지 알아보기 위한 테스트를 해보자.
 
 먼저 Thread Pool의 총 스래드 개수보다 적은 동시 요청을 보냈을때 WAS가 정상 동작하는지 검증하는 테스트 코드를 작성하였다.
 
@@ -203,7 +206,7 @@ LinkedBlockingQueue는 생성자의 인자로 queue의 사이즈를 지정해주
 
  내장 Tomcat 덕분에 위와 같이 Thread Pool을 구현할 필요 없이 `application.yml` 혹은 [application.properties](http://application.properties) 에서 Tomcat의 Connector설정을 변경 할 수 있다.
 
-```java
+```yml
 # application.yml (적어놓은 값은 default)
 server:
   tomcat:
@@ -236,12 +239,8 @@ Thead Pool에 의해 관리되는 스레드는 소켓 연결을 받아 요청을
 
 ### 참고자료 📚
 
-[Task queuing in Executors.newFixedThreadPool()](https://medium.com/@amardeepbhowmick92/task-queuing-in-executors-newfixedthreadpool-31bc8c24b4d2)
-
-[Introduction to Thread Pools in Java](https://www.baeldung.com/thread-pool-java-and-guava)
-
-[JAVA 쓰레드풀 분석 - newFixedThreadPool 는 어떻게 동작하는가?](https://hamait.tistory.com/937)
-
-[스프링부트는 어떻게 다중 유저 요청을 처리할까? (Tomcat9.0 Thread Pool)](https://velog.io/@sihyung92/how-does-springboot-handle-multiple-requests)
-
-[병행성(Concurrency)을 위한 CountDownLatch](https://imasoftwareengineer.tistory.com/100)
+- [Task queuing in Executors.newFixedThreadPool()](https://medium.com/@amardeepbhowmick92/task-queuing-in-executors-newfixedthreadpool-31bc8c24b4d2)
+- [Introduction to Thread Pools in Java](https://www.baeldung.com/thread-pool-java-and-guava)
+- [JAVA 쓰레드풀 분석 - newFixedThreadPool 는 어떻게 동작하는가?](https://hamait.tistory.com/937)
+- [스프링부트는 어떻게 다중 유저 요청을 처리할까? (Tomcat9.0 Thread Pool)](https://velog.io/@sihyung92/how-does-springboot-handle-multiple-requests)
+- [병행성(Concurrency)을 위한 CountDownLatch](https://imasoftwareengineer.tistory.com/100)

@@ -99,6 +99,7 @@ Hibernate:
 단방향 `@ManyToOne` 에선 `@JoinColumn`을 생략 할 수 있다. `@JoinColumn`을 생략하면 외래 키를 찾을 때 기본 전략을 사용한다. 실제로 앞의 예제 코드에서 `@JoinColumn`을 생략하고 테스트를 실행했을때 동일한 로그가 출력되는걸 확인할 수 있었다.
 
 > 기본 전략: 필드명 + _ + 참조하는 테이블의 컬럼명
+> 
 > ex) customer + _ + id -> customer_id
 
 그러나 단방향 `@OneToMany` 연관관계에서 `@JoinColumn`을 생략할 경우, JPA는 조인 테이블을 생성하여 엔티티간의 관계를 관리한다.
@@ -195,7 +196,7 @@ public class Customer {
 }
 ```
 
-조인 테이블이 생성되지 않은걸 확인할 수 있다.
+다시 테스트를 실행하고 로그를 확인해 보면 조인 테이블이 생성되지 않은걸 확인할 수 있다.
 
 ![log](https://i.imgur.com/1RLHtIp.png)
 

@@ -8,7 +8,7 @@ searchKeywords: jpa, JoinColumn, 외래 키, 외래 키 제약 조건
 description: JoinColumn
 ---
 
-`@JoinColumn`은 [[외래키]]를 매핑할 때 사용한다. 즉, 한 엔티티에서 다른 엔티티를 참조(조인)하는데 사용되는 필드를 지정하는 역할을 한다.
+`@JoinColumn`은 외래키를 매핑할 때 사용한다. 즉, 한 엔티티에서 다른 엔티티를 참조(조인)하는데 사용되는 필드를 지정하는 역할을 한다.
 
 ```java
 @Entity  

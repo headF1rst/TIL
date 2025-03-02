@@ -41,7 +41,7 @@ export async function getStaticProps({ params }: IParams) {
   const detail = getPostDetailById(params.id);
 
   if (!postData) {
-    return { props: {} };
+    return { notFound: true };
   }
   return { props: { postData, detail } };
 }
@@ -66,9 +66,16 @@ function PostDetail({ postData, detail }: IProps) {
     return <img {...props} style={{ maxHeight: "450px", maxWidth: "90%" }} />;
   };
 
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
+
   if (!postData) {
     return <div>존재하지 않는 게시글입니다.</div>;
   }
+
+  const tags = postData.tags ? postData.tags.split(", ") : [];
+
   return (
     <>
       <Head>
@@ -97,7 +104,7 @@ function PostDetail({ postData, detail }: IProps) {
             {postData.date}
           </div>
           <div className="flex flex-wrap gap-2 dark:text-black sm:m-0">
-            {postData.tags.split(", ").map((tag: string) => (
+            {tags.map((tag: string) => (
               <span
                 className={
                   "p-1 pl-3 pr-3 rounded-md bg-indigo-100 hover:bg-indigo-200 cursor-pointer transition ease-in-out duration-200 text-sm"

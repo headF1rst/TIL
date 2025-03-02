@@ -1,0 +1,362 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="apple-touch-icon" sizes="180x180" href="https://i.imgur.com/2nHGFTv.png"/><link rel="icon" type="image/png" sizes="32x32" href="https://i.imgur.com/2nHGFTv.png"/><link rel="icon" type="image/png" sizes="16x16" href="https://i.imgur.com/2nHGFTv.png"/><link rel="manifest" href="/site.webmanifest"/><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="theme-color" content="#ffffff"/><title>통합 테스트에 @MockBean, @SpyBean을 남용하지 말자</title><meta name="title" content="통합 테스트에 @MockBean, @SpyBean을 남용하지 말자"/><meta name="description" content=""/><meta name="keywords" content=""/><meta name="robots" content="index, follow"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><meta name="language" content="Korean"/><meta name="author" content="Sanha Ko"/><meta property="og:title" content="통합 테스트에 @MockBean, @SpyBean을 남용하지 말자"/><meta property="og:url" content="https://headf1rst.github.io/TIL/post2"/><meta property="og:type" content="blog"/><meta property="og:image" content="https://images.velog.io/images/woo00oo/post/69f1c47c-686b-4d50-ba28-cd3eea7b92f4/%E1%84%8C%E1%85%A6%E1%84%86%E1%85%A9%E1%86%A8%E1%84%8B%E1%85%B3%E1%86%AF%20%E1%84%8B%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A7%E1%86%A8%E1%84%92%E1%85%A2%E1%84%8C%E1%85%AE%E1%84%89%E1%85%A6%E1%84%8B%E1%85%AD._004.png"/><meta property="og:description"/><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"통합 테스트에 @MockBean, @SpyBean을 남용하지 말자","datePublished":"2025-02-28 10:00","dateModified":"2025-02-28 10:00","author":{"@type":"Person","name":"Sanha Ko"},"description":"","image":"https://images.velog.io/images/woo00oo/post/69f1c47c-686b-4d50-ba28-cd3eea7b92f4/%E1%84%8C%E1%85%A6%E1%84%86%E1%85%A9%E1%86%A8%E1%84%8B%E1%85%B3%E1%86%AF%20%E1%84%8B%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A7%E1%86%A8%E1%84%92%E1%85%A2%E1%84%8C%E1%85%AE%E1%84%89%E1%85%A6%E1%84%8B%E1%85%AD._004.png","url":"https://headf1rst.github.io/TIL/post2","keywords":"SpringBootTest,MockBean,SpyBean","publisher":{"@type":"Organization","name":"headF1rst","logo":{"@type":"ImageObject","url":"https://headf1rst.github.io/TIL/favicon.ico"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://headf1rst.github.io/TIL/post2"}}</script><meta name="next-head-count" content="23"/><link rel="preload" href="/TIL/_next/static/css/754b961274c075df.css" as="style"/><link rel="stylesheet" href="/TIL/_next/static/css/754b961274c075df.css" data-n-g=""/><link rel="preload" href="/TIL/_next/static/css/38994dd0aed51f22.css" as="style"/><link rel="stylesheet" href="/TIL/_next/static/css/38994dd0aed51f22.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/TIL/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/TIL/_next/static/chunks/webpack-ac557983bcc4c022.js" defer=""></script><script src="/TIL/_next/static/chunks/framework-2c79e2a64abdb08b.js" defer=""></script><script src="/TIL/_next/static/chunks/main-dc8c1543918dad35.js" defer=""></script><script src="/TIL/_next/static/chunks/pages/_app-421e211a78340d83.js" defer=""></script><script src="/TIL/_next/static/chunks/202-7f08bae5ecc79443.js" defer=""></script><script src="/TIL/_next/static/chunks/pages/%5Bid%5D-a17d958fe22e8c91.js" defer=""></script><script src="/TIL/_next/static/rHHwQgn4XzsFFzcKqsKPc/_buildManifest.js" defer=""></script><script src="/TIL/_next/static/rHHwQgn4XzsFFzcKqsKPc/_ssgManifest.js" defer=""></script></head><body><div id="__next"><nav class="flex bg-white sticky top-0 left-0 z-50 justify-between items-center border-b-2 border-gray-100 py-3 md:justify-start md:space-x-10 px-10 sm:px-5 dark:bg-[#0d1117] dark:text-[#c9d1d9] dark:border-gray-600"><div class="flex justify-start"><a href="/TIL"><div class="flex items-center gap-2 cursor-pointer"><img src="https://i.imgur.com/2nHGFTv.png" width="40" height="40" alt="블로그 아이콘"/><h1 class="text-lg ">산하개발실록</h1></div></a></div><div class="flex justify-between gap-10 sm:hidden"><a href="/TIL"><button class="font-light hover:text-indigo-300 text-base">Home</button></a><a href="/TIL/category"><button class="font-light hover:text-indigo-300 text-base">Category</button></a><a href="https://plain-composer-c65.notion.site/29c7640fdf054059b6ea28ed61189bfb" target="_blank" rel="noreferrer" class="hover:text-indigo-300 text-base font-light flex gap-1">About<span class="flex justify-center" style="align-items:center"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="m13 3 3.293 3.293-7 7 1.414 1.414 7-7L21 11V3z"></path><path d="M19 19H5V5h7l-2-2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2v-5l-2-2v7z"></path></svg></span></a></div><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="lg:hidden" height="25" width="25" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></nav><main class="dark:bg-[#0d1117] h-screen pb-10"><div class="flex flex-col w-3/5 sm:w-5/6 m-auto pt-20 pb-20 gap-10 dark:bg-[#0d1117] dark:text-[#c9d1d9]"><ul id="scroll-spy" class="sm:hidden p-10 fixed top-50 right-0 h-full w-1/5 text-gray-500 dark:text-[#c9d1d9]"></ul><div class="text-5xl font-bold">통합 테스트에 @MockBean, @SpyBean을 남용하지 말자</div><div class="flex flex-col gap-2"><div class="text-base text-gray-600 dark:text-gray-300">2025-02-28 10:00</div><div class="flex flex-wrap gap-2 dark:text-black sm:m-0"><span class="p-1 pl-3 pr-3 rounded-md bg-indigo-100 hover:bg-indigo-200 cursor-pointer transition ease-in-out duration-200 text-sm">SpringBootTest</span><span class="p-1 pl-3 pr-3 rounded-md bg-indigo-100 hover:bg-indigo-200 cursor-pointer transition ease-in-out duration-200 text-sm">MockBean</span><span class="p-1 pl-3 pr-3 rounded-md bg-indigo-100 hover:bg-indigo-200 cursor-pointer transition ease-in-out duration-200 text-sm">SpyBean</span></div></div><div class="markdown-body" style="font-size:17px"><p>좋은 테스트에 대해 이야기할 때, FIRST 원칙이 자주 거론된다.
+여기서 F는 Fast를 의미하는데, 좋은 테스트는 빠르게 동작해야하며 자주 실행할 수 있어야 한다 는 것을 의미한다.
+테스트가 느리면 피드백 주기가 길어지고 실행 빈도가 줄어들게 되어 버그를 조기에 발견하기 어려워지며 개발 생산성이 떨어지게 된다.</p>
+<p>@SpringBootTest는 ApplicationContext에 있는 모든 Bean을 띄우기 때문에 테스트 실행에 많은 시간이 소요된다.</p>
+<p>만약 @SpringBootTest 마다 ApplicationContext를 띄우면 통합 테스트가 늘어남에 따라 테스트 실행 속도도 상당히 느려지게 될 것이다.
+Spring은 이러한 문제를 해결하고자 @SpringBootTest 등을 사용한 통합 테스트에서 <a href="https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/ctx-management/caching.html">ContextCaching</a>을 제공한다.</p>
+<p>Spring은 ApplicationContext를 캐싱하여 동일한 설정을 가진 테스트에서는 기존의 캐싱된 컨텍스트를 재사용하여 테스트 실행 속도를 최적화한다.</p>
+<h2>Context Caching 동작 방식</h2>
+<p>Spring은 컨텍스트의 key를 생성하여, 이전에 생성된 컨텍스트가 캐시에 존재 하는지 확인하고 같은 키를 가진 컨텍스트가 있으면 재사용한다.</p>
+<p>Spring의 컨텍스트 캐싱 메커니즘은 다음과 같이 동작한다.</p>
+<h3>1. MergedContextConfiguration 객체 생성</h3>
+<p>테스트가 실행될 때 Spring은 해당 테스트의 설정을 기반으로 MergedContextConfiguration 객체를 생성한다.
+MergedContextConfiguration은 캐시 키로 사용되는 컨텍스트 설정 정보를 포함한 객체로 다음과 같은 정보를 포함한다.</p>
+<p><img src="https://i.imgur.com/MUGHy8z.png" alt="" node="[object Object]" style="max-height:450px;max-width:90%"/></p>
+<p>만약 @MockBean이나 @SpyBean을 사용할 경우 contextCustomimizers에 MockBeanCustomizer가 추가되면서 MergedContextConfiguration의 해시코드가 달라지게 된다.
+즉, ContextCache의 캐시 키가 달라지게 되면서 기존에 캐시된 ApplicationContext를 재사용하지 못하게 된다.</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#a626a4">public</span><span> </span><span style="color:#a626a4">abstract</span><span> </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">AbstractTestContextBootstrapper</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#a626a4">implements</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">TestContextBootstrapper</span><span class="hljs-class"> </span><span>{
+</span>
+<span>    </span><span class="hljs-function" style="color:#a626a4">private</span><span class="hljs-function"> MergedContextConfiguration </span><span class="hljs-function" style="color:#4078f2">buildMergedContextConfiguration</span><span class="hljs-function hljs-params">(
+</span><span class="hljs-function hljs-params">        Class&lt;?&gt; testClass,
+</span><span class="hljs-function hljs-params">        List&lt;ContextConfigurationAttributes&gt; configAttributesList,
+</span><span class="hljs-function hljs-params">        </span><span class="hljs-function hljs-params" style="color:#4078f2">@Nullable</span><span class="hljs-function hljs-params"> MergedContextConfiguration parentConfig,
+</span><span class="hljs-function hljs-params">        CacheAwareContextLoaderDelegate cacheAwareContextLoaderDelegate,
+</span><span class="hljs-function hljs-params">        </span><span class="hljs-function hljs-params" style="color:#a626a4">boolean</span><span class="hljs-function hljs-params"> requireLocationsClassesOrInitializers)</span><span class="hljs-function"> </span><span>{
+</span>
+<span>        </span><span style="color:#a0a1a7;font-style:italic">// 1. 설정 정보 수집을 위한 컨테이너</span><span>
+</span><span>        List&lt;String&gt; locations = </span><span style="color:#a626a4">new</span><span> ArrayList&lt;&gt;();
+</span><span>        List&lt;Class&lt;?&gt;&gt; classes = </span><span style="color:#a626a4">new</span><span> ArrayList&lt;&gt;();
+</span><span>        List&lt;Class&lt;?&gt;&gt; initializers = </span><span style="color:#a626a4">new</span><span> ArrayList&lt;&gt;();
+</span>
+<span>        </span><span style="color:#a0a1a7;font-style:italic">// 2. 각 설정 속성 처리</span><span>
+</span><span>        </span><span style="color:#a626a4">for</span><span> (ContextConfigurationAttributes configAttributes : configAttributesList) {
+</span>            ...
+<!-- -->            }
+<!-- -->        }
+<!-- -->
+<span>        </span><span style="color:#a0a1a7;font-style:italic">// 3. 추가 설정 수집</span><span>
+</span>        Set&lt;ContextCustomizer&gt; contextCustomizers = getContextCustomizers(testClass,
+<!-- -->            Collections.unmodifiableList(configAttributesList));
+<!-- -->
+<span>        </span><span style="color:#a0a1a7;font-style:italic">// 4. 프로퍼티 소스 처리</span><span>
+</span>        MergedTestPropertySources mergedTestPropertySources =
+<!-- -->            TestPropertySourceUtils.buildMergedTestPropertySources(testClass);
+<!-- -->
+<span>        </span><span style="color:#a0a1a7;font-style:italic">// 5. 최종 MergedContextConfiguration 생성</span><span>
+</span><span>        </span><span style="color:#a626a4">return</span><span> </span><span style="color:#a626a4">new</span><span> MergedContextConfiguration(
+</span>            testClass,
+<!-- -->            StringUtils.toStringArray(locations),
+<!-- -->            ClassUtils.toClassArray(classes),
+<!-- -->            ApplicationContextInitializerUtils.resolveInitializerClasses(configAttributesList),
+<!-- -->            ActiveProfilesUtils.resolveActiveProfiles(testClass),
+<!-- -->            mergedTestPropertySources.getPropertySourceDescriptors(),
+<!-- -->            mergedTestPropertySources.getProperties(),
+<!-- -->            contextCustomizers,
+<!-- -->            contextLoader,
+<!-- -->            cacheAwareContextLoaderDelegate,
+<!-- -->            parentConfig);
+<!-- -->    }
+<!-- -->}</code></div></pre>
+<h3>2. 캐시 키 생성</h3>
+<p>MergedContextConfiguration 객체는 위의 설정 요소들을 조합하여 해시 코드를 생성하며 이 해시 코드는 캐시 키로 사용된다.</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#a626a4">public</span><span> </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">DefaultContextCache</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#a626a4">implements</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">ContextCache</span><span class="hljs-class"> </span><span>{
+</span>
+<span>    </span><span style="color:#a626a4">private</span><span> </span><span style="color:#a626a4">final</span><span> Map&lt;MergedContextConfiguration, ApplicationContext&gt; contextMap =
+</span><span>        Collections.synchronizedMap(</span><span style="color:#a626a4">new</span><span> LruCache(</span><span style="color:#986801">32</span><span>, </span><span style="color:#986801">0.75f</span><span>));
+</span><span>        </span><span style="color:#a0a1a7;font-style:italic">// ...</span><span>
+</span>}</code></div></pre>
+<h3>3. 캐시 저장 및 조회</h3>
+<p>새로운 테스트 실행 시, Spring은 먼저 현재 설정의 해시 키가 캐시에 존재하는지 확인한다.</p>
+<p>동일한 키가 존재하면 캐시된 컨텍스트를 반환하고, 존재하지 않으면 새로 ApplicationContext를 생성하여 캐시에 저장한다.</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#a626a4">public</span><span> </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">DefaultContextCache</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#a626a4">implements</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">ContextCache</span><span class="hljs-class"> </span><span>{
+</span>    ...
+<!-- -->    
+<span>    </span><span style="color:#4078f2">@Override</span><span>
+</span><span>    </span><span style="color:#4078f2">@Nullable</span><span>
+</span><span>    </span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> ApplicationContext </span><span class="hljs-function" style="color:#4078f2">get</span><span class="hljs-function hljs-params">(MergedContextConfiguration key)</span><span class="hljs-function"> </span><span>{
+</span><span>        Assert.notNull(key, </span><span style="color:#50a14f">&quot;Key must not be null&quot;</span><span>);
+</span><span>        ApplicationContext context = </span><span style="color:#a626a4">this</span><span>.contextMap.get(key);
+</span><span>        </span><span style="color:#a626a4">if</span><span> (context == </span><span style="color:#a626a4">null</span><span>) {
+</span><span>            </span><span style="color:#a626a4">this</span><span>.missCount.incrementAndGet();
+</span>        }
+<span>        </span><span style="color:#a626a4">else</span><span> {
+</span><span>            </span><span style="color:#a626a4">this</span><span>.hitCount.incrementAndGet();
+</span>        }
+<span>        </span><span style="color:#a626a4">return</span><span> context;
+</span>    }
+<!-- -->
+<span>    </span><span style="color:#4078f2">@Override</span><span>
+</span><span>    </span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#a626a4">void</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">put</span><span class="hljs-function hljs-params">(MergedContextConfiguration key, ApplicationContext context)</span><span class="hljs-function"> </span><span>{
+</span><span>        Assert.notNull(key, </span><span style="color:#50a14f">&quot;Key must not be null&quot;</span><span>);
+</span><span>        Assert.notNull(context, </span><span style="color:#50a14f">&quot;ApplicationContext must not be null&quot;</span><span>);
+</span>
+<span>        </span><span style="color:#a626a4">this</span><span>.contextMap.put(key, context);
+</span>        MergedContextConfiguration child = key;
+<!-- -->        MergedContextConfiguration parent = child.getParent();
+<span>        </span><span style="color:#a626a4">while</span><span> (parent != </span><span style="color:#a626a4">null</span><span>) {
+</span><span>            Set&lt;MergedContextConfiguration&gt; list = </span><span style="color:#a626a4">this</span><span>.hierarchyMap.computeIfAbsent(parent, k -&gt; </span><span style="color:#a626a4">new</span><span> HashSet&lt;&gt;());
+</span>            list.add(child);
+<!-- -->            child = parent;
+<!-- -->            parent = child.getParent();
+<!-- -->        }
+<!-- -->    }
+<!-- -->}</code></div></pre>
+<p>ContextCaching이 어떻게 동작하는지 이해했다면, 정말로 CacheKey가 달라졌을때 ApplicationContext가 재사용되지 않는지 확인해보자.</p>
+<h2>예제 코드</h2>
+<p>위치 좌표 정보를 외부 API에서 조회하는 예제를 통해 살펴보자. 먼저 Bean으로 등록할 객체 하나와 위치 API 클라이언트 인터페이스를 정의한다.</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#4078f2">@Service</span><span>
+</span><span></span><span style="color:#a626a4">public</span><span> </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">TransportService</span><span class="hljs-class"> </span><span>{
+</span>
+<span>    </span><span style="color:#a626a4">private</span><span> </span><span style="color:#a626a4">final</span><span> String instanceId;
+</span>
+<span>    </span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">TransportService</span><span class="hljs-function hljs-params">()</span><span class="hljs-function"> </span><span>{
+</span><span>        </span><span style="color:#a626a4">this</span><span>.instanceId = java.util.UUID.randomUUID().toString();
+</span>    }
+<!-- -->
+<span>    </span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> String </span><span class="hljs-function" style="color:#4078f2">getInstanceId</span><span class="hljs-function hljs-params">()</span><span class="hljs-function"> </span><span>{
+</span><span>        </span><span style="color:#a626a4">return</span><span> instanceId;
+</span>    }
+<!-- -->}</code></div></pre>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#a626a4">public</span><span> </span><span class="hljs-class" style="color:#a626a4">interface</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">LocationApiClient</span><span class="hljs-class"> </span><span>{
+</span>    
+<span>    </span><span style="color:#a0a1a7;font-style:italic">// 주소로 위치 좌표를 조회한다</span><span>
+</span><span>    </span><span class="hljs-function">LocationCoordinate </span><span class="hljs-function" style="color:#4078f2">getCoordinatesByAddress</span><span class="hljs-function hljs-params">(String address)</span><span>;
+</span>
+<!-- -->
+<span>    </span><span style="color:#a0a1a7;font-style:italic">// 현재 API 클라이언트의 인스턴스 ID를 반환한다</span><span>
+</span><span>    </span><span class="hljs-function">String </span><span class="hljs-function" style="color:#4078f2">getInstanceId</span><span class="hljs-function hljs-params">()</span><span>;
+</span>}</code></div></pre>
+<p>다음으로 실제 API를 호출하는 구현체를 작성하였다.</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#4078f2">@Service</span><span>
+</span><span></span><span style="color:#a626a4">public</span><span> </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">KakaoLocationApiClient</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#a626a4">implements</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">LocationApiClient</span><span class="hljs-class"> </span><span>{
+</span>
+<span>    </span><span style="color:#a626a4">private</span><span> </span><span style="color:#a626a4">final</span><span> RestTemplate restTemplate;
+</span><span>    </span><span style="color:#a626a4">private</span><span> </span><span style="color:#a626a4">final</span><span> String apiKey;
+</span><span>    </span><span style="color:#a626a4">private</span><span> </span><span style="color:#a626a4">final</span><span> String instanceId;
+</span>
+<span>    </span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">KakaoLocationApiClient</span><span class="hljs-function hljs-params">(</span><span class="hljs-function hljs-params" style="color:#4078f2">@Value(&quot;${kakao.api.key:SAMPLE_API_KEY}&quot;)</span><span class="hljs-function hljs-params"> String apiKey)</span><span class="hljs-function"> </span><span>{
+</span><span>        </span><span style="color:#a626a4">this</span><span>.restTemplate = </span><span style="color:#a626a4">new</span><span> RestTemplate();
+</span><span>        </span><span style="color:#a626a4">this</span><span>.apiKey = apiKey;
+</span><span>        </span><span style="color:#a626a4">this</span><span>.instanceId = UUID.randomUUID().toString();
+</span>    }
+<!-- -->
+<span>    </span><span style="color:#4078f2">@Override</span><span>
+</span><span>    </span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> LocationCoordinate </span><span class="hljs-function" style="color:#4078f2">getCoordinatesByAddress</span><span class="hljs-function hljs-params">(String address)</span><span class="hljs-function"> </span><span>{
+</span><span>        </span><span style="color:#a0a1a7;font-style:italic">// 실제 API 호출 코드</span><span>
+</span><span>        String url = </span><span style="color:#50a14f">&quot;https://dapi.kakao.com/v2/local/search/address.json?query=&quot;</span><span> + address;
+</span>        
+<span>        HttpHeaders headers = </span><span style="color:#a626a4">new</span><span> HttpHeaders();
+</span><span>        headers.set(</span><span style="color:#50a14f">&quot;Authorization&quot;</span><span>, </span><span style="color:#50a14f">&quot;KakaoAK &quot;</span><span> + apiKey);
+</span>        
+<span>        HttpEntity&lt;String&gt; entity = </span><span style="color:#a626a4">new</span><span> HttpEntity&lt;&gt;(headers);
+</span>        
+<span>        </span><span style="color:#a626a4">try</span><span> {
+</span>            ResponseEntity&lt;Map&gt; response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+<span>            </span><span style="color:#a0a1a7;font-style:italic">// 응답 처리 로직...</span><span>
+</span><span>            </span><span style="color:#a626a4">return</span><span> parseResponse(response.getBody(), address);
+</span><span>        } </span><span style="color:#a626a4">catch</span><span> (Exception e) {
+</span><span>            </span><span style="color:#a626a4">throw</span><span> </span><span style="color:#a626a4">new</span><span> RuntimeException(</span><span style="color:#50a14f">&quot;위치 정보 조회 실패: &quot;</span><span> + e.getMessage(), e);
+</span>        }
+<!-- -->    }
+<!-- -->
+<span>    </span><span style="color:#4078f2">@Override</span><span>
+</span><span>    </span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> String </span><span class="hljs-function" style="color:#4078f2">getInstanceId</span><span class="hljs-function hljs-params">()</span><span class="hljs-function"> </span><span>{
+</span><span>        </span><span style="color:#a626a4">return</span><span> instanceId;
+</span>    }
+<!-- -->}</code></div></pre>
+<p>이제 ApplicationContext의 재사용 여부를 검증하기 위한 테스트를 작성해 보도록 하자.</p>
+<ul>
+<li>첫 번째 테스트: 기본 컨텍스트 로드</li>
+<li>두 번째 테스트: 동일한 설정으로 컨텍스트 재사용 확인</li>
+<li>세 번째 테스트: MockBean 사용으로 컨텍스트 재생성 확인</li>
+</ul>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#a626a4">public</span><span> </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">ContextCachingVerificationTest</span><span class="hljs-class"> </span><span>{
+</span>
+<!-- -->    Logger log = LoggerFactory.getLogger(ContextCachingVerificationTest.class);
+<!-- -->
+<span>    </span><span style="color:#4078f2">@Nested</span><span>
+</span><span>    </span><span style="color:#4078f2">@SpringBootTest</span><span>
+</span><span>    </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">FirstTest</span><span class="hljs-class"> </span><span>{
+</span>
+<span>        </span><span style="color:#4078f2">@Autowired</span><span>
+</span>        ApplicationContext context;
+<!-- -->        
+<span>        </span><span style="color:#4078f2">@Autowired</span><span>
+</span>        TransportService transportService;
+<!-- -->
+<span>        </span><span style="color:#4078f2">@Test</span><span>
+</span><span>        </span><span class="hljs-function" style="color:#a626a4">void</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">saveFirstContextInfo</span><span class="hljs-function hljs-params">()</span><span class="hljs-function"> </span><span>{
+</span>            assertThat(context).isNotNull();
+<!-- -->            assertThat(transportService).isNotNull();
+<!-- -->
+<span>            </span><span style="color:#a0a1a7;font-style:italic">// 첫 번째 컨텍스트 정보 출력</span><span>
+</span><span>            log.info(</span><span style="color:#50a14f">&quot;FirstTest - Context hash: {}&quot;</span><span>, System.identityHashCode(context));
+</span><span>            log.info(</span><span style="color:#50a14f">&quot;FirstTest - TransportService instance ID: {}&quot;</span><span>, transportService.getInstanceId());
+</span>        }
+<!-- -->    }
+<!-- -->
+<span>    </span><span style="color:#4078f2">@Nested</span><span>
+</span><span>    </span><span style="color:#4078f2">@SpringBootTest</span><span>
+</span><span>    </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">SecondTest</span><span class="hljs-class"> </span><span>{
+</span>
+<span>        </span><span style="color:#4078f2">@Autowired</span><span>
+</span>        ApplicationContext context;
+<!-- -->        
+<span>        </span><span style="color:#4078f2">@Autowired</span><span>
+</span>        TransportService transportService;
+<!-- -->
+<span>        </span><span style="color:#4078f2">@Test</span><span>
+</span><span>        </span><span class="hljs-function" style="color:#a626a4">void</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">verifyContextReuse</span><span class="hljs-function hljs-params">()</span><span class="hljs-function"> </span><span>{
+</span>            assertThat(context).isNotNull();
+<!-- -->            assertThat(transportService).isNotNull();
+<!-- -->
+<span>            </span><span style="color:#a0a1a7;font-style:italic">// 두 번째 컨텍스트 정보 출력</span><span>
+</span><span>            log.info(</span><span style="color:#50a14f">&quot;SecondTest - Context hash: {}&quot;</span><span>, System.identityHashCode(context));
+</span><span>            log.info(</span><span style="color:#50a14f">&quot;SecondTest - TransportService instance ID: {}&quot;</span><span>, transportService.getInstanceId());
+</span>        }
+<!-- -->    }
+<!-- -->
+<span>    </span><span style="color:#4078f2">@Nested</span><span>
+</span><span>    </span><span style="color:#4078f2">@SpringBootTest</span><span>
+</span><span>    </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">ThirdTestWithMockBean</span><span class="hljs-class"> </span><span>{
+</span>
+<span>        </span><span style="color:#4078f2">@Autowired</span><span>
+</span>        ApplicationContext context;
+<!-- -->        
+<span>        </span><span style="color:#4078f2">@Autowired</span><span>
+</span>        TransportService transportService;
+<!-- -->        
+<span>        </span><span style="color:#4078f2">@MockBean</span><span>
+</span>        LocationApiClient locationApiClient;
+<!-- -->
+<span>        </span><span style="color:#4078f2">@Test</span><span>
+</span><span>        </span><span class="hljs-function" style="color:#a626a4">void</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">verifyNewContextCreation</span><span class="hljs-function hljs-params">()</span><span class="hljs-function"> </span><span>{
+</span>            assertThat(context).isNotNull();
+<!-- -->            assertThat(transportService).isNotNull();
+<!-- -->            assertThat(locationApiClient).isNotNull();
+<!-- -->
+<span>            log.info(</span><span style="color:#50a14f">&quot;MockTest - Context hash: {}&quot;</span><span>, System.identityHashCode(context));
+</span><span>            log.info(</span><span style="color:#50a14f">&quot;MockTest - TransportService instance ID: {}&quot;</span><span>, transportService.getInstanceId());
+</span>        }
+<!-- -->    }
+<!-- -->}</code></div></pre>
+<p>첫 번째 테스트와 두 번째 테스트는 동일한 설정으로 컨텍스트를 재사용하기 때문에 ApplicationContext가 재사용되는 것을 기대할 수 있다.
+만약 ApplicationContext가 재사용됐다면, 첫 번째 테스트와 두 번째 테스트의 ApplicationContext 해시코드가 동일할 것이고 TransportService의 인스턴스 ID도 동일할 것이다.</p>
+<p>세 번째 테스트는 @MockBean을 사용했기 때문에 ContextCahche에서 동일한 키를 찾지 못하여 ApplicationContext가 재사용되지 않고 새로 생성될 것이다.
+즉, 첫 번째, 두 번째 테스트와는 다른 ApplicationContext가 생성될 것이고, TransportService의 인스턴스 ID도 다를 것이다.</p>
+<h3>테스트 실행 결과</h3>
+<p><img src="https://i.imgur.com/Uxk21uj.png" alt="" node="[object Object]" style="max-height:450px;max-width:90%"/></p>
+<p><img src="https://i.imgur.com/x0gCXng.png" alt="" node="[object Object]" style="max-height:450px;max-width:90%"/></p>
+<p>예상과 같이 첫 번째 테스트와 두 번째 테스트는 동일한 ApplicationContext를 재사용하고, 세 번째 테스트는 @MockBean을 사용하여 새로운 ApplicationContext가 생성되는 것을 확인할 수 있었다.</p>
+<h2>테스트 대역을 사용하면서 ApplicationContext를 재사용하는 방법</h2>
+<p>어떻게 하면 테스트 대역을 사용하여 실제 API를 호출하지 않으면서도 ApplicationContext를 재사용 하여 테스트 실행 속도를 개선할 수 있을까?</p>
+<h3>Stub으로 @MockBean 대체하기</h3>
+<p>인터페이스를 구현하거나 테스트 대역 클래스를 상속받아 스텁 객체를 만들어 @MockBean을 대체할 수 있다. 이 방법은 외부 API와 같은 의존성을 테스트할 때 특히 유용하다.</p>
+<p>테스트에서 사용할 스텁 구현체를 아래와 같이 정의한다.</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#4078f2">@Service</span><span>
+</span><span></span><span style="color:#4078f2">@Profile(&quot;test&quot;)</span><span>
+</span><span></span><span style="color:#a626a4">public</span><span> </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">StubLocationApiClient</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#a626a4">implements</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">LocationApiClient</span><span class="hljs-class"> </span><span>{
+</span>
+<span>    </span><span style="color:#a626a4">private</span><span> </span><span style="color:#a626a4">final</span><span> String instanceId = </span><span style="color:#50a14f">&quot;stub-instance-id&quot;</span><span>;
+</span>
+<span>    </span><span style="color:#4078f2">@Override</span><span>
+</span><span>    </span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> LocationCoordinate </span><span class="hljs-function" style="color:#4078f2">getCoordinatesByAddress</span><span class="hljs-function hljs-params">(String address)</span><span class="hljs-function"> </span><span>{
+</span><span>        </span><span style="color:#a0a1a7;font-style:italic">// 테스트용 고정 좌표 반환</span><span>
+</span><span>        </span><span style="color:#a626a4">return</span><span> </span><span style="color:#a626a4">new</span><span> LocationCoordinate(</span><span style="color:#986801">37.5665</span><span>, </span><span style="color:#986801">126.9780</span><span>, </span><span style="color:#50a14f">&quot;테스트 주소: &quot;</span><span> + address);
+</span>    }
+<!-- -->
+<span>    </span><span style="color:#4078f2">@Override</span><span>
+</span><span>    </span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> String </span><span class="hljs-function" style="color:#4078f2">getInstanceId</span><span class="hljs-function hljs-params">()</span><span class="hljs-function"> </span><span>{
+</span><span>        </span><span style="color:#a626a4">return</span><span> instanceId;
+</span>    }
+<!-- -->}</code></div></pre>
+<p>이 스텁 구현체는 실제 API를 호출하지 않고 테스트에 필요한 고정된 값을 반환한다. 이를 통해 테스트 실행 속도를 높이고 외부 의존성 없이 안정적인 테스트를 수행할 수 있다.</p>
+<p>테스트 환경에서만 스텁 구현체를 사용하도록 @Profile을 설정하였다. <code node="[object Object]">src/test/resources/application-test.yml</code> 파일을 생성하여 프로파일을 설정해주자.</p>
+<p>환경변수를 주입할 수 있는 곳이 여러군데 있긴 하지만 <code node="[object Object]">build.gradle</code>에 아래와 같이 설정해주면 편리하게 환경변수를 주입할 수 있다.</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-groovy" style="white-space:pre"><span>tasks.named(</span><span style="color:#50a14f">&#x27;test&#x27;</span><span>) {
+</span>    useJUnitPlatform()
+<span>    systemProperty(</span><span style="color:#50a14f">&quot;spring.profiles.active&quot;</span><span>, </span><span style="color:#50a14f">&quot;test&quot;</span><span>)
+</span>}</code></div></pre>
+<p>이제 테스트에서 이 스텁 구현체를 사용하도록 설정한 다음 ApplicationContext를 재사용하는지 확인해보자.</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#a626a4">public</span><span> </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">ContextCachingVerificationTest</span><span class="hljs-class"> </span><span>{
+</span>
+<!-- -->    Logger log = LoggerFactory.getLogger(ContextCachingVerificationTest.class);
+<!-- -->
+<span>    </span><span style="color:#4078f2">@Nested</span><span>
+</span><span>    </span><span style="color:#4078f2">@SpringBootTest</span><span>
+</span><span>    </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">FirstTest</span><span class="hljs-class"> </span><span>{
+</span>
+<span>        </span><span style="color:#4078f2">@Autowired</span><span>
+</span>        ApplicationContext context;
+<!-- -->        
+<span>        </span><span style="color:#4078f2">@Autowired</span><span>
+</span>        TransportService transportService;
+<!-- -->
+<span>        </span><span style="color:#4078f2">@Test</span><span>
+</span><span>        </span><span class="hljs-function" style="color:#a626a4">void</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">saveFirstContextInfo</span><span class="hljs-function hljs-params">()</span><span class="hljs-function"> </span><span>{
+</span>            assertThat(context).isNotNull();
+<!-- -->            assertThat(transportService).isNotNull();
+<!-- -->
+<span>            </span><span style="color:#a0a1a7;font-style:italic">// 첫 번째 컨텍스트 정보 출력</span><span>
+</span><span>            log.info(</span><span style="color:#50a14f">&quot;FirstTest - Context hash: {}&quot;</span><span>, System.identityHashCode(context));
+</span><span>            log.info(</span><span style="color:#50a14f">&quot;FirstTest - TransportService instance ID: {}&quot;</span><span>, transportService.getInstanceId());
+</span>        }
+<!-- -->    }
+<!-- -->
+<span>    </span><span style="color:#4078f2">@Nested</span><span>
+</span><span>    </span><span style="color:#4078f2">@SpringBootTest</span><span>
+</span><span>    </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">SecondTest</span><span class="hljs-class"> </span><span>{
+</span>
+<span>        </span><span style="color:#4078f2">@Autowired</span><span>
+</span>        ApplicationContext context;
+<!-- -->        
+<span>        </span><span style="color:#4078f2">@Autowired</span><span>
+</span>        TransportService transportService;
+<!-- -->
+<span>        </span><span style="color:#4078f2">@Test</span><span>
+</span><span>        </span><span class="hljs-function" style="color:#a626a4">void</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">verifyContextReuse</span><span class="hljs-function hljs-params">()</span><span class="hljs-function"> </span><span>{
+</span>            assertThat(context).isNotNull();
+<!-- -->            assertThat(transportService).isNotNull();
+<!-- -->
+<span>            </span><span style="color:#a0a1a7;font-style:italic">// 두 번째 컨텍스트 정보 출력</span><span>
+</span><span>            log.info(</span><span style="color:#50a14f">&quot;SecondTest - Context hash: {}&quot;</span><span>, System.identityHashCode(context));
+</span><span>            log.info(</span><span style="color:#50a14f">&quot;SecondTest - TransportService instance ID: {}&quot;</span><span>, transportService.getInstanceId());
+</span>        }
+<!-- -->    }
+<!-- -->
+<span>    </span><span style="color:#4078f2">@Nested</span><span>
+</span><span>    </span><span style="color:#4078f2">@SpringBootTest</span><span>
+</span><span>    </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">ThirdTestWithMockBean</span><span class="hljs-class"> </span><span>{
+</span>
+<span>        </span><span style="color:#4078f2">@Autowired</span><span>
+</span>        ApplicationContext context;
+<!-- -->        
+<span>        </span><span style="color:#4078f2">@Autowired</span><span>
+</span>        TransportService transportService;
+<!-- -->        
+<span>        </span><span style="color:#4078f2">@Autowired</span><span>
+</span>        LocationApiClient stubLocationApiClient;
+<!-- -->
+<span>        </span><span style="color:#4078f2">@Test</span><span>
+</span><span>        </span><span class="hljs-function" style="color:#a626a4">void</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">verifyNewContextCreation</span><span class="hljs-function hljs-params">()</span><span class="hljs-function"> </span><span>{
+</span>            assertThat(context).isNotNull();
+<!-- -->            assertThat(transportService).isNotNull();
+<!-- -->            assertThat(stubLocationApiClient).isNotNull();
+<!-- -->
+<span>            log.info(</span><span style="color:#50a14f">&quot;MockTest - Context hash: {}&quot;</span><span>, System.identityHashCode(context));
+</span><span>            log.info(</span><span style="color:#50a14f">&quot;MockTest - TransportService instance ID: {}&quot;</span><span>, transportService.getInstanceId());
+</span><span>            log.info(</span><span style="color:#50a14f">&quot;MockTest - LocationApiClient instance ID: {}&quot;</span><span>, stubLocationApiClient.getInstanceId());
+</span>        }
+<!-- -->    }
+<!-- -->}</code></div></pre>
+<h3>테스트 실행 결과</h3>
+<p><img src="https://i.imgur.com/LKE56mb.png" alt="" node="[object Object]" style="max-height:450px;max-width:90%"/></p>
+<p>테스트 실행 결과를 확인해보면, 스텁을 사용한 테스트가 ApplicationContext를 재사용하는 것을 확인할 수 있다.</p>
+<h3>마무리</h3>
+<p>@SpringBootTest를 사용한 테스트에서 @MockBean과 @SpyBean을 남용하면 ApplicationContext가 재사용되지 않아 테스트 실행 속도가 느려질 수 있으며,
+메모리 사용량이 늘어나서 OOM이 발생할 수 있다.</p>
+<p>물론 테스트가 많지 않다면 문제가 되지 않겠지만, 테스트가 많아질 경우 Stub을 사용하여 @MockBean과 @SpyBean을 대체하는 방안을 고려해보자.</p>
+<h3>참고 자료</h3>
+<ul>
+<li>https://github.com/spring-projects/spring-boot/issues/10015</li>
+</ul></div><section></section></div></main></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"postData":{"id":"post2","title":"통합 테스트에 @MockBean, @SpyBean을 남용하지 말자","category":null,"thumbnail":"https://images.velog.io/images/woo00oo/post/69f1c47c-686b-4d50-ba28-cd3eea7b92f4/%E1%84%8C%E1%85%A6%E1%84%86%E1%85%A9%E1%86%A8%E1%84%8B%E1%85%B3%E1%86%AF%20%E1%84%8B%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A7%E1%86%A8%E1%84%92%E1%85%A2%E1%84%8C%E1%85%AE%E1%84%89%E1%85%A6%E1%84%8B%E1%85%AD._004.png","tags":"SpringBootTest, MockBean, SpyBean","date":"2025-02-28 10:00","preview":"\n좋은 테스트에 대해 이야기할 때, FIRST 원칙이 자주 거론된다.\n여기서 F는 Fast를 의미하는데, 좋은 테스트는 빠르게 동작해야하며 자주 실행할 수 있어야 한다 는 것을 의미한다.\n테스트가 느리면 피드백 주기가 길어지고 실행 빈도가 줄어들게 되"},"detail":"\n좋은 테스트에 대해 이야기할 때, FIRST 원칙이 자주 거론된다.\n여기서 F는 Fast를 의미하는데, 좋은 테스트는 빠르게 동작해야하며 자주 실행할 수 있어야 한다 는 것을 의미한다.\n테스트가 느리면 피드백 주기가 길어지고 실행 빈도가 줄어들게 되어 버그를 조기에 발견하기 어려워지며 개발 생산성이 떨어지게 된다.\n\n@SpringBootTest는 ApplicationContext에 있는 모든 Bean을 띄우기 때문에 테스트 실행에 많은 시간이 소요된다.\n\n만약 @SpringBootTest 마다 ApplicationContext를 띄우면 통합 테스트가 늘어남에 따라 테스트 실행 속도도 상당히 느려지게 될 것이다.\nSpring은 이러한 문제를 해결하고자 @SpringBootTest 등을 사용한 통합 테스트에서 [ContextCaching](https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/ctx-management/caching.html)을 제공한다.\n\nSpring은 ApplicationContext를 캐싱하여 동일한 설정을 가진 테스트에서는 기존의 캐싱된 컨텍스트를 재사용하여 테스트 실행 속도를 최적화한다.\n\n## Context Caching 동작 방식\n\nSpring은 컨텍스트의 key를 생성하여, 이전에 생성된 컨텍스트가 캐시에 존재 하는지 확인하고 같은 키를 가진 컨텍스트가 있으면 재사용한다.\n\nSpring의 컨텍스트 캐싱 메커니즘은 다음과 같이 동작한다.\n\n### 1. MergedContextConfiguration 객체 생성\n\n테스트가 실행될 때 Spring은 해당 테스트의 설정을 기반으로 MergedContextConfiguration 객체를 생성한다.\nMergedContextConfiguration은 캐시 키로 사용되는 컨텍스트 설정 정보를 포함한 객체로 다음과 같은 정보를 포함한다.\n\n![](https://i.imgur.com/MUGHy8z.png)\n\n만약 @MockBean이나 @SpyBean을 사용할 경우 contextCustomimizers에 MockBeanCustomizer가 추가되면서 MergedContextConfiguration의 해시코드가 달라지게 된다.\n즉, ContextCache의 캐시 키가 달라지게 되면서 기존에 캐시된 ApplicationContext를 재사용하지 못하게 된다.\n\n```java\npublic abstract class AbstractTestContextBootstrapper implements TestContextBootstrapper {\n\n    private MergedContextConfiguration buildMergedContextConfiguration(\n        Class\u003c?\u003e testClass,\n        List\u003cContextConfigurationAttributes\u003e configAttributesList,\n        @Nullable MergedContextConfiguration parentConfig,\n        CacheAwareContextLoaderDelegate cacheAwareContextLoaderDelegate,\n        boolean requireLocationsClassesOrInitializers) {\n\n        // 1. 설정 정보 수집을 위한 컨테이너\n        List\u003cString\u003e locations = new ArrayList\u003c\u003e();\n        List\u003cClass\u003c?\u003e\u003e classes = new ArrayList\u003c\u003e();\n        List\u003cClass\u003c?\u003e\u003e initializers = new ArrayList\u003c\u003e();\n\n        // 2. 각 설정 속성 처리\n        for (ContextConfigurationAttributes configAttributes : configAttributesList) {\n            ...\n            }\n        }\n\n        // 3. 추가 설정 수집\n        Set\u003cContextCustomizer\u003e contextCustomizers = getContextCustomizers(testClass,\n            Collections.unmodifiableList(configAttributesList));\n\n        // 4. 프로퍼티 소스 처리\n        MergedTestPropertySources mergedTestPropertySources =\n            TestPropertySourceUtils.buildMergedTestPropertySources(testClass);\n\n        // 5. 최종 MergedContextConfiguration 생성\n        return new MergedContextConfiguration(\n            testClass,\n            StringUtils.toStringArray(locations),\n            ClassUtils.toClassArray(classes),\n            ApplicationContextInitializerUtils.resolveInitializerClasses(configAttributesList),\n            ActiveProfilesUtils.resolveActiveProfiles(testClass),\n            mergedTestPropertySources.getPropertySourceDescriptors(),\n            mergedTestPropertySources.getProperties(),\n            contextCustomizers,\n            contextLoader,\n            cacheAwareContextLoaderDelegate,\n            parentConfig);\n    }\n}\n```\n\n### 2. 캐시 키 생성\nMergedContextConfiguration 객체는 위의 설정 요소들을 조합하여 해시 코드를 생성하며 이 해시 코드는 캐시 키로 사용된다.\n\n```java\npublic class DefaultContextCache implements ContextCache {\n\n    private final Map\u003cMergedContextConfiguration, ApplicationContext\u003e contextMap =\n        Collections.synchronizedMap(new LruCache(32, 0.75f));\n        // ...\n}\n```\n\n### 3. 캐시 저장 및 조회\n\n새로운 테스트 실행 시, Spring은 먼저 현재 설정의 해시 키가 캐시에 존재하는지 확인한다.\n\n동일한 키가 존재하면 캐시된 컨텍스트를 반환하고, 존재하지 않으면 새로 ApplicationContext를 생성하여 캐시에 저장한다.\n\n```java\npublic class DefaultContextCache implements ContextCache {\n    ...\n    \n    @Override\n    @Nullable\n    public ApplicationContext get(MergedContextConfiguration key) {\n        Assert.notNull(key, \"Key must not be null\");\n        ApplicationContext context = this.contextMap.get(key);\n        if (context == null) {\n            this.missCount.incrementAndGet();\n        }\n        else {\n            this.hitCount.incrementAndGet();\n        }\n        return context;\n    }\n\n    @Override\n    public void put(MergedContextConfiguration key, ApplicationContext context) {\n        Assert.notNull(key, \"Key must not be null\");\n        Assert.notNull(context, \"ApplicationContext must not be null\");\n\n        this.contextMap.put(key, context);\n        MergedContextConfiguration child = key;\n        MergedContextConfiguration parent = child.getParent();\n        while (parent != null) {\n            Set\u003cMergedContextConfiguration\u003e list = this.hierarchyMap.computeIfAbsent(parent, k -\u003e new HashSet\u003c\u003e());\n            list.add(child);\n            child = parent;\n            parent = child.getParent();\n        }\n    }\n}\n```\n\nContextCaching이 어떻게 동작하는지 이해했다면, 정말로 CacheKey가 달라졌을때 ApplicationContext가 재사용되지 않는지 확인해보자.\n\n## 예제 코드\n\n위치 좌표 정보를 외부 API에서 조회하는 예제를 통해 살펴보자. 먼저 Bean으로 등록할 객체 하나와 위치 API 클라이언트 인터페이스를 정의한다.\n\n```java\n@Service\npublic class TransportService {\n\n    private final String instanceId;\n\n    public TransportService() {\n        this.instanceId = java.util.UUID.randomUUID().toString();\n    }\n\n    public String getInstanceId() {\n        return instanceId;\n    }\n}\n```\n\n```java\npublic interface LocationApiClient {\n    \n    // 주소로 위치 좌표를 조회한다\n    LocationCoordinate getCoordinatesByAddress(String address);\n\n\n    // 현재 API 클라이언트의 인스턴스 ID를 반환한다\n    String getInstanceId();\n}\n```\n\n다음으로 실제 API를 호출하는 구현체를 작성하였다.\n\n```java\n@Service\npublic class KakaoLocationApiClient implements LocationApiClient {\n\n    private final RestTemplate restTemplate;\n    private final String apiKey;\n    private final String instanceId;\n\n    public KakaoLocationApiClient(@Value(\"${kakao.api.key:SAMPLE_API_KEY}\") String apiKey) {\n        this.restTemplate = new RestTemplate();\n        this.apiKey = apiKey;\n        this.instanceId = UUID.randomUUID().toString();\n    }\n\n    @Override\n    public LocationCoordinate getCoordinatesByAddress(String address) {\n        // 실제 API 호출 코드\n        String url = \"https://dapi.kakao.com/v2/local/search/address.json?query=\" + address;\n        \n        HttpHeaders headers = new HttpHeaders();\n        headers.set(\"Authorization\", \"KakaoAK \" + apiKey);\n        \n        HttpEntity\u003cString\u003e entity = new HttpEntity\u003c\u003e(headers);\n        \n        try {\n            ResponseEntity\u003cMap\u003e response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);\n            // 응답 처리 로직...\n            return parseResponse(response.getBody(), address);\n        } catch (Exception e) {\n            throw new RuntimeException(\"위치 정보 조회 실패: \" + e.getMessage(), e);\n        }\n    }\n\n    @Override\n    public String getInstanceId() {\n        return instanceId;\n    }\n}\n```\n\n이제 ApplicationContext의 재사용 여부를 검증하기 위한 테스트를 작성해 보도록 하자.\n\n- 첫 번째 테스트: 기본 컨텍스트 로드\n- 두 번째 테스트: 동일한 설정으로 컨텍스트 재사용 확인\n- 세 번째 테스트: MockBean 사용으로 컨텍스트 재생성 확인\n\n```java\npublic class ContextCachingVerificationTest {\n\n    Logger log = LoggerFactory.getLogger(ContextCachingVerificationTest.class);\n\n    @Nested\n    @SpringBootTest\n    class FirstTest {\n\n        @Autowired\n        ApplicationContext context;\n        \n        @Autowired\n        TransportService transportService;\n\n        @Test\n        void saveFirstContextInfo() {\n            assertThat(context).isNotNull();\n            assertThat(transportService).isNotNull();\n\n            // 첫 번째 컨텍스트 정보 출력\n            log.info(\"FirstTest - Context hash: {}\", System.identityHashCode(context));\n            log.info(\"FirstTest - TransportService instance ID: {}\", transportService.getInstanceId());\n        }\n    }\n\n    @Nested\n    @SpringBootTest\n    class SecondTest {\n\n        @Autowired\n        ApplicationContext context;\n        \n        @Autowired\n        TransportService transportService;\n\n        @Test\n        void verifyContextReuse() {\n            assertThat(context).isNotNull();\n            assertThat(transportService).isNotNull();\n\n            // 두 번째 컨텍스트 정보 출력\n            log.info(\"SecondTest - Context hash: {}\", System.identityHashCode(context));\n            log.info(\"SecondTest - TransportService instance ID: {}\", transportService.getInstanceId());\n        }\n    }\n\n    @Nested\n    @SpringBootTest\n    class ThirdTestWithMockBean {\n\n        @Autowired\n        ApplicationContext context;\n        \n        @Autowired\n        TransportService transportService;\n        \n        @MockBean\n        LocationApiClient locationApiClient;\n\n        @Test\n        void verifyNewContextCreation() {\n            assertThat(context).isNotNull();\n            assertThat(transportService).isNotNull();\n            assertThat(locationApiClient).isNotNull();\n\n            log.info(\"MockTest - Context hash: {}\", System.identityHashCode(context));\n            log.info(\"MockTest - TransportService instance ID: {}\", transportService.getInstanceId());\n        }\n    }\n}\n```\n\n첫 번째 테스트와 두 번째 테스트는 동일한 설정으로 컨텍스트를 재사용하기 때문에 ApplicationContext가 재사용되는 것을 기대할 수 있다.\n만약 ApplicationContext가 재사용됐다면, 첫 번째 테스트와 두 번째 테스트의 ApplicationContext 해시코드가 동일할 것이고 TransportService의 인스턴스 ID도 동일할 것이다.\n\n세 번째 테스트는 @MockBean을 사용했기 때문에 ContextCahche에서 동일한 키를 찾지 못하여 ApplicationContext가 재사용되지 않고 새로 생성될 것이다.\n즉, 첫 번째, 두 번째 테스트와는 다른 ApplicationContext가 생성될 것이고, TransportService의 인스턴스 ID도 다를 것이다.\n\n### 테스트 실행 결과\n\n![](https://i.imgur.com/Uxk21uj.png)\n\n![](https://i.imgur.com/x0gCXng.png)\n\n\n예상과 같이 첫 번째 테스트와 두 번째 테스트는 동일한 ApplicationContext를 재사용하고, 세 번째 테스트는 @MockBean을 사용하여 새로운 ApplicationContext가 생성되는 것을 확인할 수 있었다.\n\n## 테스트 대역을 사용하면서 ApplicationContext를 재사용하는 방법\n\n어떻게 하면 테스트 대역을 사용하여 실제 API를 호출하지 않으면서도 ApplicationContext를 재사용 하여 테스트 실행 속도를 개선할 수 있을까?\n\n### Stub으로 @MockBean 대체하기\n\n인터페이스를 구현하거나 테스트 대역 클래스를 상속받아 스텁 객체를 만들어 @MockBean을 대체할 수 있다. 이 방법은 외부 API와 같은 의존성을 테스트할 때 특히 유용하다.\n\n테스트에서 사용할 스텁 구현체를 아래와 같이 정의한다.\n\n```java\n@Service\n@Profile(\"test\")\npublic class StubLocationApiClient implements LocationApiClient {\n\n    private final String instanceId = \"stub-instance-id\";\n\n    @Override\n    public LocationCoordinate getCoordinatesByAddress(String address) {\n        // 테스트용 고정 좌표 반환\n        return new LocationCoordinate(37.5665, 126.9780, \"테스트 주소: \" + address);\n    }\n\n    @Override\n    public String getInstanceId() {\n        return instanceId;\n    }\n}\n```\n\n이 스텁 구현체는 실제 API를 호출하지 않고 테스트에 필요한 고정된 값을 반환한다. 이를 통해 테스트 실행 속도를 높이고 외부 의존성 없이 안정적인 테스트를 수행할 수 있다.\n\n테스트 환경에서만 스텁 구현체를 사용하도록 @Profile을 설정하였다. `src/test/resources/application-test.yml` 파일을 생성하여 프로파일을 설정해주자.\n\n환경변수를 주입할 수 있는 곳이 여러군데 있긴 하지만 `build.gradle`에 아래와 같이 설정해주면 편리하게 환경변수를 주입할 수 있다.\n\n```groovy\ntasks.named('test') {\n    useJUnitPlatform()\n    systemProperty(\"spring.profiles.active\", \"test\")\n}\n```\n\n이제 테스트에서 이 스텁 구현체를 사용하도록 설정한 다음 ApplicationContext를 재사용하는지 확인해보자.\n\n```java\npublic class ContextCachingVerificationTest {\n\n    Logger log = LoggerFactory.getLogger(ContextCachingVerificationTest.class);\n\n    @Nested\n    @SpringBootTest\n    class FirstTest {\n\n        @Autowired\n        ApplicationContext context;\n        \n        @Autowired\n        TransportService transportService;\n\n        @Test\n        void saveFirstContextInfo() {\n            assertThat(context).isNotNull();\n            assertThat(transportService).isNotNull();\n\n            // 첫 번째 컨텍스트 정보 출력\n            log.info(\"FirstTest - Context hash: {}\", System.identityHashCode(context));\n            log.info(\"FirstTest - TransportService instance ID: {}\", transportService.getInstanceId());\n        }\n    }\n\n    @Nested\n    @SpringBootTest\n    class SecondTest {\n\n        @Autowired\n        ApplicationContext context;\n        \n        @Autowired\n        TransportService transportService;\n\n        @Test\n        void verifyContextReuse() {\n            assertThat(context).isNotNull();\n            assertThat(transportService).isNotNull();\n\n            // 두 번째 컨텍스트 정보 출력\n            log.info(\"SecondTest - Context hash: {}\", System.identityHashCode(context));\n            log.info(\"SecondTest - TransportService instance ID: {}\", transportService.getInstanceId());\n        }\n    }\n\n    @Nested\n    @SpringBootTest\n    class ThirdTestWithMockBean {\n\n        @Autowired\n        ApplicationContext context;\n        \n        @Autowired\n        TransportService transportService;\n        \n        @Autowired\n        LocationApiClient stubLocationApiClient;\n\n        @Test\n        void verifyNewContextCreation() {\n            assertThat(context).isNotNull();\n            assertThat(transportService).isNotNull();\n            assertThat(stubLocationApiClient).isNotNull();\n\n            log.info(\"MockTest - Context hash: {}\", System.identityHashCode(context));\n            log.info(\"MockTest - TransportService instance ID: {}\", transportService.getInstanceId());\n            log.info(\"MockTest - LocationApiClient instance ID: {}\", stubLocationApiClient.getInstanceId());\n        }\n    }\n}\n```\n\n### 테스트 실행 결과\n\n![](https://i.imgur.com/LKE56mb.png)\n\n테스트 실행 결과를 확인해보면, 스텁을 사용한 테스트가 ApplicationContext를 재사용하는 것을 확인할 수 있다.\n\n### 마무리\n\n@SpringBootTest를 사용한 테스트에서 @MockBean과 @SpyBean을 남용하면 ApplicationContext가 재사용되지 않아 테스트 실행 속도가 느려질 수 있으며,\n메모리 사용량이 늘어나서 OOM이 발생할 수 있다.\n\n물론 테스트가 많지 않다면 문제가 되지 않겠지만, 테스트가 많아질 경우 Stub을 사용하여 @MockBean과 @SpyBean을 대체하는 방안을 고려해보자.\n\n### 참고 자료\n- https://github.com/spring-projects/spring-boot/issues/10015\n"},"__N_SSG":true},"page":"/[id]","query":{"id":"post2"},"buildId":"rHHwQgn4XzsFFzcKqsKPc","assetPrefix":"/TIL","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

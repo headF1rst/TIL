@@ -1,0 +1,164 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="apple-touch-icon" sizes="180x180" href="https://i.imgur.com/2nHGFTv.png"/><link rel="icon" type="image/png" sizes="32x32" href="https://i.imgur.com/2nHGFTv.png"/><link rel="icon" type="image/png" sizes="16x16" href="https://i.imgur.com/2nHGFTv.png"/><link rel="manifest" href="/site.webmanifest"/><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="theme-color" content="#ffffff"/><title>조인 테이블이 왜 생기지? @JoinColumn으로 해결하는 연관관계 매핑의 비밀</title><meta name="title" content="조인 테이블이 왜 생기지? @JoinColumn으로 해결하는 연관관계 매핑의 비밀"/><meta name="description" content="JoinColumn"/><meta name="keywords" content="jpa, JoinColumn, 외래 키, 외래 키 제약 조건"/><meta name="robots" content="index, follow"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><meta name="language" content="Korean"/><meta name="author" content="Sanha Ko"/><meta property="og:title" content="조인 테이블이 왜 생기지? @JoinColumn으로 해결하는 연관관계 매핑의 비밀"/><meta property="og:url" content="https://headf1rst.github.io/TIL/post-2-3"/><meta property="og:type" content="blog"/><meta property="og:image" content="https://velog.velcdn.com/images/wooyong99/post/6fdebd14-5fe8-4959-b085-74edb6bc4d46/image.png"/><meta property="og:description" content="JoinColumn"/><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"조인 테이블이 왜 생기지? @JoinColumn으로 해결하는 연관관계 매핑의 비밀","datePublished":"2024-10-10 10:00","dateModified":"2024-10-10 10:00","author":{"@type":"Person","name":"Sanha Ko"},"description":"JoinColumn","image":"https://velog.velcdn.com/images/wooyong99/post/6fdebd14-5fe8-4959-b085-74edb6bc4d46/image.png","url":"https://headf1rst.github.io/TIL/post-2-3","keywords":"JPA","publisher":{"@type":"Organization","name":"headF1rst","logo":{"@type":"ImageObject","url":"https://headf1rst.github.io/TIL/favicon.ico"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://headf1rst.github.io/TIL/post-2-3"}}</script><meta name="next-head-count" content="23"/><link rel="preload" href="/TIL/_next/static/css/754b961274c075df.css" as="style"/><link rel="stylesheet" href="/TIL/_next/static/css/754b961274c075df.css" data-n-g=""/><link rel="preload" href="/TIL/_next/static/css/38994dd0aed51f22.css" as="style"/><link rel="stylesheet" href="/TIL/_next/static/css/38994dd0aed51f22.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/TIL/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/TIL/_next/static/chunks/webpack-ac557983bcc4c022.js" defer=""></script><script src="/TIL/_next/static/chunks/framework-2c79e2a64abdb08b.js" defer=""></script><script src="/TIL/_next/static/chunks/main-dc8c1543918dad35.js" defer=""></script><script src="/TIL/_next/static/chunks/pages/_app-421e211a78340d83.js" defer=""></script><script src="/TIL/_next/static/chunks/202-7f08bae5ecc79443.js" defer=""></script><script src="/TIL/_next/static/chunks/pages/%5Bid%5D-a17d958fe22e8c91.js" defer=""></script><script src="/TIL/_next/static/rHHwQgn4XzsFFzcKqsKPc/_buildManifest.js" defer=""></script><script src="/TIL/_next/static/rHHwQgn4XzsFFzcKqsKPc/_ssgManifest.js" defer=""></script></head><body><div id="__next"><nav class="flex bg-white sticky top-0 left-0 z-50 justify-between items-center border-b-2 border-gray-100 py-3 md:justify-start md:space-x-10 px-10 sm:px-5 dark:bg-[#0d1117] dark:text-[#c9d1d9] dark:border-gray-600"><div class="flex justify-start"><a href="/TIL"><div class="flex items-center gap-2 cursor-pointer"><img src="https://i.imgur.com/2nHGFTv.png" width="40" height="40" alt="블로그 아이콘"/><h1 class="text-lg ">산하개발실록</h1></div></a></div><div class="flex justify-between gap-10 sm:hidden"><a href="/TIL"><button class="font-light hover:text-indigo-300 text-base">Home</button></a><a href="/TIL/category"><button class="font-light hover:text-indigo-300 text-base">Category</button></a><a href="https://plain-composer-c65.notion.site/29c7640fdf054059b6ea28ed61189bfb" target="_blank" rel="noreferrer" class="hover:text-indigo-300 text-base font-light flex gap-1">About<span class="flex justify-center" style="align-items:center"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="m13 3 3.293 3.293-7 7 1.414 1.414 7-7L21 11V3z"></path><path d="M19 19H5V5h7l-2-2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2v-5l-2-2v7z"></path></svg></span></a></div><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="lg:hidden" height="25" width="25" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></nav><main class="dark:bg-[#0d1117] h-screen pb-10"><div class="flex flex-col w-3/5 sm:w-5/6 m-auto pt-20 pb-20 gap-10 dark:bg-[#0d1117] dark:text-[#c9d1d9]"><ul id="scroll-spy" class="sm:hidden p-10 fixed top-50 right-0 h-full w-1/5 text-gray-500 dark:text-[#c9d1d9]"></ul><div class="text-5xl font-bold">조인 테이블이 왜 생기지? @JoinColumn으로 해결하는 연관관계 매핑의 비밀</div><div class="flex flex-col gap-2"><div class="text-base text-gray-600 dark:text-gray-300">2024-10-10 10:00</div><div class="flex flex-wrap gap-2 dark:text-black sm:m-0"><span class="p-1 pl-3 pr-3 rounded-md bg-indigo-100 hover:bg-indigo-200 cursor-pointer transition ease-in-out duration-200 text-sm">JPA</span></div></div><div class="markdown-body" style="font-size:17px"><p><code node="[object Object]">@JoinColumn</code>은 외래키를 매핑할 때 사용한다. 즉, 한 엔티티에서 다른 엔티티를 참조(조인)하는데 사용되는 필드를 지정하는 역할을 한다.</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#4078f2">@Entity</span><span>  
+</span><span></span><span style="color:#4078f2">@Table(name = &quot;orders&quot;)</span><span>  
+</span><span></span><span style="color:#4078f2">@Getter</span><span>
+</span><span></span><span style="color:#4078f2">@NoArgsConstructor</span><span>  
+</span><span></span><span style="color:#a626a4">public</span><span> </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">Order</span><span class="hljs-class"> </span><span>{  
+</span>  
+<span>    </span><span style="color:#4078f2">@Id</span><span>  
+</span><span>    </span><span style="color:#4078f2">@GeneratedValue(strategy = GenerationType.IDENTITY)</span><span>  
+</span><span>    </span><span style="color:#a626a4">private</span><span> Long id;  
+</span>  
+<span>    </span><span style="color:#4078f2">@ManyToOne</span><span>  
+</span><span>    </span><span style="color:#4078f2">@JoinColumn(name = &quot;customer_id&quot;)</span><span> </span><span style="color:#a0a1a7;font-style:italic">// 외래 키로 지정</span><span>
+</span><span>    </span><span style="color:#a626a4">private</span><span> Customer customer;
+</span>  
+<span>    </span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">Order</span><span class="hljs-function hljs-params">(Customer customer)</span><span class="hljs-function"> </span><span>{  
+</span><span>        </span><span style="color:#a626a4">this</span><span>.customer = customer;  
+</span>    }  
+<!-- -->}</code></div></pre>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#4078f2">@Entity</span><span>  
+</span><span></span><span style="color:#4078f2">@Getter</span><span>  
+</span><span></span><span style="color:#4078f2">@NoArgsConstructor</span><span>  
+</span><span></span><span style="color:#a626a4">public</span><span> </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">Customer</span><span class="hljs-class"> </span><span>{  
+</span>  
+<span>    </span><span style="color:#4078f2">@Id</span><span>  
+</span><span>    </span><span style="color:#4078f2">@GeneratedValue(strategy = GenerationType.IDENTITY)</span><span>  
+</span><span>    </span><span style="color:#a626a4">private</span><span> Long id;  
+</span>  
+<span>    </span><span style="color:#a626a4">private</span><span> String name;  
+</span>  
+<span>    </span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">Customer</span><span class="hljs-function hljs-params">(String name)</span><span class="hljs-function"> </span><span>{  
+</span><span>        </span><span style="color:#a626a4">this</span><span>.name = name;  
+</span>    }  
+<!-- -->}</code></div></pre>
+<p><code node="[object Object]">@JoinColumn(name = &quot;customer_id&quot;)</code>는 Order 테이블에서 <code node="[object Object]">customer_id</code>라는 컬럼을 통해 <code node="[object Object]">Customer</code> 엔티티를 참조하는 외래 키를 정의한다.</p>
+<p><code node="[object Object]">@ManyToOne</code>의 기본 FetchType이 EAGER이기 때문에, Order 조회시 연관된 Customer 엔티티도 함께 <code node="[object Object]">@JoinColumn</code>에 명시된 필드를 통해 참조(조인)하여 가져오는걸 볼 수 있다.</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#4078f2">@SpringBootTest</span><span>  
+</span><span></span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">OrderTest</span><span class="hljs-class"> </span><span>{  
+</span>  
+<span>    </span><span style="color:#4078f2">@Autowired</span><span>  
+</span><span>    </span><span style="color:#a626a4">private</span><span> OrderRepository orderRepository;  
+</span><span>    </span><span style="color:#4078f2">@Autowired</span><span>  
+</span><span>    </span><span style="color:#a626a4">private</span><span> CustomerRepository customerRepository;  
+</span>  
+<span>    </span><span style="color:#4078f2">@Test</span><span>  
+</span><span>    </span><span class="hljs-function" style="color:#a626a4">void</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">joinColumnTest</span><span class="hljs-function hljs-params">()</span><span class="hljs-function"> </span><span>{  
+</span><span>        </span><span style="color:#a626a4">var</span><span> customer = customerRepository.save( </span><span style="color:#a626a4">new</span><span> Customer(</span><span style="color:#50a14f">&quot;John Doe&quot;</span><span>));  
+</span><span>        </span><span style="color:#a626a4">var</span><span> order = orderRepository.save(</span><span style="color:#a626a4">new</span><span> Order(customer));  
+</span>  
+<!-- -->        Order result = orderRepository.findById(order.getId()).get();  
+<!-- -->    }
+<!-- -->}</code></div></pre>
+<pre><code node="[object Object]">Hibernate: 
+    select
+        o1_0.id,
+        c1_0.id,
+        c1_0.name 
+    from
+        orders o1_0 
+    left join
+        customer c1_0 
+            on c1_0.id=o1_0.customer_id 
+    where
+        o1_0.id=?
+</code></pre>
+<p><code node="[object Object]">@JoinColumn</code>은 ConstraintMode 옵션 값을 통해서 외래 키 제약 조건을 걸 수 있다.</p>
+<ul>
+<li><strong>ConstraintMode.PROVIDER_DEFAULT</strong> (기본값): JPA Provider의 외래 키 제약 조건 생성 전략을 따른다. Hibernate는 이 옵션 값에서 외래 키 제약 조건을 설정한다.</li>
+<li><strong>ConstraintMode.CONSTRAINT</strong>: 해당 외래 키 컬럼에 데이터베이스 레벨에서 외래 키 제약 조건을 설정한다.</li>
+<li><strong>ConstraintMode.NO_CONSTRAIN</strong>: DB에 외래키 제약조건을 걸지 않는다.<!-- -->
+<ul>
+<li>외래 키 컬럼은 생성되지만 DB가 그 컬럼의 값을 검증하거나 무결성을 유지하지는 않는다.</li>
+</ul>
+</li>
+</ul>
+<h1>@JoinColumn은 생략해도 될까</h1>
+<p>단방향 <code node="[object Object]">@ManyToOne</code> 에선 <code node="[object Object]">@JoinColumn</code>을 생략 할 수 있다. <code node="[object Object]">@JoinColumn</code>을 생략하면 외래 키를 찾을 때 기본 전략을 사용한다. 실제로 앞의 예제 코드에서 <code node="[object Object]">@JoinColumn</code>을 생략하고 테스트를 실행했을때 동일한 로그가 출력되는걸 확인할 수 있었다.</p>
+<blockquote>
+<p>기본 전략: 필드명 + _ + 참조하는 테이블의 컬럼명</p>
+<p>ex) customer + _ + id -&gt; customer_id</p>
+</blockquote>
+<p>그러나 단방향 <code node="[object Object]">@OneToMany</code> 연관관계에서 <code node="[object Object]">@JoinColumn</code>을 생략할 경우, JPA는 조인 테이블을 생성하여 엔티티간의 관계를 관리한다.</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#4078f2">@Entity</span><span>  
+</span><span></span><span style="color:#4078f2">@Table(name = &quot;orders&quot;)</span><span>  
+</span><span></span><span style="color:#4078f2">@Getter</span><span>  
+</span><span></span><span style="color:#4078f2">@NoArgsConstructor</span><span>  
+</span><span></span><span style="color:#a626a4">public</span><span> </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">Order</span><span class="hljs-class"> </span><span>{  
+</span>  
+<span>    </span><span style="color:#4078f2">@Id</span><span>  
+</span><span>    </span><span style="color:#4078f2">@GeneratedValue(strategy = GenerationType.IDENTITY)</span><span>  
+</span><span>    </span><span style="color:#a626a4">private</span><span> Long id;  
+</span>
+<span>	</span><span style="color:#4078f2">@Column(name = &quot;customer_id&quot;)</span><span>
+</span><span>    </span><span style="color:#a626a4">private</span><span> Long customerId;  
+</span>  
+<span>    </span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">Order</span><span class="hljs-function hljs-params">(Long customerId)</span><span class="hljs-function"> </span><span>{  
+</span><span>        </span><span style="color:#a626a4">this</span><span>.customerId = customerId;  
+</span>    }  
+<!-- -->}</code></div></pre>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#4078f2">@Entity</span><span>  
+</span><span></span><span style="color:#4078f2">@Getter</span><span>  
+</span><span></span><span style="color:#4078f2">@NoArgsConstructor</span><span>  
+</span><span></span><span style="color:#a626a4">public</span><span> </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">Customer</span><span class="hljs-class"> </span><span>{  
+</span>  
+<span>    </span><span style="color:#4078f2">@Id</span><span>  
+</span><span>    </span><span style="color:#4078f2">@GeneratedValue(strategy = GenerationType.IDENTITY)</span><span>  
+</span><span>    </span><span style="color:#a626a4">private</span><span> Long id;  
+</span>  
+<span>    </span><span style="color:#4078f2">@OneToMany(cascade = CascadeType.ALL)</span><span>  
+</span><span>    </span><span style="color:#a626a4">private</span><span> List&lt;Order&gt; orders = </span><span style="color:#a626a4">new</span><span> ArrayList&lt;&gt;();
+</span>  
+<span>    </span><span style="color:#a626a4">private</span><span> String name;  
+</span>  
+<span>    </span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">Customer</span><span class="hljs-function hljs-params">(String name)</span><span class="hljs-function"> </span><span>{  
+</span><span>        </span><span style="color:#a626a4">this</span><span>.name = name;  
+</span>    }  
+<!-- -->}</code></div></pre>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#4078f2">@SpringBootTest</span><span>  
+</span><span></span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">OrderTest</span><span class="hljs-class"> </span><span>{  
+</span>  
+<span>    </span><span style="color:#4078f2">@Autowired</span><span>  
+</span><span>    </span><span style="color:#a626a4">private</span><span> OrderRepository orderRepository;  
+</span><span>    </span><span style="color:#4078f2">@Autowired</span><span>  
+</span><span>    </span><span style="color:#a626a4">private</span><span> CustomerRepository customerRepository;  
+</span>  
+<span>    </span><span style="color:#4078f2">@Test</span><span>  
+</span><span>	</span><span style="color:#4078f2">@Transactional</span><span>  
+</span><span>	</span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#a626a4">void</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">joinColumnTest</span><span class="hljs-function hljs-params">()</span><span class="hljs-function"> </span><span>{  
+</span><span>	    Customer customer = </span><span style="color:#a626a4">new</span><span> Customer(</span><span style="color:#50a14f">&quot;John Doe&quot;</span><span>);  
+</span>	    List&lt;Order&gt; orders = List.of(
+<span>		    </span><span style="color:#a626a4">new</span><span> Order(customer.getId()), 
+</span><span>		    </span><span style="color:#a626a4">new</span><span> Order(customer.getId())
+</span>		);
+<!-- -->	    customer.getOrders().addAll(orders);  
+<!-- -->  
+<!-- -->	    customerRepository.save(customer);  
+<!-- -->	    orderRepository.saveAll(orders);  
+<!-- -->	}
+<!-- -->}</code></div></pre>
+<p>테스트 실행 후 로그를 확인해보면 <code node="[object Object]">customer_orders</code> 조인 테이블이 생성된것을 확인할 수 있다.</p>
+<p><img src="https://i.imgur.com/v332oJ2.png" alt="log" node="[object Object]" style="max-height:450px;max-width:90%"/></p>
+<h1>왜 조인 테이블이 생성될까?</h1>
+<p>단방향 <code node="[object Object]">@OneToMany</code> 관계에서는 JPA가 어느 테이블에 외래 키를 두어야 할지 명확하지 않기 때문에, 중간 조인 테이블을 생성하여 관계를 관리한다.</p>
+<p>조인 테이블이 생성되는 것을 방지하고 싶다면, <code node="[object Object]">@JoinColumn</code>을 명시적으로 설정하여 외래 키를 직접 관리하도록 해야 한다.
+아래와 같이 <code node="[object Object]">@JoinColumn(name = &quot;customer_id&quot;...)</code>를 설정하여 외래키를 Order 테이블에 설정할 수 있다.</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#4078f2">@Entity</span><span>  
+</span><span></span><span style="color:#4078f2">@Getter</span><span>  
+</span><span></span><span style="color:#4078f2">@NoArgsConstructor</span><span>  
+</span><span></span><span style="color:#a626a4">public</span><span> </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">Customer</span><span class="hljs-class"> </span><span>{  
+</span><span>	</span><span style="color:#a0a1a7;font-style:italic">//...</span><span>
+</span>	
+<span>    </span><span style="color:#4078f2">@OneToMany(cascade = CascadeType.ALL)</span><span>  
+</span><span>    </span><span style="color:#4078f2">@JoinColumn(name = &quot;customer_id&quot;, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))</span><span>  
+</span><span>    </span><span style="color:#a626a4">private</span><span> List&lt;Order&gt; orders = </span><span style="color:#a626a4">new</span><span> ArrayList&lt;&gt;();  
+</span>  
+<span>    </span><span style="color:#a0a1a7;font-style:italic">//...</span><span>
+</span>}</code></div></pre>
+<p>다시 테스트를 실행하고 로그를 확인해 보면 조인 테이블이 생성되지 않은걸 확인할 수 있다.</p>
+<p><img src="https://i.imgur.com/1RLHtIp.png" alt="log" node="[object Object]" style="max-height:450px;max-width:90%"/></p>
+<hr/>
+<p><strong>참고 자료</strong></p>
+<ul>
+<li><a href="https://hyeon9mak.github.io/omit-join-column-when-using-many-to-one/">@ManyToOne을 사용할 때 @JoinColumn 생략</a></li>
+</ul></div><section></section></div></main></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"postData":{"id":"post-2-3","title":"조인 테이블이 왜 생기지? @JoinColumn으로 해결하는 연관관계 매핑의 비밀","category":"JPA","thumbnail":"https://velog.velcdn.com/images/wooyong99/post/6fdebd14-5fe8-4959-b085-74edb6bc4d46/image.png","tags":"JPA","date":"2024-10-10 10:00","searchKeywords":"jpa, JoinColumn, 외래 키, 외래 키 제약 조건","description":"JoinColumn","preview":"\n`@JoinColumn`은 외래키를 매핑할 때 사용한다. 즉, 한 엔티티에서 다른 엔티티를 참조(조인)하는데 사용되는 필드를 지정하는 역할을 한다.\n\n```java\n@Entity  \n@Table(name = \"orders\")  \n@Getter\n@No"},"detail":"\n`@JoinColumn`은 외래키를 매핑할 때 사용한다. 즉, 한 엔티티에서 다른 엔티티를 참조(조인)하는데 사용되는 필드를 지정하는 역할을 한다.\n\n```java\n@Entity  \n@Table(name = \"orders\")  \n@Getter\n@NoArgsConstructor  \npublic class Order {  \n  \n    @Id  \n    @GeneratedValue(strategy = GenerationType.IDENTITY)  \n    private Long id;  \n  \n    @ManyToOne  \n    @JoinColumn(name = \"customer_id\") // 외래 키로 지정\n    private Customer customer;\n  \n    public Order(Customer customer) {  \n        this.customer = customer;  \n    }  \n}\n```\n\n```java\n@Entity  \n@Getter  \n@NoArgsConstructor  \npublic class Customer {  \n  \n    @Id  \n    @GeneratedValue(strategy = GenerationType.IDENTITY)  \n    private Long id;  \n  \n    private String name;  \n  \n    public Customer(String name) {  \n        this.name = name;  \n    }  \n}\n```\n\n`@JoinColumn(name = \"customer_id\")`는 Order 테이블에서 `customer_id`라는 컬럼을 통해 `Customer` 엔티티를 참조하는 외래 키를 정의한다.\n\n`@ManyToOne`의 기본 FetchType이 EAGER이기 때문에, Order 조회시 연관된 Customer 엔티티도 함께 `@JoinColumn`에 명시된 필드를 통해 참조(조인)하여 가져오는걸 볼 수 있다.\n\n```java\n@SpringBootTest  \nclass OrderTest {  \n  \n    @Autowired  \n    private OrderRepository orderRepository;  \n    @Autowired  \n    private CustomerRepository customerRepository;  \n  \n    @Test  \n    void joinColumnTest() {  \n        var customer = customerRepository.save( new Customer(\"John Doe\"));  \n        var order = orderRepository.save(new Order(customer));  \n  \n        Order result = orderRepository.findById(order.getId()).get();  \n    }\n}\n```\n\n```\nHibernate: \n    select\n        o1_0.id,\n        c1_0.id,\n        c1_0.name \n    from\n        orders o1_0 \n    left join\n        customer c1_0 \n            on c1_0.id=o1_0.customer_id \n    where\n        o1_0.id=?\n```\n\n`@JoinColumn`은 ConstraintMode 옵션 값을 통해서 외래 키 제약 조건을 걸 수 있다.\n\n- **ConstraintMode.PROVIDER_DEFAULT** (기본값): JPA Provider의 외래 키 제약 조건 생성 전략을 따른다. Hibernate는 이 옵션 값에서 외래 키 제약 조건을 설정한다.\n- **ConstraintMode.CONSTRAINT**: 해당 외래 키 컬럼에 데이터베이스 레벨에서 외래 키 제약 조건을 설정한다.\n- **ConstraintMode.NO_CONSTRAIN**: DB에 외래키 제약조건을 걸지 않는다.\n    - 외래 키 컬럼은 생성되지만 DB가 그 컬럼의 값을 검증하거나 무결성을 유지하지는 않는다.\n\n# @JoinColumn은 생략해도 될까\n\n단방향 `@ManyToOne` 에선 `@JoinColumn`을 생략 할 수 있다. `@JoinColumn`을 생략하면 외래 키를 찾을 때 기본 전략을 사용한다. 실제로 앞의 예제 코드에서 `@JoinColumn`을 생략하고 테스트를 실행했을때 동일한 로그가 출력되는걸 확인할 수 있었다.\n\n\u003e 기본 전략: 필드명 + _ + 참조하는 테이블의 컬럼명\n\u003e \n\u003e ex) customer + _ + id -\u003e customer_id\n\n그러나 단방향 `@OneToMany` 연관관계에서 `@JoinColumn`을 생략할 경우, JPA는 조인 테이블을 생성하여 엔티티간의 관계를 관리한다.\n\n```java\n@Entity  \n@Table(name = \"orders\")  \n@Getter  \n@NoArgsConstructor  \npublic class Order {  \n  \n    @Id  \n    @GeneratedValue(strategy = GenerationType.IDENTITY)  \n    private Long id;  \n\n\t@Column(name = \"customer_id\")\n    private Long customerId;  \n  \n    public Order(Long customerId) {  \n        this.customerId = customerId;  \n    }  \n}\n```\n\n```java\n@Entity  \n@Getter  \n@NoArgsConstructor  \npublic class Customer {  \n  \n    @Id  \n    @GeneratedValue(strategy = GenerationType.IDENTITY)  \n    private Long id;  \n  \n    @OneToMany(cascade = CascadeType.ALL)  \n    private List\u003cOrder\u003e orders = new ArrayList\u003c\u003e();\n  \n    private String name;  \n  \n    public Customer(String name) {  \n        this.name = name;  \n    }  \n}\n```\n\n```java\n@SpringBootTest  \nclass OrderTest {  \n  \n    @Autowired  \n    private OrderRepository orderRepository;  \n    @Autowired  \n    private CustomerRepository customerRepository;  \n  \n    @Test  \n\t@Transactional  \n\tpublic void joinColumnTest() {  \n\t    Customer customer = new Customer(\"John Doe\");  \n\t    List\u003cOrder\u003e orders = List.of(\n\t\t    new Order(customer.getId()), \n\t\t    new Order(customer.getId())\n\t\t);\n\t    customer.getOrders().addAll(orders);  \n  \n\t    customerRepository.save(customer);  \n\t    orderRepository.saveAll(orders);  \n\t}\n}\n```\n\n테스트 실행 후 로그를 확인해보면 `customer_orders` 조인 테이블이 생성된것을 확인할 수 있다.\n\n![log](https://i.imgur.com/v332oJ2.png)\n\n# 왜 조인 테이블이 생성될까?\n\n단방향 `@OneToMany` 관계에서는 JPA가 어느 테이블에 외래 키를 두어야 할지 명확하지 않기 때문에, 중간 조인 테이블을 생성하여 관계를 관리한다.\n\n조인 테이블이 생성되는 것을 방지하고 싶다면, `@JoinColumn`을 명시적으로 설정하여 외래 키를 직접 관리하도록 해야 한다.\n아래와 같이 `@JoinColumn(name = \"customer_id\"...)`를 설정하여 외래키를 Order 테이블에 설정할 수 있다.\n\n```java\n@Entity  \n@Getter  \n@NoArgsConstructor  \npublic class Customer {  \n\t//...\n\t\n    @OneToMany(cascade = CascadeType.ALL)  \n    @JoinColumn(name = \"customer_id\", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))  \n    private List\u003cOrder\u003e orders = new ArrayList\u003c\u003e();  \n  \n    //...\n}\n```\n\n다시 테스트를 실행하고 로그를 확인해 보면 조인 테이블이 생성되지 않은걸 확인할 수 있다.\n\n![log](https://i.imgur.com/1RLHtIp.png)\n\n---\n\n**참고 자료**\n- [@ManyToOne을 사용할 때 @JoinColumn 생략](https://hyeon9mak.github.io/omit-join-column-when-using-many-to-one/)\n\n"},"__N_SSG":true},"page":"/[id]","query":{"id":"post-2-3"},"buildId":"rHHwQgn4XzsFFzcKqsKPc","assetPrefix":"/TIL","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

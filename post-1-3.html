@@ -1,0 +1,126 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="apple-touch-icon" sizes="180x180" href="https://i.imgur.com/2nHGFTv.png"/><link rel="icon" type="image/png" sizes="32x32" href="https://i.imgur.com/2nHGFTv.png"/><link rel="icon" type="image/png" sizes="16x16" href="https://i.imgur.com/2nHGFTv.png"/><link rel="manifest" href="/site.webmanifest"/><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="theme-color" content="#ffffff"/><title>Fixture Monkey With Kotlin</title><meta name="title" content="Fixture Monkey With Kotlin"/><meta name="description" content="fixtureMonkey"/><meta name="keywords" content="fixture monkey, test, fixture"/><meta name="robots" content="index, follow"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><meta name="language" content="Korean"/><meta name="author" content="Sanha Ko"/><meta property="og:title" content="Fixture Monkey With Kotlin"/><meta property="og:url" content="https://headf1rst.github.io/TIL/post-1-3"/><meta property="og:type" content="blog"/><meta property="og:image" content="https://i.imgur.com/J5SIYtU.png"/><meta property="og:description" content="fixtureMonkey"/><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Fixture Monkey With Kotlin","datePublished":"2024-03-03 10:00","dateModified":"2024-03-03 10:00","author":{"@type":"Person","name":"Sanha Ko"},"description":"fixtureMonkey","image":"https://i.imgur.com/J5SIYtU.png","url":"https://headf1rst.github.io/TIL/post-1-3","keywords":"test","publisher":{"@type":"Organization","name":"headF1rst","logo":{"@type":"ImageObject","url":"https://headf1rst.github.io/TIL/favicon.ico"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://headf1rst.github.io/TIL/post-1-3"}}</script><meta name="next-head-count" content="23"/><link rel="preload" href="/TIL/_next/static/css/754b961274c075df.css" as="style"/><link rel="stylesheet" href="/TIL/_next/static/css/754b961274c075df.css" data-n-g=""/><link rel="preload" href="/TIL/_next/static/css/38994dd0aed51f22.css" as="style"/><link rel="stylesheet" href="/TIL/_next/static/css/38994dd0aed51f22.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/TIL/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/TIL/_next/static/chunks/webpack-ac557983bcc4c022.js" defer=""></script><script src="/TIL/_next/static/chunks/framework-2c79e2a64abdb08b.js" defer=""></script><script src="/TIL/_next/static/chunks/main-dc8c1543918dad35.js" defer=""></script><script src="/TIL/_next/static/chunks/pages/_app-421e211a78340d83.js" defer=""></script><script src="/TIL/_next/static/chunks/202-7f08bae5ecc79443.js" defer=""></script><script src="/TIL/_next/static/chunks/pages/%5Bid%5D-a17d958fe22e8c91.js" defer=""></script><script src="/TIL/_next/static/rHHwQgn4XzsFFzcKqsKPc/_buildManifest.js" defer=""></script><script src="/TIL/_next/static/rHHwQgn4XzsFFzcKqsKPc/_ssgManifest.js" defer=""></script></head><body><div id="__next"><nav class="flex bg-white sticky top-0 left-0 z-50 justify-between items-center border-b-2 border-gray-100 py-3 md:justify-start md:space-x-10 px-10 sm:px-5 dark:bg-[#0d1117] dark:text-[#c9d1d9] dark:border-gray-600"><div class="flex justify-start"><a href="/TIL"><div class="flex items-center gap-2 cursor-pointer"><img src="https://i.imgur.com/2nHGFTv.png" width="40" height="40" alt="블로그 아이콘"/><h1 class="text-lg ">산하개발실록</h1></div></a></div><div class="flex justify-between gap-10 sm:hidden"><a href="/TIL"><button class="font-light hover:text-indigo-300 text-base">Home</button></a><a href="/TIL/category"><button class="font-light hover:text-indigo-300 text-base">Category</button></a><a href="https://plain-composer-c65.notion.site/29c7640fdf054059b6ea28ed61189bfb" target="_blank" rel="noreferrer" class="hover:text-indigo-300 text-base font-light flex gap-1">About<span class="flex justify-center" style="align-items:center"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="m13 3 3.293 3.293-7 7 1.414 1.414 7-7L21 11V3z"></path><path d="M19 19H5V5h7l-2-2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2v-5l-2-2v7z"></path></svg></span></a></div><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="lg:hidden" height="25" width="25" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></nav><main class="dark:bg-[#0d1117] h-screen pb-10"><div class="flex flex-col w-3/5 sm:w-5/6 m-auto pt-20 pb-20 gap-10 dark:bg-[#0d1117] dark:text-[#c9d1d9]"><ul id="scroll-spy" class="sm:hidden p-10 fixed top-50 right-0 h-full w-1/5 text-gray-500 dark:text-[#c9d1d9]"></ul><div class="text-5xl font-bold">Fixture Monkey With Kotlin</div><div class="flex flex-col gap-2"><div class="text-base text-gray-600 dark:text-gray-300">2024-03-03 10:00</div><div class="flex flex-wrap gap-2 dark:text-black sm:m-0"><span class="p-1 pl-3 pr-3 rounded-md bg-indigo-100 hover:bg-indigo-200 cursor-pointer transition ease-in-out duration-200 text-sm">test</span></div></div><div class="markdown-body" style="font-size:17px"><p>테스트를 작성하다보면 프로덕션 코드를 작성하는 시간보다 테스트를 위한 픽스처를 만드는데 더 많은 시간이 소요될 때가 있다.</p>
+<p>테스트를 작성하는데 시간이 많이 들고 번거로울 수록 테스트 코드를 생략하게 되고 결국 결함에 취약한 시스템을 구현할 위험이 있다.</p>
+<p>주문 관련 로직을 테스트 하기위해서 <code node="[object Object]">Order</code> 픽스처를 만들어야했었는데 <code node="[object Object]">Order</code> 객체 내부에 필드가 24개 였을뿐더러 내부 객체의 필드까지 합하면 정의해줘야 하는 필드가 수 없이 많았다.</p>
+<p>심지어 케이스마다 다른 상태값을 갖고있는 <code node="[object Object]">Order</code> 픽스처를 추가로 만들어줘야 했기 때문에 테스트 준비에 많은 시간이 소요됐던 경험이 있다.</p>
+<p>그러던중 <code node="[object Object]">Fixture Monkey</code>라는 PBT(Property Based Testing) 라이브러리를 알게되었고, <code node="[object Object]">Fixture Monkey</code>를 사용하여 테스트를 편리하게 작성할 수 있었던 경험이 있었는데, 개인적으로 유용하게 사용했던 핵심 내용만 간략하게 소개하고자 한다.</p>
+<h2>FixtureMonkey의 주요 기능</h2>
+<ul>
+<li>렌덤하고 복잡한 제약조건을 갖는 객체를 생성해준다.</li>
+<li>설정한 제약조건을 검증할 수 있다.</li>
+<li>테스트케이스마다 다르게 객체 제어가 가능하다.</li>
+</ul>
+<p><code node="[object Object]">FixtureMonkey</code>는 엔티티 필드에 지정된 Bean validation 어노테이션에 따라 유효한 속성값을 갖는 객체를 생성한다.</p>
+<p>실패 테스트 작성과 같이 특정 테스트 케이스에서 조건을 추가하거나 조건에 벗어난 필드를 설정해야할 경우에는 <code node="[object Object]">ArbitraryBuilder</code>를 사용하여 fixture를 제어할 수 있다.</p>
+<p><code node="[object Object]">ArbitraryBuilder</code>는 빌더 패턴을 사용하여 객체의 필드값을 원하는 값으로 설정하여 객체를 생성하는게 가능하다.</p>
+<h2>예제</h2>
+<h3>Without FixtureMonkey Test</h3>
+<p><code node="[object Object]">FixtureMonkey</code>의 편리한 기능을 살펴보기에 앞서서 이전 방식으로 테스트를 작성해보았다.</p>
+<p>다음은 주문 과정에서 입력된 배송지 주소가 유효한지 검증하는 테스트이다.</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-kotlin" style="white-space:pre"><span style="color:#a626a4">data</span><span> </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">Order</span><span>(  
+</span><span>    </span><span style="color:#a626a4">val</span><span> product: List&lt;Product&gt;,  
+</span><span>    </span><span style="color:#a626a4">val</span><span> purchaserName: String,  
+</span><span>    </span><span style="color:#a626a4">val</span><span> receiver: Receiver,  
+</span><span>    </span><span style="color:#a626a4">val</span><span> totalPrice: </span><span style="color:#c18401">Long</span><span>,  
+</span><span>    </span><span style="color:#a626a4">val</span><span> coupon: List&lt;Coupon&gt;,  
+</span><span>    </span><span style="color:#a626a4">val</span><span> delivery: Delivery,  
+</span>)</code></div></pre>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-kotlin" style="white-space:pre"><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">OrderFixture</span><span class="hljs-class"> </span><span>{  
+</span><span>    </span><span style="color:#a626a4">companion</span><span> </span><span style="color:#a626a4">object</span><span> {  
+</span><span>        </span><span class="hljs-function" style="color:#a626a4">fun</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">create</span><span class="hljs-function hljs-params">(  
+</span><span class="hljs-function hljs-params">            id: </span><span class="hljs-function hljs-params" style="color:#986801">Long</span><span class="hljs-function hljs-params"> = </span><span class="hljs-function hljs-params" style="color:#986801">1</span><span class="hljs-function hljs-params">L,  
+</span><span class="hljs-function hljs-params">            product: </span><span class="hljs-function hljs-params" style="color:#986801">List</span><span class="hljs-function hljs-params">&lt;</span><span class="hljs-function hljs-params" style="color:#986801">Product</span><span class="hljs-function hljs-params">&gt; = listOf(  
+</span><span class="hljs-function hljs-params">                Product(name = </span><span class="hljs-function hljs-params" style="color:#50a14f">&quot;초콜릿&quot;</span><span class="hljs-function hljs-params">, price = </span><span class="hljs-function hljs-params" style="color:#986801">300</span><span class="hljs-function hljs-params">L)</span><span>,  
+</span><span>                Product(name = </span><span style="color:#50a14f">&quot;키보드&quot;</span><span>, price = </span><span style="color:#986801">20000L</span><span>),  
+</span>            ),  
+<span>            purchaserName: String = </span><span style="color:#50a14f">&quot;홍길동&quot;</span><span>,  
+</span><span>            receiver: Receiver = Receiver(name = </span><span style="color:#50a14f">&quot;홍길동&quot;</span><span>, </span><span style="color:#50a14f">&quot;01012341234&quot;</span><span>),  
+</span><span>            totalPrice: </span><span style="color:#c18401">Long</span><span> = </span><span style="color:#986801">20300L</span><span>,  
+</span>            coupon: List&lt;Coupon&gt; = listOf(Coupon()),  
+<span>            delivery: Delivery = Delivery(</span><span style="color:#50a14f">&quot;경기도&quot;</span><span>, </span><span style="color:#50a14f">&quot;203동 1023호&quot;</span><span>, </span><span style="color:#0184bb">true</span><span>),  
+</span>        ): Order {  
+<span>            </span><span style="color:#a626a4">return</span><span> Order(  
+</span>                id = id,  
+<!-- -->                product = product,  
+<!-- -->                purchaserName = purchaserName,  
+<!-- -->                receiver = receiver,  
+<!-- -->                totalPrice = totalPrice,  
+<!-- -->                coupon = coupon,  
+<!-- -->                delivery = delivery,  
+<!-- -->            )  
+<!-- -->        }  
+<!-- -->    }  
+<!-- -->}</code></div></pre>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-kotlin" style="white-space:pre"><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">OrderServiceTestWithOutFixtureMonkey</span><span class="hljs-class"> : </span><span class="hljs-class" style="color:#986801">DescribeSpec</span><span>({  
+</span><span>    </span><span style="color:#a626a4">val</span><span> sut = OrderService()  
+</span><span>    </span><span style="color:#a626a4">val</span><span> log = LoggerFactory.getLogger(</span><span style="color:#a626a4">this</span><span>.javaClass)  
+</span>  
+<span>    describe(</span><span style="color:#50a14f">&quot;배송 주소 유효성 검사&quot;</span><span>) {  
+</span><span>        it(</span><span style="color:#50a14f">&quot;유효성 검증을 통과한다.&quot;</span><span>) {  
+</span><span>            </span><span style="color:#a626a4">val</span><span> order = OrderFixture.create()  
+</span>  
+<!-- -->            shouldNotThrowAny {  
+<!-- -->                sut.validateDeliveryAddress(order)  
+<!-- -->            }  
+<!-- -->        }  
+<span>        it(</span><span style="color:#50a14f">&quot;지번 주소를 입력받았을 경우, 상세 주소가 없으면 안 된다&quot;</span><span>) {  
+</span><span>            </span><span style="color:#a626a4">val</span><span> order = OrderFixture.create(delivery = Delivery(baseAddress = </span><span style="color:#50a14f">&quot;경기도&quot;</span><span>, road = </span><span style="color:#0184bb">false</span><span>, detailAddress = </span><span style="color:#0184bb">null</span><span>))  
+</span>  
+<span>            </span><span style="color:#a626a4">val</span><span> exception = shouldThrow&lt;IllegalArgumentException&gt; {  
+</span>                sut.validateDeliveryAddress(order)  
+<!-- -->            }  
+<!-- -->  
+<span>            exception.message shouldBe </span><span style="color:#50a14f">&quot;지번 주소에는 상세 주소가 반드시 필요합니다.&quot;</span><span>  
+</span>        }  
+<!-- -->    }})</code></div></pre>
+<p>테스트 성공과 실패 케이스를 위한 <code node="[object Object]">OrderFixture</code> 객체를 정의하여 사용하였다.
+<code node="[object Object]">Order</code> 객체에 정의된 필드 뿐만 아니라 연관된 객체의 필드값들도 함께 정의해줘야하기 때문에 꽤나 번거로운 작업일 수 있다.</p>
+<p>만약 연관된 엔티티가 더 많고 정의해줘야하는 필드 수가 훨씬 많아진다면 테스트를 위한 fixture를 정의하는데 큰 비용이 소모되게 된다.</p>
+<h3>FixtureMonkey Test</h3>
+<p>이번엔 <code node="[object Object]">FixtureMonkey</code>를 사용하여 간단하게 fixture를 생성하여 테스트를 작성해보도록 하겠다.</p>
+<p>먼저 <code node="[object Object]">build.gradle.kts</code>에 의존성을 추가해주었다.</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-gradle" style="white-space:pre"><span style="color:#a0a1a7;font-style:italic">// fixture monkey  </span><span>
+</span><span>testImplementation(</span><span style="color:#50a14f">&quot;com.navercorp.fixturemonkey:fixture-monkey-starter-kotlin:1.0.14&quot;</span><span>)  
+</span><span>testImplementation(</span><span style="color:#50a14f">&quot;com.navercorp.fixturemonkey:fixture-monkey-jakarta-validation:0.6.3&quot;</span><span>)  
+</span><span>testImplementation(</span><span style="color:#50a14f">&quot;com.navercorp.fixturemonkey:fixture-monkey-jackson:0.6.3&quot;</span><span>)</span></code></div></pre>
+<p><strong>DefaultMonkeyCreator</strong></p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-kotlin" style="white-space:pre"><span class="hljs-function" style="color:#a626a4">fun</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">monkey</span><span class="hljs-function hljs-params">()</span><span> : FixtureMonkey {  
+</span><span>    </span><span style="color:#a626a4">return</span><span> FixtureMonkey.builder()  
+</span>        .plugin(KotlinPlugin())  
+<!-- -->        .build()  
+<!-- -->}</code></div></pre>
+<p><strong>FixtureBuilders</strong></p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-kotlin" style="white-space:pre"><span class="hljs-function" style="color:#a626a4">fun</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#986801">&lt;T&gt;</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">defaultFixtureBuilder</span><span class="hljs-function hljs-params">(clazz: </span><span class="hljs-function hljs-params" style="color:#986801">Class</span><span class="hljs-function hljs-params">&lt;</span><span class="hljs-function hljs-params" style="color:#986801">T</span><span class="hljs-function hljs-params">&gt;)</span><span>: ArbitraryBuilder&lt;T&gt; {  
+</span><span>    </span><span style="color:#a626a4">return</span><span> monkey().giveMeBuilder(clazz)  
+</span>}</code></div></pre>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-kotlin" style="white-space:pre"><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">OrderServiceTestWithFixtureMonkey</span><span class="hljs-class">: </span><span class="hljs-class" style="color:#986801">DescribeSpec</span><span>({  
+</span><span>    </span><span style="color:#a626a4">val</span><span> sut = OrderService()  
+</span><span>    </span><span style="color:#a626a4">val</span><span> log = LoggerFactory.getLogger(</span><span style="color:#a626a4">this</span><span>.javaClass)  
+</span>  
+<span>    describe(</span><span style="color:#50a14f">&quot;배송 주소 유효성 검사&quot;</span><span>) {  
+</span><span>        it(</span><span style="color:#50a14f">&quot;유효성 검증을 통과한다.&quot;</span><span>) {  
+</span><span>            </span><span style="color:#a626a4">val</span><span> order = defaultFixtureBuilder(Order::</span><span style="color:#a626a4">class</span><span>.java)  
+</span>                .setExp(  
+<!-- -->                    Order::delivery,  
+<span>                    Delivery(baseAddress = </span><span style="color:#50a14f">&quot;경기도&quot;</span><span>, detailAddress = </span><span style="color:#0184bb">null</span><span>, road = </span><span style="color:#0184bb">true</span><span>))  
+</span>                .sample()  
+<!-- -->  
+<!-- -->            shouldNotThrowAny {  
+<!-- -->                sut.validateDeliveryAddress(order)  
+<!-- -->            }  
+<!-- -->        }  
+<span>        it(</span><span style="color:#50a14f">&quot;지번 주소를 입력받았을 경우, 상세 주소가 없으면 안 된다&quot;</span><span>) {  
+</span><span>            </span><span style="color:#a626a4">val</span><span> order = defaultFixtureBuilder(Order::</span><span style="color:#a626a4">class</span><span>.java)  
+</span>                .setExp(  
+<!-- -->                    Order::delivery,  
+<span>                    Delivery(baseAddress = </span><span style="color:#50a14f">&quot;경기도&quot;</span><span>, detailAddress = </span><span style="color:#0184bb">null</span><span>, road = </span><span style="color:#0184bb">false</span><span>))  
+</span>                .sample()  
+<!-- -->  
+<span>            </span><span style="color:#a626a4">val</span><span> exception = shouldThrow&lt;IllegalArgumentException&gt; {  
+</span>                sut.validateDeliveryAddress(order)  
+<!-- -->            }  
+<!-- -->  
+<span>            exception.message shouldBe </span><span style="color:#50a14f">&quot;지번 주소에는 상세 주소가 반드시 필요합니다.&quot;</span><span>  
+</span>        }  
+<!-- -->    }})</code></div></pre>
+<p>이처럼 <code node="[object Object]">FixtureMonkey</code>를 사용하면 랜덤한 필드값을 갖는 fixture 객체를 생성하여 사용할 수 있다.</p>
+<p><code node="[object Object]">setter</code>를 통해서 객체를 제어할 수 있는데, 테스트하고자 하는 필드를 명확히 표현하기 때문에 테스트 관심사를 바로 파악할 수 있다는 장점도 있다.</p></div><section></section></div></main></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"postData":{"id":"post-1-3","title":"Fixture Monkey With Kotlin","category":"test","thumbnail":"https://i.imgur.com/J5SIYtU.png","tags":"test","date":"2024-03-03 10:00","searchKeywords":"fixture monkey, test, fixture","description":"fixtureMonkey","preview":"\n테스트를 작성하다보면 프로덕션 코드를 작성하는 시간보다 테스트를 위한 픽스처를 만드는데 더 많은 시간이 소요될 때가 있다.\n\n테스트를 작성하는데 시간이 많이 들고 번거로울 수록 테스트 코드를 생략하게 되고 결국 결함에 취약한 시스템을 구현할 위험이 "},"detail":"\n테스트를 작성하다보면 프로덕션 코드를 작성하는 시간보다 테스트를 위한 픽스처를 만드는데 더 많은 시간이 소요될 때가 있다.\n\n테스트를 작성하는데 시간이 많이 들고 번거로울 수록 테스트 코드를 생략하게 되고 결국 결함에 취약한 시스템을 구현할 위험이 있다.\n\n주문 관련 로직을 테스트 하기위해서 `Order` 픽스처를 만들어야했었는데 `Order` 객체 내부에 필드가 24개 였을뿐더러 내부 객체의 필드까지 합하면 정의해줘야 하는 필드가 수 없이 많았다.\n\n심지어 케이스마다 다른 상태값을 갖고있는 `Order` 픽스처를 추가로 만들어줘야 했기 때문에 테스트 준비에 많은 시간이 소요됐던 경험이 있다.\n\n그러던중 `Fixture Monkey`라는 PBT(Property Based Testing) 라이브러리를 알게되었고, `Fixture Monkey`를 사용하여 테스트를 편리하게 작성할 수 있었던 경험이 있었는데, 개인적으로 유용하게 사용했던 핵심 내용만 간략하게 소개하고자 한다.\n\n## FixtureMonkey의 주요 기능\n\n- 렌덤하고 복잡한 제약조건을 갖는 객체를 생성해준다.\n- 설정한 제약조건을 검증할 수 있다.\n- 테스트케이스마다 다르게 객체 제어가 가능하다.\n\n`FixtureMonkey`는 엔티티 필드에 지정된 Bean validation 어노테이션에 따라 유효한 속성값을 갖는 객체를 생성한다.\n\n실패 테스트 작성과 같이 특정 테스트 케이스에서 조건을 추가하거나 조건에 벗어난 필드를 설정해야할 경우에는 `ArbitraryBuilder`를 사용하여 fixture를 제어할 수 있다.\n\n`ArbitraryBuilder`는 빌더 패턴을 사용하여 객체의 필드값을 원하는 값으로 설정하여 객체를 생성하는게 가능하다.\n\n## 예제\n\n### Without FixtureMonkey Test\n\n`FixtureMonkey`의 편리한 기능을 살펴보기에 앞서서 이전 방식으로 테스트를 작성해보았다.\n\n다음은 주문 과정에서 입력된 배송지 주소가 유효한지 검증하는 테스트이다.\n\n```kotlin\ndata class Order(  \n    val product: List\u003cProduct\u003e,  \n    val purchaserName: String,  \n    val receiver: Receiver,  \n    val totalPrice: Long,  \n    val coupon: List\u003cCoupon\u003e,  \n    val delivery: Delivery,  \n)\n```\n\n```kotlin\nclass OrderFixture {  \n    companion object {  \n        fun create(  \n            id: Long = 1L,  \n            product: List\u003cProduct\u003e = listOf(  \n                Product(name = \"초콜릿\", price = 300L),  \n                Product(name = \"키보드\", price = 20000L),  \n            ),  \n            purchaserName: String = \"홍길동\",  \n            receiver: Receiver = Receiver(name = \"홍길동\", \"01012341234\"),  \n            totalPrice: Long = 20300L,  \n            coupon: List\u003cCoupon\u003e = listOf(Coupon()),  \n            delivery: Delivery = Delivery(\"경기도\", \"203동 1023호\", true),  \n        ): Order {  \n            return Order(  \n                id = id,  \n                product = product,  \n                purchaserName = purchaserName,  \n                receiver = receiver,  \n                totalPrice = totalPrice,  \n                coupon = coupon,  \n                delivery = delivery,  \n            )  \n        }  \n    }  \n}\n```\n\n```kotlin\nclass OrderServiceTestWithOutFixtureMonkey : DescribeSpec({  \n    val sut = OrderService()  \n    val log = LoggerFactory.getLogger(this.javaClass)  \n  \n    describe(\"배송 주소 유효성 검사\") {  \n        it(\"유효성 검증을 통과한다.\") {  \n            val order = OrderFixture.create()  \n  \n            shouldNotThrowAny {  \n                sut.validateDeliveryAddress(order)  \n            }  \n        }  \n        it(\"지번 주소를 입력받았을 경우, 상세 주소가 없으면 안 된다\") {  \n            val order = OrderFixture.create(delivery = Delivery(baseAddress = \"경기도\", road = false, detailAddress = null))  \n  \n            val exception = shouldThrow\u003cIllegalArgumentException\u003e {  \n                sut.validateDeliveryAddress(order)  \n            }  \n  \n            exception.message shouldBe \"지번 주소에는 상세 주소가 반드시 필요합니다.\"  \n        }  \n    }})\n```\n\n테스트 성공과 실패 케이스를 위한 `OrderFixture` 객체를 정의하여 사용하였다.\n`Order` 객체에 정의된 필드 뿐만 아니라 연관된 객체의 필드값들도 함께 정의해줘야하기 때문에 꽤나 번거로운 작업일 수 있다.\n\n만약 연관된 엔티티가 더 많고 정의해줘야하는 필드 수가 훨씬 많아진다면 테스트를 위한 fixture를 정의하는데 큰 비용이 소모되게 된다.\n\n### FixtureMonkey Test\n\n이번엔 `FixtureMonkey`를 사용하여 간단하게 fixture를 생성하여 테스트를 작성해보도록 하겠다.\n\n먼저 `build.gradle.kts`에 의존성을 추가해주었다.\n```gradle\n// fixture monkey  \ntestImplementation(\"com.navercorp.fixturemonkey:fixture-monkey-starter-kotlin:1.0.14\")  \ntestImplementation(\"com.navercorp.fixturemonkey:fixture-monkey-jakarta-validation:0.6.3\")  \ntestImplementation(\"com.navercorp.fixturemonkey:fixture-monkey-jackson:0.6.3\")\n```\n\n**DefaultMonkeyCreator**\n```kotlin\nfun monkey() : FixtureMonkey {  \n    return FixtureMonkey.builder()  \n        .plugin(KotlinPlugin())  \n        .build()  \n}\n```\n\n**FixtureBuilders**\n```kotlin\nfun \u003cT\u003e defaultFixtureBuilder(clazz: Class\u003cT\u003e): ArbitraryBuilder\u003cT\u003e {  \n    return monkey().giveMeBuilder(clazz)  \n}\n```\n\n```kotlin\nclass OrderServiceTestWithFixtureMonkey: DescribeSpec({  \n    val sut = OrderService()  \n    val log = LoggerFactory.getLogger(this.javaClass)  \n  \n    describe(\"배송 주소 유효성 검사\") {  \n        it(\"유효성 검증을 통과한다.\") {  \n            val order = defaultFixtureBuilder(Order::class.java)  \n                .setExp(  \n                    Order::delivery,  \n                    Delivery(baseAddress = \"경기도\", detailAddress = null, road = true))  \n                .sample()  \n  \n            shouldNotThrowAny {  \n                sut.validateDeliveryAddress(order)  \n            }  \n        }  \n        it(\"지번 주소를 입력받았을 경우, 상세 주소가 없으면 안 된다\") {  \n            val order = defaultFixtureBuilder(Order::class.java)  \n                .setExp(  \n                    Order::delivery,  \n                    Delivery(baseAddress = \"경기도\", detailAddress = null, road = false))  \n                .sample()  \n  \n            val exception = shouldThrow\u003cIllegalArgumentException\u003e {  \n                sut.validateDeliveryAddress(order)  \n            }  \n  \n            exception.message shouldBe \"지번 주소에는 상세 주소가 반드시 필요합니다.\"  \n        }  \n    }})\n```\n\n이처럼 `FixtureMonkey`를 사용하면 랜덤한 필드값을 갖는 fixture 객체를 생성하여 사용할 수 있다.\n\n`setter`를 통해서 객체를 제어할 수 있는데, 테스트하고자 하는 필드를 명확히 표현하기 때문에 테스트 관심사를 바로 파악할 수 있다는 장점도 있다.\n"},"__N_SSG":true},"page":"/[id]","query":{"id":"post-1-3"},"buildId":"rHHwQgn4XzsFFzcKqsKPc","assetPrefix":"/TIL","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

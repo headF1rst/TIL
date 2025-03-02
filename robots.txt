@@ -11,4 +11,3 @@ Host: https://headf1rst.github.io/TIL/
 
 # Sitemaps
 Sitemap: https://headf1rst.github.io/TIL/sitemap.xml
-Sitemap: https://headf1rst.github.io/TIL/server-sitemap.xml

@@ -1,0 +1,144 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><link rel="apple-touch-icon" sizes="180x180" href="https://i.imgur.com/2nHGFTv.png"/><link rel="icon" type="image/png" sizes="32x32" href="https://i.imgur.com/2nHGFTv.png"/><link rel="icon" type="image/png" sizes="16x16" href="https://i.imgur.com/2nHGFTv.png"/><link rel="manifest" href="/site.webmanifest"/><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="theme-color" content="#ffffff"/><title>내부 메서드 호출시 트랜잭션이 적용되지 않는 이슈</title><meta name="title" content="내부 메서드 호출시 트랜잭션이 적용되지 않는 이슈"/><meta name="description" content="Transactional 내부 메서드 호출시 트랜잭션이 적용되지 않는 이슈"/><meta name="keywords" content="transactional, spring, aop"/><meta name="robots" content="index, follow"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><meta name="language" content="Korean"/><meta name="author" content="Sanha Ko"/><meta property="og:title" content="내부 메서드 호출시 트랜잭션이 적용되지 않는 이슈"/><meta property="og:url" content="https://headf1rst.github.io/TIL/post-1-6"/><meta property="og:type" content="blog"/><meta property="og:image" content="https://velog.velcdn.com/images/uiurihappy/post/0c13062e-e5cb-45f0-9727-a9ef018b1ffc/image.png"/><meta property="og:description" content="Transactional 내부 메서드 호출시 트랜잭션이 적용되지 않는 이슈"/><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"내부 메서드 호출시 트랜잭션이 적용되지 않는 이슈","datePublished":"2024-10-01 10:00","dateModified":"2024-10-01 10:00","author":{"@type":"Person","name":"Sanha Ko"},"description":"Transactional 내부 메서드 호출시 트랜잭션이 적용되지 않는 이슈","image":"https://velog.velcdn.com/images/uiurihappy/post/0c13062e-e5cb-45f0-9727-a9ef018b1ffc/image.png","url":"https://headf1rst.github.io/TIL/post-1-6","keywords":"transactional","publisher":{"@type":"Organization","name":"headF1rst","logo":{"@type":"ImageObject","url":"https://headf1rst.github.io/TIL/favicon.ico"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://headf1rst.github.io/TIL/post-1-6"}}</script><meta name="next-head-count" content="23"/><link rel="preload" href="/TIL/_next/static/css/754b961274c075df.css" as="style"/><link rel="stylesheet" href="/TIL/_next/static/css/754b961274c075df.css" data-n-g=""/><link rel="preload" href="/TIL/_next/static/css/38994dd0aed51f22.css" as="style"/><link rel="stylesheet" href="/TIL/_next/static/css/38994dd0aed51f22.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/TIL/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script><script src="/TIL/_next/static/chunks/webpack-ac557983bcc4c022.js" defer=""></script><script src="/TIL/_next/static/chunks/framework-2c79e2a64abdb08b.js" defer=""></script><script src="/TIL/_next/static/chunks/main-dc8c1543918dad35.js" defer=""></script><script src="/TIL/_next/static/chunks/pages/_app-421e211a78340d83.js" defer=""></script><script src="/TIL/_next/static/chunks/202-7f08bae5ecc79443.js" defer=""></script><script src="/TIL/_next/static/chunks/pages/%5Bid%5D-a17d958fe22e8c91.js" defer=""></script><script src="/TIL/_next/static/rHHwQgn4XzsFFzcKqsKPc/_buildManifest.js" defer=""></script><script src="/TIL/_next/static/rHHwQgn4XzsFFzcKqsKPc/_ssgManifest.js" defer=""></script></head><body><div id="__next"><nav class="flex bg-white sticky top-0 left-0 z-50 justify-between items-center border-b-2 border-gray-100 py-3 md:justify-start md:space-x-10 px-10 sm:px-5 dark:bg-[#0d1117] dark:text-[#c9d1d9] dark:border-gray-600"><div class="flex justify-start"><a href="/TIL"><div class="flex items-center gap-2 cursor-pointer"><img src="https://i.imgur.com/2nHGFTv.png" width="40" height="40" alt="블로그 아이콘"/><h1 class="text-lg ">산하개발실록</h1></div></a></div><div class="flex justify-between gap-10 sm:hidden"><a href="/TIL"><button class="font-light hover:text-indigo-300 text-base">Home</button></a><a href="/TIL/category"><button class="font-light hover:text-indigo-300 text-base">Category</button></a><a href="https://plain-composer-c65.notion.site/29c7640fdf054059b6ea28ed61189bfb" target="_blank" rel="noreferrer" class="hover:text-indigo-300 text-base font-light flex gap-1">About<span class="flex justify-center" style="align-items:center"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="m13 3 3.293 3.293-7 7 1.414 1.414 7-7L21 11V3z"></path><path d="M19 19H5V5h7l-2-2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2v-5l-2-2v7z"></path></svg></span></a></div><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="lg:hidden" height="25" width="25" xmlns="http://www.w3.org/2000/svg"><path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path></svg></nav><main class="dark:bg-[#0d1117] h-screen pb-10"><div class="flex flex-col w-3/5 sm:w-5/6 m-auto pt-20 pb-20 gap-10 dark:bg-[#0d1117] dark:text-[#c9d1d9]"><ul id="scroll-spy" class="sm:hidden p-10 fixed top-50 right-0 h-full w-1/5 text-gray-500 dark:text-[#c9d1d9]"></ul><div class="text-5xl font-bold">내부 메서드 호출시 트랜잭션이 적용되지 않는 이슈</div><div class="flex flex-col gap-2"><div class="text-base text-gray-600 dark:text-gray-300">2024-10-01 10:00</div><div class="flex flex-wrap gap-2 dark:text-black sm:m-0"><span class="p-1 pl-3 pr-3 rounded-md bg-indigo-100 hover:bg-indigo-200 cursor-pointer transition ease-in-out duration-200 text-sm">transactional</span></div></div><div class="markdown-body" style="font-size:17px"><h1>@Transactional 동작 원리</h1>
+<h2>AOP와 프록시 패턴을 통한 트랜잭션 관리</h2>
+<p>AOP는 엔터프라이즈 애플리케이션 개발에서 객체지향 프로그래밍(OOP)의 한계를 보완해주는 보조적인 프로그래밍 기법이다. 이를 통해 트랜잭션, 캐싱, 로깅 같은 부가적인 관심사를 분리하고 모듈화하여 개발자가 비즈니스 로직에 집중할 수 있게 한다.</p>
+<p>스프링은 프록시 패턴을 이용해 AOP를 지원한다. 프록시 객체는 실제 객체로의 메서드 호출을 가로채며, 비즈니스 로직이 실행되기 전후에 공통 기능을 적용하는 방식으로 동작한다.</p>
+<p>트랜잭션 관리도 마찬가지로, @Transactional이 적용된 메서드가 호출되기 전후에 프록시 객체가 트랜잭션 시작과 종료를 처리한다. 그렇다면 이 프록시 객체는 어떻게 생성될까?</p>
+<h2>Spring AOP의 두 가지 프록시 방식</h2>
+<p>스프링은 프록시 객체 생성을 위해 JDK 동적 프록시와 CGLIB 프록시, 두 가지 방식을 제공한다.</p>
+<h3>1. JDK 동적 프록시</h3>
+<p>JDK의 java.lang.reflect.Proxy 클래스를 이용해 인터페이스를 구현하는 프록시 객체를 런타임에 동적으로 생성한다. 타겟 객체는 최소 하나 이상의 인터페이스를 구현해야 하며, 그 인터페이스의 추상 메서드를 기반으로 프록시 객체를 생성한다.</p>
+<p><img src="https://i.imgur.com/V8LdLQg.png" alt="Drawing 2024-09-25 18.44.13.excalidraw" node="[object Object]" style="max-height:450px;max-width:90%"/></p>
+<p>인터페이스를 구현한 프록시 객체는 InvocationHandler를 통해 타겟 메서드로의 메서드 호출을 가로채고 부가 기능을 처리한다.</p>
+<p>만약 트랜잭션 처리 이외에 로깅 처리를 추가로 타겟 메서드에 부여하면 그에 필요한 프록시 객체가 하나 더 생성되며 다음과 같은 순서로 객체가 호출된다.</p>
+<blockquote>
+<p>ProxyLogging -&gt; ProxyTransaction -&gt; Target</p>
+</blockquote>
+<h3>2. CGLIB 프록시 (기본 방식)</h3>
+<p>CGLIB(Code Generation Library)는 바이트코드를 조작해 런타임에 동적으로 클래스를 생성할 수 있는 라이브러리다. JDK 동적 프록시와 달리, 타겟 객체를 상속하는 프록시 객체를 생성하므로 타겟 객체가 인터페이스를 구현하지 않아도 프록시를 생성할 수 있다. 프록시 객체는 타겟 객체의 메서드를 오버라이드하여 호출을 가로채고, 메서드 실행 전후에 부가 기능을 처리한다.</p>
+<p>스프링 부트 2.x 이후에는 타깃 객체가 인터페이스를 구현하고 있는지와 상관없이 기본적으로 CGLIB 프록시 방식으로 트랜잭션이 동작한다.</p>
+<blockquote>
+<p><a href="https://www.springcloud.io/post/2022-01/springboot-aop/#gsc.tab=0">AOP in Spring Boot, is it a JDK dynamic proxy or a Cglib dynamic proxy?</a></p>
+</blockquote>
+<h1>내부 메서드와 AOP 프록시</h1>
+<p>@Transactional이 어떤 원리로 동작하는지 알아보았으니, 이제 동일 클래스 내에서 내부 메서드를 호출했을 때 트랜잭션이 적용되지 않는 경우와 그 이유를 살펴보자.</p>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#4078f2">@Service</span><span>  
+</span><span></span><span style="color:#4078f2">@RequiredArgsConstructor</span><span>  
+</span><span></span><span style="color:#a626a4">public</span><span> </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">TransportService</span><span class="hljs-class"> </span><span>{  
+</span>  
+<span>    </span><span style="color:#a626a4">private</span><span> </span><span style="color:#a626a4">final</span><span> TransportRepository transportRepository;  
+</span>  
+<span>    </span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#a626a4">void</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">sendTransportEvents</span><span class="hljs-function hljs-params">(List&lt;Long&gt; transportIds)</span><span class="hljs-function"> </span><span>{  
+</span>        transportRepository.changeStatuses(transportIds);  
+<span>        </span><span style="color:#a0a1a7;font-style:italic">// 전송...  </span><span>
+</span>    }  
+<!-- -->}</code></div></pre>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#4078f2">@Repository</span><span>  
+</span><span></span><span style="color:#a626a4">public</span><span> </span><span class="hljs-class" style="color:#a626a4">interface</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">TransportRepository</span><span class="hljs-class"> </span><span>{  
+</span>  
+<span>    </span><span class="hljs-function" style="color:#a626a4">void</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">save</span><span class="hljs-function hljs-params">(Transport transport)</span><span>;  
+</span>  
+<span>    </span><span class="hljs-function" style="color:#a626a4">default</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#a626a4">void</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">changeStatuses</span><span class="hljs-function hljs-params">(List&lt;Long&gt; transportIds)</span><span class="hljs-function"> </span><span>{  
+</span><span>        </span><span style="color:#a626a4">for</span><span> (Long transportId : transportIds) {  
+</span>            changeStatus(transportId);  
+<!-- -->        }  
+<!-- -->    }  
+<!-- -->  
+<span>    </span><span class="hljs-function" style="color:#a626a4">void</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">changeStatus</span><span class="hljs-function hljs-params">(Long transportId)</span><span>;  
+</span>  
+<span>    </span><span class="hljs-function">Optional&lt;Transport&gt; </span><span class="hljs-function" style="color:#4078f2">findById</span><span class="hljs-function hljs-params">(Long id)</span><span>;  
+</span>}</code></div></pre>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#4078f2">@Repository</span><span>  
+</span><span></span><span style="color:#4078f2">@RequiredArgsConstructor</span><span>  
+</span><span></span><span style="color:#a626a4">public</span><span> </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">TransportRepositoryImpl</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#a626a4">implements</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">TransportRepository</span><span class="hljs-class"> </span><span>{  
+</span>  
+<span>    </span><span style="color:#a626a4">private</span><span> </span><span style="color:#a626a4">final</span><span> TransportJpaRepository transportJpaRepository;  
+</span>  
+<span>    </span><span style="color:#4078f2">@Override</span><span>  
+</span><span>    </span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#a626a4">void</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">save</span><span class="hljs-function hljs-params">(Transport transport)</span><span class="hljs-function"> </span><span>{  
+</span>        transportJpaRepository.save(transport);  
+<!-- -->    }
+<!-- -->
+<span>    </span><span style="color:#4078f2">@Transactional(propagation = Propagation.REQUIRES_NEW)</span><span>
+</span><span>    </span><span style="color:#4078f2">@Override</span><span>    
+</span><span>    </span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#a626a4">void</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">changeStatus</span><span class="hljs-function hljs-params">(Long transportId)</span><span class="hljs-function"> </span><span>{  
+</span>        Transport transport = transportJpaRepository.findById(transportId).orElseThrow();  
+<!-- -->        transport.updateStatus(TransportStatus.SENT);  
+<!-- -->    }  
+<!-- -->  
+<span>    </span><span style="color:#4078f2">@Override</span><span>  
+</span><span>    </span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> Optional&lt;Transport&gt; </span><span class="hljs-function" style="color:#4078f2">findById</span><span class="hljs-function hljs-params">(Long id)</span><span class="hljs-function"> </span><span>{  
+</span><span>        </span><span style="color:#a626a4">return</span><span> transportJpaRepository.findById(id);  
+</span>    }  
+<!-- -->}</code></div></pre>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#4078f2">@SpringBootTest</span><span>  
+</span><span></span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">TransportServiceTest</span><span class="hljs-class"> </span><span>{  
+</span>  
+<span>    </span><span style="color:#4078f2">@Autowired</span><span>  
+</span><span>    </span><span style="color:#a626a4">private</span><span> TransportService sut;  
+</span><span>    </span><span style="color:#4078f2">@Autowired</span><span>  
+</span><span>    </span><span style="color:#a626a4">private</span><span> TransportRepository transportRepository;  
+</span>  
+<span>    </span><span style="color:#4078f2">@Test</span><span>  
+</span><span>    </span><span style="color:#a626a4">void</span><span> 운송_이벤트가_전송되면서_상태를_SENT로_변경한다() {  
+</span><span>        </span><span style="color:#a0a1a7;font-style:italic">// given  </span><span>
+</span><span>        </span><span style="color:#a626a4">var</span><span> transportA = </span><span style="color:#a626a4">new</span><span> Transport(</span><span style="color:#986801">1L</span><span>, TransportStatus.PENDING);  
+</span><span>        </span><span style="color:#a626a4">var</span><span> transportB = </span><span style="color:#a626a4">new</span><span> Transport(</span><span style="color:#986801">2L</span><span>, TransportStatus.PENDING);  
+</span>        List.of(transportA, transportB).forEach(transportRepository::save);  
+<!-- -->  
+<span>        </span><span style="color:#a0a1a7;font-style:italic">// when  </span><span>
+</span><span>        sut.sendTransportEvents(List.of(</span><span style="color:#986801">1L</span><span>, </span><span style="color:#986801">2L</span><span>));  
+</span>  
+<span>        </span><span style="color:#a0a1a7;font-style:italic">// then  </span><span>
+</span><span>        </span><span style="color:#a626a4">var</span><span> result1 = transportRepository.findById(</span><span style="color:#986801">1L</span><span>).get();  
+</span><span>        </span><span style="color:#a626a4">var</span><span> result2 = transportRepository.findById(</span><span style="color:#986801">2L</span><span>).get();  
+</span>  
+<!-- -->        assertThat(result1.getStatus()).isEqualTo(TransportStatus.SENT);  
+<!-- -->        assertThat(result2.getStatus()).isEqualTo(TransportStatus.SENT);  
+<!-- -->    }  
+<!-- -->}</code></div></pre>
+<p>TransportRepositoryImpl.changeStatus(transportId)에서 JPA의 더티 체킹을 활용해 transport의 상태 값을 PENDING에서 SENT로 변경을 시도하고 있다.</p>
+<p>JPA의 더티 체킹이 의도한 대로 동작한다면 테스트가 통과해야 하지만 테스트가 실패하며 상태 값은 그대로 PENDING으로 변하지 않은 것을 확인할 수 있었다.</p>
+<p><img src="https://i.imgur.com/RI75mwO.png" alt="스크린샷 2024-10-01 오전 2.05.54.png" node="[object Object]" style="max-height:450px;max-width:90%"/></p>
+<h2>왜 이런 일이 발생할까?</h2>
+<pre><div node="[object Object]" style="display:block;overflow-x:auto;padding:0.5em;color:#383a42;background:#fafafa"><code class="language-java" style="white-space:pre"><span style="color:#4078f2">@Repository</span><span>  
+</span><span></span><span style="color:#4078f2">@RequiredArgsConstructor</span><span>  
+</span><span></span><span style="color:#4078f2">@Slf4j</span><span>  
+</span><span></span><span style="color:#a626a4">public</span><span> </span><span class="hljs-class" style="color:#a626a4">class</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">TransportRepositoryImpl</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#a626a4">implements</span><span class="hljs-class"> </span><span class="hljs-class" style="color:#4078f2">TransportRepository</span><span class="hljs-class"> </span><span>{  
+</span>  
+<span>    </span><span style="color:#a626a4">private</span><span> </span><span style="color:#a626a4">final</span><span> TransportJpaRepository transportJpaRepository;  
+</span><span>    </span><span style="color:#a626a4">private</span><span> </span><span style="color:#a626a4">final</span><span> EntityManager em;  
+</span>
+<span>	</span><span style="color:#a0a1a7;font-style:italic">// ...</span><span>
+</span>
+<span>    </span><span style="color:#4078f2">@Transactional(propagation = Propagation.REQUIRES_NEW)</span><span>
+</span><span>    </span><span style="color:#4078f2">@Override</span><span>    
+</span><span>    </span><span class="hljs-function" style="color:#a626a4">public</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#a626a4">void</span><span class="hljs-function"> </span><span class="hljs-function" style="color:#4078f2">changeStatus</span><span class="hljs-function hljs-params">(Long transportId)</span><span class="hljs-function"> </span><span>{    
+</span>        Transport transport = transportJpaRepository.findById(transportId).orElseThrow();  
+<!-- -->        transport.updateStatus(TransportStatus.SENT);  
+<!-- -->  
+<span>        </span><span style="color:#a626a4">if</span><span> (em.contains(transport)) {  
+</span><span>            log.info(</span><span style="color:#50a14f">&quot;Entity is managed&quot;</span><span>);  
+</span><span>        } </span><span style="color:#a626a4">else</span><span> {  
+</span><span>            log.info(</span><span style="color:#50a14f">&quot;Entity is detached&quot;</span><span>);  
+</span>        }
+<!-- -->        
+<span>        log.info(</span><span style="color:#50a14f">&quot;Transaction active: {}&quot;</span><span>, TransactionSynchronizationManager.isActualTransactionActive());  
+</span>    }
+<!-- -->}</code></div></pre>
+<p>더티 체킹이 정상적으로 동작하려면 엔티티가 영속성 컨텍스트에서 관리되고 있어야 한다. 하지만 아래 로그를 보면 Transport 엔티티가 영속성 컨텍스트에 관리되지 않는 것을 확인할 수 있는데, 이는 해당 메서드에 트랜잭션이 적용되지 않았기 때문이다.</p>
+<p><img src="https://i.imgur.com/BANQI7X.png" alt="스크린샷 2024-10-01 오전 2.35.24.png" node="[object Object]" style="max-height:450px;max-width:90%"/></p>
+<p>영속성 컨텍스트의 생명주기는 트랜잭션과 동일하다. 트랜잭션이 활성화되지 않으면 영속성 컨텍스트가 생성되지 않고, 따라서 엔티티도 영속성 컨텍스트에서 관리되지 않는다. 결국, 트랜잭션이 적용되지 않은 <code node="[object Object]">changeStatus()</code> 메서드에서는 영속성 컨텍스트가 생성되지 않기 때문에 더티 체킹이 동작하지 않는 것이다.</p>
+<p>스프링은 CGLIB을 사용해 <code node="[object Object]">TransportRepositoryImpl</code> 객체를 상속하는 프록시 객체를 생성한다. 이 프록시 객체는 <code node="[object Object]">@Transactional</code>이 붙은 <code node="[object Object]">changeStatus()</code> 메서드를 오버라이드하여, 트랜잭션 관련 로직을 메서드 호출 전후에 삽입한다.</p>
+<p>문제는 <code node="[object Object]">changeStatuses()</code> 메서드가 같은 클래스 내에서 <code node="[object Object]">changeStatus()</code>를 직접 호출하는 방식으로 작성되어 발생한다. 스프링 프록시는 클래스 외부에서 호출되는 경우에만 트랜잭션을 처리할 수 있으며, 자기 자신 내에서 호출하는 메서드는 프록시를 거치지 않고 호출되기 때문에 트랜잭션이 적용되지 않는다.</p>
+<h3>왜 내부 호출은 프록시를 거치지 않을까?</h3>
+<p>스프링 AOP에서 프록시는 외부 클라이언트가 호출할 때 동작한다. 외부에서 프록시 객체를 통해 메서드를 호출하면, 프록시는 이 호출을 가로채고 트랜잭션 등의 부가 기능을 처리한다. 그러나 동일 클래스 내에서 호출하는 경우는 외부 호출이 아니라 자기 자신의 인스턴스를 통해 메서드가 호출되는 것이기 때문에, 프록시를 거치지 않고 실제 메서드가 직접 호출된다.</p>
+<p>이를 해결하기 위해 <code node="[object Object]">@Transactional</code>을 외부에서 호출되는 메서드에 적용하는 것이 권장된다. 혹은 내부 메서드를 별도의 클래스로 분리해 외부에서 호출할 수 있도록 설계하는 방법도 있다.</p>
+<h3>마무리</h3>
+<p>@Transactional의 동작 원리에 대해 어느 정도 알고 있다고 생각했는데 이번 문제를 겪으면서 아직 명확히 정리되어 있지 않다는 것을 느끼게 되었다.</p>
+<p>글을 작성하면서 정리되지 않고 점으로만 존재하던 지식이 선으로 연결되는 듯한 느낌을 받았다. 바쁘다고 글 쓰는 걸 미루지 말고 글로 지식과 경험을 내재화하는 습관을 가질 수 있도록 노력해야겠다.</p>
+<hr/>
+<p><strong>참고 자료</strong></p>
+<ul>
+<li><a href="https://docs.spring.io/spring-framework/reference/core/aop/proxying.html">Proxying Mechanisms</a></li>
+<li><a href="https://www.quora.com/In-Java-why-are-dynamic-proxies-only-allowed-to-proxy-interface-classes">In Java, why are dynamic proxies only allowed to proxy interface classes?</a></li>
+</ul></div><section></section></div></main></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"postData":{"id":"post-1-6","title":"내부 메서드 호출시 트랜잭션이 적용되지 않는 이슈","category":"spring","thumbnail":"https://velog.velcdn.com/images/uiurihappy/post/0c13062e-e5cb-45f0-9727-a9ef018b1ffc/image.png","tags":"transactional","date":"2024-10-01 10:00","searchKeywords":"transactional, spring, aop","description":"Transactional 내부 메서드 호출시 트랜잭션이 적용되지 않는 이슈","preview":"\n# @Transactional 동작 원리\n\n## AOP와 프록시 패턴을 통한 트랜잭션 관리\n\nAOP는 엔터프라이즈 애플리케이션 개발에서 객체지향 프로그래밍(OOP)의 한계를 보완해주는 보조적인 프로그래밍 기법이다. 이를 통해 트랜잭션, 캐싱, 로깅 "},"detail":"\n# @Transactional 동작 원리\n\n## AOP와 프록시 패턴을 통한 트랜잭션 관리\n\nAOP는 엔터프라이즈 애플리케이션 개발에서 객체지향 프로그래밍(OOP)의 한계를 보완해주는 보조적인 프로그래밍 기법이다. 이를 통해 트랜잭션, 캐싱, 로깅 같은 부가적인 관심사를 분리하고 모듈화하여 개발자가 비즈니스 로직에 집중할 수 있게 한다.\n\n스프링은 프록시 패턴을 이용해 AOP를 지원한다. 프록시 객체는 실제 객체로의 메서드 호출을 가로채며, 비즈니스 로직이 실행되기 전후에 공통 기능을 적용하는 방식으로 동작한다.\n\n트랜잭션 관리도 마찬가지로, @Transactional이 적용된 메서드가 호출되기 전후에 프록시 객체가 트랜잭션 시작과 종료를 처리한다. 그렇다면 이 프록시 객체는 어떻게 생성될까?\n\n## Spring AOP의 두 가지 프록시 방식\n\n스프링은 프록시 객체 생성을 위해 JDK 동적 프록시와 CGLIB 프록시, 두 가지 방식을 제공한다.\n\n### 1. JDK 동적 프록시\n\nJDK의 java.lang.reflect.Proxy 클래스를 이용해 인터페이스를 구현하는 프록시 객체를 런타임에 동적으로 생성한다. 타겟 객체는 최소 하나 이상의 인터페이스를 구현해야 하며, 그 인터페이스의 추상 메서드를 기반으로 프록시 객체를 생성한다.\n\n![Drawing 2024-09-25 18.44.13.excalidraw](https://i.imgur.com/V8LdLQg.png)\n\n인터페이스를 구현한 프록시 객체는 InvocationHandler를 통해 타겟 메서드로의 메서드 호출을 가로채고 부가 기능을 처리한다.\n\n만약 트랜잭션 처리 이외에 로깅 처리를 추가로 타겟 메서드에 부여하면 그에 필요한 프록시 객체가 하나 더 생성되며 다음과 같은 순서로 객체가 호출된다.\n\n\u003e ProxyLogging -\u003e ProxyTransaction -\u003e Target\n\n### 2. CGLIB 프록시 (기본 방식)\n\nCGLIB(Code Generation Library)는 바이트코드를 조작해 런타임에 동적으로 클래스를 생성할 수 있는 라이브러리다. JDK 동적 프록시와 달리, 타겟 객체를 상속하는 프록시 객체를 생성하므로 타겟 객체가 인터페이스를 구현하지 않아도 프록시를 생성할 수 있다. 프록시 객체는 타겟 객체의 메서드를 오버라이드하여 호출을 가로채고, 메서드 실행 전후에 부가 기능을 처리한다.\n\n스프링 부트 2.x 이후에는 타깃 객체가 인터페이스를 구현하고 있는지와 상관없이 기본적으로 CGLIB 프록시 방식으로 트랜잭션이 동작한다.\n\n\u003e [AOP in Spring Boot, is it a JDK dynamic proxy or a Cglib dynamic proxy?](https://www.springcloud.io/post/2022-01/springboot-aop/#gsc.tab=0)\n\n# 내부 메서드와 AOP 프록시\n\n@Transactional이 어떤 원리로 동작하는지 알아보았으니, 이제 동일 클래스 내에서 내부 메서드를 호출했을 때 트랜잭션이 적용되지 않는 경우와 그 이유를 살펴보자.\n\n```java\n@Service  \n@RequiredArgsConstructor  \npublic class TransportService {  \n  \n    private final TransportRepository transportRepository;  \n  \n    public void sendTransportEvents(List\u003cLong\u003e transportIds) {  \n        transportRepository.changeStatuses(transportIds);  \n        // 전송...  \n    }  \n}\n```\n\n```java\n@Repository  \npublic interface TransportRepository {  \n  \n    void save(Transport transport);  \n  \n    default void changeStatuses(List\u003cLong\u003e transportIds) {  \n        for (Long transportId : transportIds) {  \n            changeStatus(transportId);  \n        }  \n    }  \n  \n    void changeStatus(Long transportId);  \n  \n    Optional\u003cTransport\u003e findById(Long id);  \n}\n```\n\n```java\n@Repository  \n@RequiredArgsConstructor  \npublic class TransportRepositoryImpl implements TransportRepository {  \n  \n    private final TransportJpaRepository transportJpaRepository;  \n  \n    @Override  \n    public void save(Transport transport) {  \n        transportJpaRepository.save(transport);  \n    }\n\n    @Transactional(propagation = Propagation.REQUIRES_NEW)\n    @Override    \n    public void changeStatus(Long transportId) {  \n        Transport transport = transportJpaRepository.findById(transportId).orElseThrow();  \n        transport.updateStatus(TransportStatus.SENT);  \n    }  \n  \n    @Override  \n    public Optional\u003cTransport\u003e findById(Long id) {  \n        return transportJpaRepository.findById(id);  \n    }  \n}\n```\n\n```java\n@SpringBootTest  \nclass TransportServiceTest {  \n  \n    @Autowired  \n    private TransportService sut;  \n    @Autowired  \n    private TransportRepository transportRepository;  \n  \n    @Test  \n    void 운송_이벤트가_전송되면서_상태를_SENT로_변경한다() {  \n        // given  \n        var transportA = new Transport(1L, TransportStatus.PENDING);  \n        var transportB = new Transport(2L, TransportStatus.PENDING);  \n        List.of(transportA, transportB).forEach(transportRepository::save);  \n  \n        // when  \n        sut.sendTransportEvents(List.of(1L, 2L));  \n  \n        // then  \n        var result1 = transportRepository.findById(1L).get();  \n        var result2 = transportRepository.findById(2L).get();  \n  \n        assertThat(result1.getStatus()).isEqualTo(TransportStatus.SENT);  \n        assertThat(result2.getStatus()).isEqualTo(TransportStatus.SENT);  \n    }  \n}\n```\n\nTransportRepositoryImpl.changeStatus(transportId)에서 JPA의 더티 체킹을 활용해 transport의 상태 값을 PENDING에서 SENT로 변경을 시도하고 있다.\n\nJPA의 더티 체킹이 의도한 대로 동작한다면 테스트가 통과해야 하지만 테스트가 실패하며 상태 값은 그대로 PENDING으로 변하지 않은 것을 확인할 수 있었다.\n\n![스크린샷 2024-10-01 오전 2.05.54.png](https://i.imgur.com/RI75mwO.png)\n\n## 왜 이런 일이 발생할까?\n\n```java\n@Repository  \n@RequiredArgsConstructor  \n@Slf4j  \npublic class TransportRepositoryImpl implements TransportRepository {  \n  \n    private final TransportJpaRepository transportJpaRepository;  \n    private final EntityManager em;  \n\n\t// ...\n\n    @Transactional(propagation = Propagation.REQUIRES_NEW)\n    @Override    \n    public void changeStatus(Long transportId) {    \n        Transport transport = transportJpaRepository.findById(transportId).orElseThrow();  \n        transport.updateStatus(TransportStatus.SENT);  \n  \n        if (em.contains(transport)) {  \n            log.info(\"Entity is managed\");  \n        } else {  \n            log.info(\"Entity is detached\");  \n        }\n        \n        log.info(\"Transaction active: {}\", TransactionSynchronizationManager.isActualTransactionActive());  \n    }\n}\n```\n\n더티 체킹이 정상적으로 동작하려면 엔티티가 영속성 컨텍스트에서 관리되고 있어야 한다. 하지만 아래 로그를 보면 Transport 엔티티가 영속성 컨텍스트에 관리되지 않는 것을 확인할 수 있는데, 이는 해당 메서드에 트랜잭션이 적용되지 않았기 때문이다.\n\n![스크린샷 2024-10-01 오전 2.35.24.png](https://i.imgur.com/BANQI7X.png)\n\n영속성 컨텍스트의 생명주기는 트랜잭션과 동일하다. 트랜잭션이 활성화되지 않으면 영속성 컨텍스트가 생성되지 않고, 따라서 엔티티도 영속성 컨텍스트에서 관리되지 않는다. 결국, 트랜잭션이 적용되지 않은 `changeStatus()` 메서드에서는 영속성 컨텍스트가 생성되지 않기 때문에 더티 체킹이 동작하지 않는 것이다.\n\n스프링은 CGLIB을 사용해 `TransportRepositoryImpl` 객체를 상속하는 프록시 객체를 생성한다. 이 프록시 객체는 `@Transactional`이 붙은 `changeStatus()` 메서드를 오버라이드하여, 트랜잭션 관련 로직을 메서드 호출 전후에 삽입한다.\n\n문제는 `changeStatuses()` 메서드가 같은 클래스 내에서 `changeStatus()`를 직접 호출하는 방식으로 작성되어 발생한다. 스프링 프록시는 클래스 외부에서 호출되는 경우에만 트랜잭션을 처리할 수 있으며, 자기 자신 내에서 호출하는 메서드는 프록시를 거치지 않고 호출되기 때문에 트랜잭션이 적용되지 않는다.\n\n### 왜 내부 호출은 프록시를 거치지 않을까?\n\n스프링 AOP에서 프록시는 외부 클라이언트가 호출할 때 동작한다. 외부에서 프록시 객체를 통해 메서드를 호출하면, 프록시는 이 호출을 가로채고 트랜잭션 등의 부가 기능을 처리한다. 그러나 동일 클래스 내에서 호출하는 경우는 외부 호출이 아니라 자기 자신의 인스턴스를 통해 메서드가 호출되는 것이기 때문에, 프록시를 거치지 않고 실제 메서드가 직접 호출된다.\n\n이를 해결하기 위해 `@Transactional`을 외부에서 호출되는 메서드에 적용하는 것이 권장된다. 혹은 내부 메서드를 별도의 클래스로 분리해 외부에서 호출할 수 있도록 설계하는 방법도 있다.\n\n### 마무리\n\n@Transactional의 동작 원리에 대해 어느 정도 알고 있다고 생각했는데 이번 문제를 겪으면서 아직 명확히 정리되어 있지 않다는 것을 느끼게 되었다.\n\n글을 작성하면서 정리되지 않고 점으로만 존재하던 지식이 선으로 연결되는 듯한 느낌을 받았다. 바쁘다고 글 쓰는 걸 미루지 말고 글로 지식과 경험을 내재화하는 습관을 가질 수 있도록 노력해야겠다.\n\n---\n\n**참고 자료**\n\n- [Proxying Mechanisms](https://docs.spring.io/spring-framework/reference/core/aop/proxying.html)\n- [In Java, why are dynamic proxies only allowed to proxy interface classes?](https://www.quora.com/In-Java-why-are-dynamic-proxies-only-allowed-to-proxy-interface-classes)\n"},"__N_SSG":true},"page":"/[id]","query":{"id":"post-1-6"},"buildId":"rHHwQgn4XzsFFzcKqsKPc","assetPrefix":"/TIL","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

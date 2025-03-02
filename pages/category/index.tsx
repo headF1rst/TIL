@@ -70,11 +70,14 @@ function Category({ categoryInfos, profileData }: IProps) {
                 key={categoryInfo.id}
                 onClick={() => onCategoryClick(categoryInfo.id)}
               >
-                <img
-                  src={categoryInfo.thumbnail}
-                  alt="카테고리 썸네일"
-                  className="object-cover w-[250px] h-[180px] sm:w-full sm:h-[200px]"
-                />
+                <div style={{ position: 'relative', width: '250px', height: '180px' }} className="sm:w-full sm:h-[200px]">
+                  <Image
+                    src={categoryInfo.thumbnail}
+                    alt="카테고리 썸네일"
+                    layout="fill"
+                    objectFit="cover"
+                  />
+                </div>
                 <div className="pt-3 pl-2 text-lg font-semibold">
                   {categoryInfo.name}
                 </div>

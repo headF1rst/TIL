@@ -9,13 +9,14 @@ function SideProfile(props: IProfile) {
   return (
     <div className="p-10 lg:fixed lg:top-50 lg:right-0 lg:h-full lg:w-1/5 dark:text-[#c9d1d9] sm:flex sm:gap-4">
       <div className="sm:w-20 sm:h-20 sm:m-2 sm:my-auto">
-        <img
-          className="rounded-full lg:w-full object-cover"
-          src={image}
-          width={180}
-          height={180}
-          alt="프로필 사진"
-        />
+        <div style={{ position: 'relative', width: '180px', height: '180px' }} className="sm:w-20 sm:h-20">
+          <Image
+            className="rounded-full object-cover"
+            src={image}
+            alt="프로필 사진"
+            layout="fill"
+          />
+        </div>
       </div>
       <div className="flex flex-col gap-2 mt-5">
         <span className="text-xl mr-2">{name}</span>

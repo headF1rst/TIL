@@ -16,6 +16,8 @@ import "github-markdown-css";
 import Utterances from "../components/utterances";
 import ScrollSpy from "../components/scroll-spy";
 import Head from "next/head";
+import Image from "next/image";
+
 interface IParams {
   params: {
     id: string;
@@ -62,8 +64,75 @@ function PostDetail({ postData, detail }: IProps) {
     router.push(`/?tag=${tag}`);
   };
 
-  const ImageRenderer = ({ ...props }) => {
-    return <img {...props} style={{ maxHeight: "450px", maxWidth: "90%" }} />;
+  const ImageRenderer = ({ src, alt, ...props }: any) => {
+    if (!src) return null;
+    
+    if (src.startsWith('http')) {
+      return (
+        <div style={{ position: 'relative', maxWidth: '90%', maxHeight: '450px', margin: '0 auto' }}>
+          <Image 
+            src={src} 
+            alt={alt || "블로그 이미지"} 
+            layout="responsive"
+            width={700}
+            height={400}
+            objectFit="contain"
+            {...props}
+          />
+        </div>
+      );
+    }
+    
+    return (
+      <div style={{ position: 'relative', maxWidth: '90%', maxHeight: '450px', margin: '0 auto' }}>
+        <img 
+          src={src} 
+          alt={alt || "블로그 이미지"} 
+          style={{ maxHeight: "450px", maxWidth: "100%" }}
+          {...props}
+        />
+      </div>
+    );
+  };
+
+  // 구조화된 데이터(JSON-LD) 생성
+  const generateJsonLd = () => {
+    if (!postData) return null;
+    
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": postData.title,
+      "datePublished": postData.date,
+      "dateModified": postData.date,
+      "author": {
+        "@type": "Person",
+        "name": "Sanha Ko"
+      },
+      "description": postData.description || "",
+      "image": postData.thumbnail || "",
+      "url": `https://headf1rst.github.io/TIL/${postData.id}`,
+      "keywords": postData.tags ? postData.tags.split(", ").join(",") : "",
+      "publisher": {
+        "@type": "Organization",
+        "name": "headF1rst",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://headf1rst.github.io/TIL/favicon.ico"
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": `https://headf1rst.github.io/TIL/${postData.id}`
+      }
+    };
+    
+    return (
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+    );
   };
 
   if (router.isFallback) {
@@ -95,6 +164,7 @@ function PostDetail({ postData, detail }: IProps) {
         <meta property="og:type" content="blog" />
         <meta property="og:image" content={postData.thumbnail} />
         <meta property="og:description" content={postData.description} />
+        {generateJsonLd()}
       </Head>
       <div className="flex flex-col w-3/5 sm:w-5/6 m-auto pt-20 pb-20 gap-10 dark:bg-[#0d1117] dark:text-[#c9d1d9]">
         <ScrollSpy />

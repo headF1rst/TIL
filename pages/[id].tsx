@@ -16,7 +16,6 @@ import "github-markdown-css";
 import Utterances from "../components/utterances";
 import ScrollSpy from "../components/scroll-spy";
 import Head from "next/head";
-import Image from "next/image";
 
 interface IParams {
   params: {
@@ -64,35 +63,8 @@ function PostDetail({ postData, detail }: IProps) {
     router.push(`/?tag=${tag}`);
   };
 
-  const ImageRenderer = ({ src, alt, ...props }: any) => {
-    if (!src) return null;
-    
-    if (src.startsWith('http')) {
-      return (
-        <div style={{ position: 'relative', maxWidth: '90%', maxHeight: '450px', margin: '0 auto' }}>
-          <Image 
-            src={src} 
-            alt={alt || "블로그 이미지"} 
-            layout="responsive"
-            width={700}
-            height={400}
-            objectFit="contain"
-            {...props}
-          />
-        </div>
-      );
-    }
-    
-    return (
-      <div style={{ position: 'relative', maxWidth: '90%', maxHeight: '450px', margin: '0 auto' }}>
-        <img 
-          src={src} 
-          alt={alt || "블로그 이미지"} 
-          style={{ maxHeight: "450px", maxWidth: "100%" }}
-          {...props}
-        />
-      </div>
-    );
+  const ImageRenderer = ({ ...props }) => {
+    return <img {...props} style={{ maxHeight: "450px", maxWidth: "90%" }} />;
   };
 
   // 구조화된 데이터(JSON-LD) 생성

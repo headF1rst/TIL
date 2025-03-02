@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { Fragment, useState } from "react";
-import Image from "next/image";
 import { classNames } from "../../util/class-name";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { MdClose } from "react-icons/md";
@@ -23,14 +22,12 @@ function Header() {
       <div className="flex justify-start">
         <Link href="/">
           <div className="flex items-center gap-2 cursor-pointer">
-            <div style={{ position: 'relative', width: '40px', height: '40px' }}>
-              <Image
-                src={headerData.icon}
-                alt="블로그 아이콘"
-                layout="fill"
-                objectFit="contain"
-              />
-            </div>
+            <img
+              src={headerData.icon}
+              width={40}
+              height={40}
+              alt="블로그 아이콘"
+            />
             <h1 className="text-lg ">{headerData.blog_name}</h1>
           </div>
         </Link>

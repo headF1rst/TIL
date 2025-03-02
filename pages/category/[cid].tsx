@@ -1,5 +1,4 @@
 import markdownToTxt from "markdown-to-txt";
-import Image from "next/image";
 import Link from "next/link";
 import React, { Fragment } from "react";
 import { ICategoryInfo } from ".";
@@ -94,15 +93,13 @@ function CategoryPosts({ categoryInfo, postDatas, profileData }: IProps) {
                     <div className="text-gray-500">{postData.date}</div>
                   </div>
                   <Link href={`/${postData.id}`}>
-                    <div style={{ position: 'relative', width: '250px', height: '180px' }}>
-                      <Image
-                        src={postData.thumbnail}
-                        alt="포스트 썸네일"
-                        layout="fill"
-                        objectFit="cover"
-                        className="cursor-pointer"
-                      />
-                    </div>
+                    <img
+                      src={postData.thumbnail}
+                      alt="포스트 썸네일"
+                      width={250}
+                      height={180}
+                      className="object-cover cursor-pointer"
+                    />
                   </Link>
                 </div>
               </div>

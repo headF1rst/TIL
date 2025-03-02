@@ -1,6 +1,5 @@
 import { getAllTags, getSortedPostsData } from "../lib/posts";
 import { getProfileData } from "../lib/blog";
-import Image from "next/image";
 import Link from "next/link";
 import SideProfile from "../components/side-profile";
 import { classNames } from "../util/class-name";
@@ -132,15 +131,11 @@ const Home = ({ allPostsData, allTags, profileData }: IProps) => {
                       <div className="text-gray-500">{postData.date}</div>
                     </div>
                     <Link href={`/${postData.id}`}>
-                      <div style={{ position: 'relative', width: '250px', height: '180px' }} className="sm:w-full sm:h-[200px]">
-                        <Image
-                          src={postData.thumbnail}
-                          alt="포스트 썸네일"
-                          layout="fill"
-                          objectFit="cover"
-                          className="cursor-pointer"
-                        />
-                      </div>
+                      <img
+                        src={postData.thumbnail}
+                        alt="포스트 썸네일"
+                        className="object-cover h-[180px] cursor-pointer w-[250px] sm:w-full sm:h-[200px]"
+                      />
                     </Link>
                   </div>
                 </div>

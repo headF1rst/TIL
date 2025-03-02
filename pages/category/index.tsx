@@ -1,6 +1,5 @@
 import React from "react";
 import { getCategoryInfos } from "../../lib/category";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { IProfile } from "..";
 import { getProfileData } from "../../lib/blog";
@@ -34,7 +33,7 @@ function Category({ categoryInfos, profileData }: IProps) {
     <>
       <Head>
         <title>카테고리: 산하개발실록</title>
-        <meta name="title" content="카테고리: 산하개발실록" />
+        <meta name="title" content="카테고리: 산하개발록" />
         <meta
           name="description"
           content="경험 공유를 통해 함께 성장하는 선순환 가치를 만들고자 블로그를 운영하고 있습니다."
@@ -70,14 +69,11 @@ function Category({ categoryInfos, profileData }: IProps) {
                 key={categoryInfo.id}
                 onClick={() => onCategoryClick(categoryInfo.id)}
               >
-                <div style={{ position: 'relative', width: '250px', height: '180px' }} className="sm:w-full sm:h-[200px]">
-                  <Image
-                    src={categoryInfo.thumbnail}
-                    alt="카테고리 썸네일"
-                    layout="fill"
-                    objectFit="cover"
-                  />
-                </div>
+                <img
+                  src={categoryInfo.thumbnail}
+                  alt="카테고리 썸네일"
+                  className="object-cover w-[250px] h-[180px] sm:w-full sm:h-[200px]"
+                />
                 <div className="pt-3 pl-2 text-lg font-semibold">
                   {categoryInfo.name}
                 </div>

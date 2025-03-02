@@ -1,7 +1,7 @@
 ---
 title: 통합 테스트에 @MockBean, @SpyBean을 남용하지 말자
 category:
-thumbnail: https://img.freepik.com/free-vector/software-code-testing-concept-illustration_114360-8414.jpg?w=2000
+thumbnail: https://images.velog.io/images/woo00oo/post/69f1c47c-686b-4d50-ba28-cd3eea7b92f4/%E1%84%8C%E1%85%A6%E1%84%86%E1%85%A9%E1%86%A8%E1%84%8B%E1%85%B3%E1%86%AF%20%E1%84%8B%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A7%E1%86%A8%E1%84%92%E1%85%A2%E1%84%8C%E1%85%AE%E1%84%89%E1%85%A6%E1%84%8B%E1%85%AD._004.png
 tags: SpringBootTest, MockBean, SpyBean
 date: 2025-02-28 10:00
 ---
@@ -87,7 +87,7 @@ public class DefaultContextCache implements ContextCache {
 
     private final Map<MergedContextConfiguration, ApplicationContext> contextMap =
         Collections.synchronizedMap(new LruCache(32, 0.75f));
-    ...
+        // ...
 }
 ```
 

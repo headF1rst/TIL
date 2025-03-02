@@ -1,7 +1,7 @@
 ---
 title: 조인 테이블이 왜 생기지? @JoinColumn으로 해결하는 연관관계 매핑의 비밀
 category: JPA
-thumbnail: https://devcolibri.com/wp-content/uploads/2017/11/dfdfds.png
+thumbnail: https://velog.velcdn.com/images/wooyong99/post/6fdebd14-5fe8-4959-b085-74edb6bc4d46/image.png
 tags: JPA
 date: 2024-10-10 10:00
 searchKeywords: jpa, JoinColumn, 외래 키, 외래 키 제약 조건

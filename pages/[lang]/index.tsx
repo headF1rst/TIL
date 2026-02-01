@@ -99,7 +99,7 @@ const Home = ({ allPostsData, allTags, profileData, lang }: IProps) => {
         <link rel="alternate" hrefLang="en" href="https://headf1rst.github.io/TIL/en" />
         <link rel="alternate" hrefLang="x-default" href="https://headf1rst.github.io/TIL/ko" />
       </Head>
-      <div className="flex justify-around gap-10 sm:gap-0 sm:flex-col-reverse dark:bg-[#0d1117] dark:text-[#c9d1d9] lg:h-full">
+      <div className="flex justify-around gap-5 sm:gap-0 sm:flex-col-reverse dark:bg-[#0d1117] dark:text-[#c9d1d9] lg:h-full">
         <div className="flex flex-col w-2/3 gap-10 px-5 pt-10 sm:w-full">
           <div className="flex flex-wrap gap-2 mr-20 sm:m-0">
             {allTags.map((tagItem: ITag) => (

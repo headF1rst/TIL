@@ -33,6 +33,7 @@ interface IProps {
   postData: IPostData;
   detail: string;
   lang: string;
+  allPostsInOtherLang?: IPostData[];
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -68,10 +69,13 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     return { notFound: true };
   }
 
-  return { props: { postData, detail, lang } };
+  const otherLang = lang === 'ko' ? 'en' : 'ko';
+  const allPostsInOtherLang = getSortedPostsData(otherLang);
+
+  return { props: { postData, detail, lang, allPostsInOtherLang } };
 };
 
-function PostDetail({ postData, detail, lang }: IProps) {
+function PostDetail({ postData, detail, lang, allPostsInOtherLang }: IProps) {
   const router = useRouter();
   const postLabels = getPostLabels(lang === 'ko' ? 'ko' : 'en');
 
@@ -93,8 +97,7 @@ function PostDetail({ postData, detail, lang }: IProps) {
   };
 
   const otherLang = lang === 'ko' ? 'en' : 'ko';
-  const allPostsInOtherLang = getSortedPostsData(otherLang);
-  const translationPost = allPostsInOtherLang.find((p) => {
+  const translationPost = allPostsInOtherLang?.find((p) => {
     if (postData && postData.translationSlug) {
       return p.id === postData.translationSlug;
     }

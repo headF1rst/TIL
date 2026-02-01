@@ -1,6 +1,7 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import Layout from "../components/layout/layout";
+import { LanguageProvider } from "../contexts/LanguageContext";
 
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
@@ -8,6 +9,8 @@ import Head from "next/head";
 config.autoAddCss = false;
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const initialLang = (pageProps as any)?.lang || 'ko';
+
   return (
     <>
       <Head>
@@ -33,9 +36,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="theme-color" content="#ffffff" />
       </Head>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <LanguageProvider initialLang={initialLang}>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </LanguageProvider>
     </>
   );
 }

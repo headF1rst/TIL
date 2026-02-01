@@ -1,10 +1,13 @@
 import React from "react";
-import { IProfile } from "../pages";
+import { IProfile } from "../lib/types";
 import { AiFillGithub } from "react-icons/ai";
 import { MdEmail } from "react-icons/md";
 
-function SideProfile(props: IProfile) {
-  const { name, description, email, github, image } = props;
+interface SideProfileProps extends IProfile {
+  lang?: string;
+}
+
+function SideProfile({ name, description, email, github, image, lang }: SideProfileProps) {
   return (
     <div className="p-10 lg:fixed lg:top-50 lg:right-0 lg:h-full lg:w-1/5 dark:text-[#c9d1d9] sm:flex sm:gap-4">
       <div className="sm:w-20 sm:h-20 sm:m-2 sm:my-auto">

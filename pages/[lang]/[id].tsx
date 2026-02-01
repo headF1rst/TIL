@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { IPostData } from ".";
+import Link from "next/link";
+import { IPostData } from "../../lib/types";
 import {
   getPostDataById,
   getPostDetailById,
   getSortedPostsData,
-} from "../lib/posts";
+  SUPPORTED_LANGS,
+  DEFAULT_LANG,
+} from "../../lib/posts";
+import { getPostLabels, SupportedLang } from "../../lib/i18n";
 import ReactMarkdown from "react-markdown";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import {
@@ -13,42 +17,63 @@ import {
 } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 import { useRouter } from "next/router";
 import "github-markdown-css";
-import Utterances from "../components/utterances";
-import ScrollSpy from "../components/scroll-spy";
+import Utterances from "../../components/utterances";
+import ScrollSpy from "../../components/scroll-spy";
 import Head from "next/head";
+import { GetStaticProps, GetStaticPaths } from "next";
 
 interface IParams {
   params: {
+    lang: string;
     id: string;
   };
 }
+
 interface IProps {
   postData: IPostData;
   detail: string;
+  lang: string;
 }
-export async function getStaticPaths() {
-  const allPostData = getSortedPostsData();
-  const paths = allPostData.map((postData) => {
-    return { params: { id: postData.id } };
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const paths: { params: { lang: string; id: string } }[] = [];
+  
+  SUPPORTED_LANGS.forEach((lang) => {
+    const allPostData = getSortedPostsData(lang);
+    allPostData.forEach((postData) => {
+      paths.push({
+        params: { lang, id: postData.id },
+      });
+    });
   });
+
   return {
     paths,
     fallback: true,
   };
-}
+};
 
-export async function getStaticProps({ params }: IParams) {
-  const postData = getPostDataById(params.id);
-  const detail = getPostDetailById(params.id);
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const lang = (params?.lang as string) || DEFAULT_LANG;
+  const id = params?.id as string;
+
+  if (!SUPPORTED_LANGS.includes(lang)) {
+    return { notFound: true };
+  }
+
+  const postData = getPostDataById(lang, id);
+  const detail = getPostDetailById(lang, id);
 
   if (!postData) {
     return { notFound: true };
   }
-  return { props: { postData, detail } };
-}
 
-function PostDetail({ postData, detail }: IProps) {
+  return { props: { postData, detail, lang } };
+};
+
+function PostDetail({ postData, detail, lang }: IProps) {
   const router = useRouter();
+  const postLabels = getPostLabels(lang === 'ko' ? 'ko' : 'en');
 
   const [isDark, setIsDark] = useState<boolean>();
 
@@ -60,14 +85,25 @@ function PostDetail({ postData, detail }: IProps) {
   }, []);
 
   const onTagClick = (tag: string) => {
-    router.push(`/?tag=${tag}`);
+    router.push(`/${lang}?tag=${tag}`);
   };
 
   const ImageRenderer = ({ ...props }) => {
-    return <img {...props} style={{ maxHeight: "450px", maxWidth: "90%" }} />;
+    return <img {...props} alt="Post image" style={{ maxHeight: "450px", maxWidth: "90%" }} />;
   };
 
-  // 구조화된 데이터(JSON-LD) 생성
+  const otherLang = lang === 'ko' ? 'en' : 'ko';
+  const allPostsInOtherLang = getSortedPostsData(otherLang);
+  const translationPost = allPostsInOtherLang.find((p) => {
+    if (postData && postData.translationSlug) {
+      return p.id === postData.translationSlug;
+    }
+    if (postData) {
+      return p.id === postData.id;
+    }
+    return false;
+  });
+
   const generateJsonLd = () => {
     if (!postData) return null;
     
@@ -83,8 +119,9 @@ function PostDetail({ postData, detail }: IProps) {
       },
       "description": postData.description || "",
       "image": postData.thumbnail || "",
-      "url": `https://headf1rst.github.io/TIL/${postData.id}`,
+      "url": `https://headf1rst.github.io/TIL/${lang}/${postData.id}`,
       "keywords": postData.tags ? postData.tags.split(", ").join(",") : "",
+      "inLanguage": lang === "ko" ? "ko-KR" : "en-US",
       "publisher": {
         "@type": "Organization",
         "name": "headF1rst",
@@ -95,7 +132,7 @@ function PostDetail({ postData, detail }: IProps) {
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": `https://headf1rst.github.io/TIL/${postData.id}`
+        "@id": `https://headf1rst.github.io/TIL/${lang}/${postData.id}`
       }
     };
     
@@ -108,11 +145,11 @@ function PostDetail({ postData, detail }: IProps) {
   };
 
   if (router.isFallback) {
-    return <div>Loading...</div>;
+    return <div>{postLabels.loading}</div>;
   }
 
   if (!postData) {
-    return <div>존재하지 않는 게시글입니다.</div>;
+    return <div>{postLabels.notFound}</div>;
   }
 
   const tags = postData.tags ? postData.tags.split(", ") : [];
@@ -126,16 +163,23 @@ function PostDetail({ postData, detail }: IProps) {
         <meta name="keywords" content={postData.searchKeywords || ""} />
         <meta name="robots" content="index, follow" />
         <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta name="language" content="Korean" />
+        <meta name="language" content={lang === "ko" ? "Korean" : "English"} />
         <meta name="author" content="Sanha Ko" />
         <meta property="og:title" content={postData.title} />
         <meta
           property="og:url"
-          content={`https://headf1rst.github.io/TIL/${postData.id}`}
+          content={`https://headf1rst.github.io/TIL/${lang}/${postData.id}`}
         />
         <meta property="og:type" content="blog" />
         <meta property="og:image" content={postData.thumbnail} />
         <meta property="og:description" content={postData.description} />
+
+        <link rel="alternate" hrefLang="ko" href={`https://headf1rst.github.io/TIL/ko/${postData.id}`} />
+        {translationPost && (
+          <link rel="alternate" hrefLang="en" href={`https://headf1rst.github.io/TIL/en/${translationPost.id}`} />
+        )}
+        <link rel="alternate" hrefLang="x-default" href={`https://headf1rst.github.io/TIL/ko/${postData.id}`} />
+        
         {generateJsonLd()}
       </Head>
       <div className="flex flex-col w-3/5 sm:w-5/6 m-auto pt-20 pb-20 gap-10 dark:bg-[#0d1117] dark:text-[#c9d1d9]">
@@ -158,6 +202,18 @@ function PostDetail({ postData, detail }: IProps) {
               </span>
             ))}
           </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {translationPost ? (
+            <Link href={`/${otherLang}/${translationPost.id}`} className="text-sm text-indigo-600 hover:underline">
+              {postLabels.readIn(otherLang)}
+            </Link>
+          ) : (
+            <span className="text-sm text-gray-400">
+              {postLabels.readIn(otherLang)}
+            </span>
+          )}
         </div>
 
         <div className="markdown-body" style={{ fontSize: "17px" }}>
